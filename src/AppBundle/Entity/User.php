@@ -23,6 +23,11 @@ class User extends BaseUser implements UserInterface
      */
     protected $id;
 
+    /**
+     * @ORM\Column(type="integer")
+     */
+    protected $money;
+
     public function __construct()
     {
         parent::__construct();

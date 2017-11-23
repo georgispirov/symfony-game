@@ -13,91 +13,172 @@
       <Current>1</Current>
       <Visible>1</Visible>
     </schema>
-    <table id="8" parent="7" name="user"/>
-    <column id="9" parent="8" name="id">
+    <table id="8" parent="7" name="categories"/>
+    <table id="9" parent="7" name="migration_versions"/>
+    <table id="10" parent="7" name="product"/>
+    <table id="11" parent="7" name="user"/>
+    <column id="12" parent="8" name="id">
       <Position>1</Position>
       <DataType>int(11)|0</DataType>
       <NotNull>1</NotNull>
       <SequenceIdentity>1</SequenceIdentity>
     </column>
-    <column id="10" parent="8" name="username">
+    <column id="13" parent="8" name="name">
+      <Position>2</Position>
+      <DataType>varchar(255)|0</DataType>
+      <NotNull>1</NotNull>
+    </column>
+    <key id="14" parent="8" name="PRIMARY">
+      <NameSurrogate>1</NameSurrogate>
+      <ColNames>id</ColNames>
+      <Primary>1</Primary>
+    </key>
+    <column id="15" parent="9" name="version">
+      <Position>1</Position>
+      <DataType>varchar(255)|0</DataType>
+      <NotNull>1</NotNull>
+    </column>
+    <key id="16" parent="9" name="PRIMARY">
+      <NameSurrogate>1</NameSurrogate>
+      <ColNames>version</ColNames>
+      <Primary>1</Primary>
+    </key>
+    <column id="17" parent="10" name="id">
+      <Position>1</Position>
+      <DataType>int(11)|0</DataType>
+      <NotNull>1</NotNull>
+      <SequenceIdentity>1</SequenceIdentity>
+    </column>
+    <column id="18" parent="10" name="title">
+      <Position>2</Position>
+      <DataType>varchar(255)|0</DataType>
+      <NotNull>1</NotNull>
+    </column>
+    <column id="19" parent="10" name="description">
+      <Position>3</Position>
+      <DataType>longtext|0</DataType>
+    </column>
+    <column id="20" parent="10" name="price">
+      <Position>4</Position>
+      <DataType>double|0</DataType>
+      <NotNull>1</NotNull>
+    </column>
+    <column id="21" parent="10" name="image">
+      <Position>5</Position>
+      <DataType>varchar(255)|0</DataType>
+    </column>
+    <column id="22" parent="10" name="created_at">
+      <Position>6</Position>
+      <DataType>datetime|0</DataType>
+      <NotNull>1</NotNull>
+    </column>
+    <column id="23" parent="10" name="updated_at">
+      <Position>7</Position>
+      <DataType>datetime|0</DataType>
+      <NotNull>1</NotNull>
+    </column>
+    <index id="24" parent="10" name="UNIQ_D34A04AD2B36786B">
+      <ColNames>title</ColNames>
+      <Unique>1</Unique>
+    </index>
+    <key id="25" parent="10" name="PRIMARY">
+      <NameSurrogate>1</NameSurrogate>
+      <ColNames>id</ColNames>
+      <Primary>1</Primary>
+    </key>
+    <key id="26" parent="10" name="UNIQ_D34A04AD2B36786B">
+      <ColNames>title</ColNames>
+      <UnderlyingIndexName>UNIQ_D34A04AD2B36786B</UnderlyingIndexName>
+    </key>
+    <column id="27" parent="11" name="id">
+      <Position>1</Position>
+      <DataType>int(11)|0</DataType>
+      <NotNull>1</NotNull>
+      <SequenceIdentity>1</SequenceIdentity>
+    </column>
+    <column id="28" parent="11" name="username">
       <Position>2</Position>
       <DataType>varchar(180)|0</DataType>
       <NotNull>1</NotNull>
     </column>
-    <column id="11" parent="8" name="username_canonical">
+    <column id="29" parent="11" name="username_canonical">
       <Position>3</Position>
       <DataType>varchar(180)|0</DataType>
       <NotNull>1</NotNull>
     </column>
-    <column id="12" parent="8" name="email">
+    <column id="30" parent="11" name="email">
       <Position>4</Position>
       <DataType>varchar(180)|0</DataType>
       <NotNull>1</NotNull>
     </column>
-    <column id="13" parent="8" name="email_canonical">
+    <column id="31" parent="11" name="email_canonical">
       <Position>5</Position>
       <DataType>varchar(180)|0</DataType>
       <NotNull>1</NotNull>
     </column>
-    <column id="14" parent="8" name="enabled">
+    <column id="32" parent="11" name="enabled">
       <Position>6</Position>
       <DataType>tinyint(1)|0</DataType>
       <NotNull>1</NotNull>
     </column>
-    <column id="15" parent="8" name="salt">
+    <column id="33" parent="11" name="salt">
       <Position>7</Position>
       <DataType>varchar(255)|0</DataType>
     </column>
-    <column id="16" parent="8" name="password">
+    <column id="34" parent="11" name="password">
       <Position>8</Position>
       <DataType>varchar(255)|0</DataType>
       <NotNull>1</NotNull>
     </column>
-    <column id="17" parent="8" name="last_login">
+    <column id="35" parent="11" name="last_login">
       <Position>9</Position>
       <DataType>datetime|0</DataType>
     </column>
-    <column id="18" parent="8" name="confirmation_token">
+    <column id="36" parent="11" name="confirmation_token">
       <Position>10</Position>
       <DataType>varchar(180)|0</DataType>
     </column>
-    <column id="19" parent="8" name="password_requested_at">
+    <column id="37" parent="11" name="password_requested_at">
       <Position>11</Position>
       <DataType>datetime|0</DataType>
     </column>
-    <column id="20" parent="8" name="roles">
+    <column id="38" parent="11" name="roles">
       <Position>12</Position>
       <Comment>(DC2Type:array)</Comment>
       <DataType>longtext|0</DataType>
       <NotNull>1</NotNull>
     </column>
-    <index id="21" parent="8" name="UNIQ_8D93D64992FC23A8">
+    <column id="39" parent="11" name="money">
+      <Position>13</Position>
+      <DataType>int(11)|0</DataType>
+      <NotNull>1</NotNull>
+    </column>
+    <index id="40" parent="11" name="UNIQ_8D93D64992FC23A8">
       <ColNames>username_canonical</ColNames>
       <Unique>1</Unique>
     </index>
-    <index id="22" parent="8" name="UNIQ_8D93D649A0D96FBF">
+    <index id="41" parent="11" name="UNIQ_8D93D649A0D96FBF">
       <ColNames>email_canonical</ColNames>
       <Unique>1</Unique>
     </index>
-    <index id="23" parent="8" name="UNIQ_8D93D649C05FB297">
+    <index id="42" parent="11" name="UNIQ_8D93D649C05FB297">
       <ColNames>confirmation_token</ColNames>
       <Unique>1</Unique>
     </index>
-    <key id="24" parent="8" name="PRIMARY">
+    <key id="43" parent="11" name="PRIMARY">
       <NameSurrogate>1</NameSurrogate>
       <ColNames>id</ColNames>
       <Primary>1</Primary>
     </key>
-    <key id="25" parent="8" name="UNIQ_8D93D64992FC23A8">
+    <key id="44" parent="11" name="UNIQ_8D93D64992FC23A8">
       <ColNames>username_canonical</ColNames>
       <UnderlyingIndexName>UNIQ_8D93D64992FC23A8</UnderlyingIndexName>
     </key>
-    <key id="26" parent="8" name="UNIQ_8D93D649A0D96FBF">
+    <key id="45" parent="11" name="UNIQ_8D93D649A0D96FBF">
       <ColNames>email_canonical</ColNames>
       <UnderlyingIndexName>UNIQ_8D93D649A0D96FBF</UnderlyingIndexName>
     </key>
-    <key id="27" parent="8" name="UNIQ_8D93D649C05FB297">
+    <key id="46" parent="11" name="UNIQ_8D93D649C05FB297">
       <ColNames>confirmation_token</ColNames>
       <UnderlyingIndexName>UNIQ_8D93D649C05FB297</UnderlyingIndexName>
     </key>
