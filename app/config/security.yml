@@ -21,11 +21,10 @@ security:
             anonymous:    true
             remember_me:
                 secret:      "%secret%"
-                lifetime: 1296000
 
     access_control:
         - { path: ^/login$, allow_if: "not has_role('ROLE_USER')" }
-        - { path: ^/register, allow_if: "not has_role('ROLE_USER')" }
+        - { path: /register, allow_if: "not has_role('ROLE_USER')" }
         - { path: ^/resetting, role: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/admin/, role: ROLE_ADMIN }
         - { path: ^/, role: ROLE_USER }

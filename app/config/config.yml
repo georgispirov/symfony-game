@@ -23,7 +23,6 @@ framework:
     trusted_hosts: ~
     session:
         handler_id: session.handler.native_file
-        cookie_lifetime: 1296000
         save_path: '%kernel.project_dir%/var/sessions/%kernel.environment%'
     fragments: ~
     http_method_override: true

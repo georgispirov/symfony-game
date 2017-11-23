@@ -2,9 +2,9 @@
 
 {{ form_start(form, { 'action': path('fos_user_profile_edit'), 'attr': { 'class': 'fos_user_profile_edit' } }) }}
     <h2>Edit Profile</h2>
-    <div class="form-group">
+    <div class="container col-xs-6">
         {{ form_widget(form) }}
-        <div class="form-group update-profile">
+        <div class="update-profile">
             <div class="col-xs-2">
                 <input class="btn btn-success"
                        type="submit"
