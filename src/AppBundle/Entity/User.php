@@ -2,6 +2,7 @@
 
 namespace AppBundle\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 use FOS\UserBundle\Model\User as BaseUser;
 use Symfony\Component\Security\Core\User\UserInterface;
@@ -29,7 +30,7 @@ class User extends BaseUser implements UserInterface
     protected $money = 1000;
 
     /**
-     * @var Product[]
+     * @var Product[]|ArrayCollection
      * @ORM\OneToMany(targetEntity="AppBundle\Entity\Product", mappedBy="user")
      */
     protected $products;

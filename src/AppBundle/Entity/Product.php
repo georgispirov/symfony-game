@@ -3,6 +3,7 @@
 namespace AppBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 use Vich\UploaderBundle\Entity\File;
 use Vich\UploaderBundle\Mapping\Annotation as Vich;
 
@@ -70,6 +71,13 @@ class Product
      * @ORM\Column(name="updated_at", type="datetime")
      */
     private $updatedAt;
+
+    /**
+     * @ORM\Column(name="quantity", type="integer")
+     * @Assert\NotBlank(message="Quantity cannot be blank.")
+     * @Assert\GreaterThanOrEqual(value="1", message="Quantity must be at least 1.")
+     */
+    private $quantity;
 
     /**
      * @var User

@@ -2,8 +2,10 @@
 
 namespace AppBundle\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bundle\FrameworkBundle\Tests\Fixtures\Validation\Category;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * Promotion
@@ -24,31 +26,37 @@ class Promotion
 
     /**
      * @var int
-     *
      * @ORM\Column(name="discount", type="integer")
+     * @Assert\NotBlank(message="Please enter a discount percent!")
+     * @Assert\Range(min="1", max="100")
      */
     private $discount;
 
     /**
      * @var \DateTime
-     *
      * @ORM\Column(name="start_date", type="datetime")
+     * @ORM\Column(name="start_date", type="datetime")
+     * @Assert\NotBlank(message="Please enter a valid start date!")
      */
     private $startDate;
 
     /**
      * @var \DateTime
-     *
      * @ORM\Column(name="end_date", type="datetime")
+     * @Assert\NotBlank(message="Please enter a valid end date!")
      */
     private $endDate;
 
     /**
-     * @var Category
-     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Categories", inversedBy="promotions")
+     * @var ArrayCollection
+     * @ORM\ManyToMany(targetEntity="AppBundle\Entity\Product", mappedBy="promotions")
      */
-    private $category;
+    private $products;
 
+    public function __construct($products)
+    {
+        $this->products = new ArrayCollection();
+    }
 
     /**
      * Get id
