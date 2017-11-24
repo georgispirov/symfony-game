@@ -26,7 +26,61 @@ class User extends BaseUser implements UserInterface
     /**
      * @ORM\Column(type="integer")
      */
-    protected $money;
+    protected $money = 1000;
+
+    /**
+     * @var Product[]
+     * @ORM\OneToMany(targetEntity="AppBundle\Entity\Product", mappedBy="user")
+     */
+    protected $products;
+
+    /**
+     * @return int
+     */
+    public function getId()
+    {
+        return $this->id;
+    }
+
+    /**
+     * @param int $id
+     */
+    public function setId($id)
+    {
+        $this->id = $id;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getMoney()
+    {
+        return $this->money;
+    }
+
+    /**
+     * @param mixed $money
+     */
+    public function setMoney($money)
+    {
+        $this->money = $money;
+    }
+
+    /**
+     * @return Product[]
+     */
+    public function getProducts()
+    {
+        return $this->products;
+    }
+
+    /**
+     * @param Product[] $products
+     */
+    public function setProducts($products)
+    {
+        $this->products = $products;
+    }
 
     public function __construct()
     {
