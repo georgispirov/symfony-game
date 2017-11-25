@@ -48,7 +48,7 @@ class PromotionService implements IPromotionService
     public function applyPromotionForCategory(Promotion $promotion,
                                               Categories $category): bool
     {
-        // TODO: Implement applyPromotionForCategory() method.
+
     }
 
     /**
@@ -59,7 +59,7 @@ class PromotionService implements IPromotionService
     public function removePromotionForCategory(Promotion $promotion,
                                                Categories $category): bool
     {
-        // TODO: Implement removePromotionForCategory() method.
+
     }
 
     /**
@@ -68,7 +68,7 @@ class PromotionService implements IPromotionService
      */
     public function applyPromotionForProducts(Promotion $promotion): bool
     {
-        // TODO: Implement applyPromotionForProducts() method.
+
     }
 
     /**
@@ -77,6 +77,6 @@ class PromotionService implements IPromotionService
      */
     public function removePromotionForProducts(Promotion $promotion): bool
     {
-        // TODO: Implement removePromotionForProducts() method.
+
     }
 }
