@@ -5,7 +5,7 @@ namespace AppBundle\Services;
 use AppBundle\Entity\Product;
 use Doctrine\ORM\EntityManagerInterface;
 use FOS\UserBundle\Model\UserInterface;
-use Symfony\Component\HttpFoundation\Session\Session;
+use Symfony\Component\HttpFoundation\Session\SessionInterface;
 
 class CartService implements ICartService
 {
@@ -15,7 +15,7 @@ class CartService implements ICartService
     private $em;
 
     /**
-     * @var Session
+     * @var SessionInterface
      */
     private $session;
 
@@ -25,13 +25,13 @@ class CartService implements ICartService
     private $ordered;
 
     /**
-     * CategoriesService constructor.
+     * CartService constructor.
      * @param EntityManagerInterface $em
-     * @param Session $session
+     * @param SessionInterface $session
      * @param IOrderedProductsService $ordered
      */
     public function __construct(EntityManagerInterface $em,
-                                Session $session,
+                                SessionInterface $session,
                                 IOrderedProductsService $ordered)
     {
         $this->em      = $em;

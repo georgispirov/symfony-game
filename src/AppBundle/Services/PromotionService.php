@@ -6,7 +6,7 @@ use AppBundle\Entity\Categories;
 use AppBundle\Entity\Promotion;
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Component\HttpFoundation\Session\Session;
+use Symfony\Component\HttpFoundation\Session\SessionInterface;
 
 class PromotionService implements IPromotionService
 {
@@ -16,7 +16,7 @@ class PromotionService implements IPromotionService
     private $em;
 
     /**
-     * @var Session
+     * @var SessionInterface
      */
     private $session;
 
@@ -27,12 +27,12 @@ class PromotionService implements IPromotionService
 
     /**
      * PromotionService constructor.
-     * @param $em
-     * @param $session
-     * @param $manager
+     * @param EntityManagerInterface $em
+     * @param SessionInterface $session
+     * @param ManagerRegistry $manager
      */
     public function __construct(EntityManagerInterface $em,
-                                Session $session,
+                                SessionInterface $session,
                                 ManagerRegistry $manager)
     {
         $this->em = $em;
