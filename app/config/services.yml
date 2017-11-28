@@ -4,6 +4,10 @@ parameters:
     #parameter_name: value
 
 services:
+    app.shopping.cart.menu_builder:
+        class: AppBundle\Menu\MenuBuilder
+        arguments: ['@service_container']
+
     app.form.registration:
        class: AppBundle\Form\RegistrationType
        tags:
