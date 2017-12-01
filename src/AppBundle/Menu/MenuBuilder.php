@@ -3,7 +3,6 @@
 namespace AppBundle\Menu;
 
 use Knp\Menu\FactoryInterface;
-use Knp\Menu\MenuFactory;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerAwareTrait;
 
@@ -15,23 +14,15 @@ class MenuBuilder implements ContainerAwareInterface
     {
         $menu = $factory->createItem('root');
 
-        $menu->addChild('User Management')
-             ->setAttributes([
-                 'class' => 'nav-item'
-             ]);
+        $menu->addChild('My Shopping Cart', ['route' => 'homepage'])
+             ->setAttribute('class', 'list-group-item');
 
-        $menu['User Management']->addChild('My Cart', [
-            'route' => 'cart-preview'
-        ]);
+        $menu->addChild('Categories', ['route' => 'homepage'])
+             ->setAttribute('class', 'list-group-item');
 
-        $menu->addChild('Categories', [
-            'route' => 'homepage'
-        ]);
+        $menu->addChild('All Products', ['route' => 'homepage'])
+             ->setAttribute('class', 'list-group-item');
 
-        $menu->addChild('All Products', [
-            'route' => 'homepage'
-        ]);
-            $rr = new MenuFactory();
         return $menu;
     }
 }

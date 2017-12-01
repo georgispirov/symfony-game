@@ -1,22 +1,39 @@
 {% trans_default_domain 'FOSUserBundle' %}
 
-{{ form_start(form, { 'action': path('fos_user_profile_edit'), 'attr': { 'class': 'fos_user_profile_edit' } }) }}
-    <h2>Edit Profile</h2>
-    <div class="container col-xs-6">
-        {{ form_widget(form) }}
-        <div class="update-profile">
-            <div class="col-xs-2">
-                <input class="btn btn-success"
-                       type="submit"
-                       value="{{ 'Update'|trans }}" />
-            </div>
+<head>
+    <meta charset="UTF-8" />
+    {% block stylesheets %}{% endblock %}
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <link rel="stylesheet" href="{{ asset('css/style.css') }}" />
+</head>
 
-            <div class="col-xs-2">
-                <a
-                    class="btn btn-primary"
-                    href="{{ path('fos_user_change_password') }}">Change Password</a>
+<div class="col-lg-10 col-lg-offset-4 main-update-profile">
+    {{ form_start(form, {
+                            'action': path('fos_user_profile_edit'),
+                            'attr': { 'class': 'fos_user_profile_edit' }
+                        }
+                 )
+    }}
+
+    <div class="container user-update-container">
+        <h2>Edit Profile</h2>
+        <div class="container col-lg-6">
+            {{ form_widget(form) }}
+            <div class="update-profile">
+                <div class="col-xs-2">
+                    <input class="btn btn-success"
+                           type="submit"
+                           value="{{ 'Update'|trans }}" />
+                </div>
+
+                <div class="col-xs-2">
+                    <a
+                            class="btn btn-primary"
+                            href="{{ path('fos_user_change_password') }}">Change Password</a>
+                </div>
             </div>
         </div>
     </div>
 
-{{ form_end(form) }}
+    {{ form_end(form) }}
+</div>
