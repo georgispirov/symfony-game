@@ -21,9 +21,7 @@
                         Logged in as: <a href="{{ path('fos_user_profile_edit') }}"> {{ app.user.username }} </a>
                     </p>
                     <li>
-                        <a href="{{ path('fos_user_security_logout') }}">
-                            {{ 'Logout'|trans({}, 'FOSUserBundle') }}
-                        </a>
+                        <a href="{{ path('fos_user_security_logout') }}">Logout</a>
                     </li>
                 {% endif %}
             </ul>

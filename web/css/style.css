@@ -3,8 +3,16 @@ body {
     padding-bottom: 40px;
 }
 
+.add-product {
+    margin-top: -170px;
+}
+
+.add-product-header {
+    margin-top: -100px;
+}
+
 .main-update-profile {
-    margin-top: -70px;
+    margin-top: -210px;
 }
 
 .form-signin {

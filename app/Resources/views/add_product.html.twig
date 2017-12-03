@@ -1,0 +1,22 @@
+{% trans_default_domain 'FOSUserBundle' %}
+
+{% include '::base.html.twig' %}
+
+<head>
+    <meta charset="UTF-8">
+</head>
+
+<div class="col-lg-10 col-lg-offset-4 add-product">
+    <h2 class="add-product-header">Add Product</h2>
+    {{ form_start(form, {
+                            'action': path('addProduct'),
+                        }
+                 )
+    }}
+
+    <div class="container">
+        <div class="container col-lg-6">
+            {{ form_widget(form) }}
+        </div>
+    </div>
+</div>

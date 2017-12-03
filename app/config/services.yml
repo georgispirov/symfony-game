@@ -18,6 +18,12 @@ services:
        autowire: true
        tags:
           - { name: kernel.event_subscriber }
+
+    app.services.cart_service:
+           class: AppBundle\Services\CartService
+           autowire: true
+           public: true
+
     # default configuration for services in *this* file
     _defaults:
         # automatically injects dependencies in your services

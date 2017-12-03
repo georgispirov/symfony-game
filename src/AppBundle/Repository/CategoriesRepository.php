@@ -2,6 +2,7 @@
 
 namespace AppBundle\Repository;
 
+use AppBundle\Entity\Categories;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\QueryBuilder;
 
@@ -16,5 +17,14 @@ class CategoriesRepository extends EntityRepository implements ICategoriesReposi
     public function invokeFindByBuilder(): QueryBuilder
     {
         return $this->createQueryBuilder($this->getClassMetadata()->getTableName());
+    }
+
+    /**
+     * @param string $name
+     * @return null|object
+     */
+    public function findByCategoryName(string $name)
+    {
+        return $this->findOneBy(['name' => $name]);
     }
 }

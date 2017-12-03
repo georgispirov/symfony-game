@@ -4,14 +4,15 @@ namespace AppBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
-use Vich\UploaderBundle\Entity\File;
+use Symfony\Component\HttpFoundation\File\File;
 use Vich\UploaderBundle\Mapping\Annotation as Vich;
 
 /**
  * Product
- *
+ * @ORM\HasLifecycleCallbacks()
  * @ORM\Table(name="product")
  * @ORM\Entity(repositoryClass="AppBundle\Repository\ProductRepository")
+ * @Vich\Uploadable()
  */
 class Product
 {
@@ -46,9 +47,14 @@ class Product
     private $price;
 
     /**
+     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Categories", fetch="EXTRA_LAZY")
+     * @Assert\NotBlank()
+     */
+    private $category;
+
+    /**
+     * @ORM\Column(type="string", length=255)
      * @var string
-     *
-     * @ORM\Column(name="image", type="string", length=255, nullable=true)
      */
     private $image;
 
@@ -108,6 +114,23 @@ class Product
     {
         return $this->quantity;
     }
+
+    /**
+     * @return mixed
+     */
+    public function getCategory()
+    {
+        return $this->category;
+    }
+
+    /**
+     * @param Categories $category
+     */
+    public function setCategory(Categories $category)
+    {
+        $this->category = $category;
+    }
+
 
     /**
      * @param $quantity
@@ -177,12 +200,21 @@ class Product
         return $this->description;
     }
 
-    /**
-     * @return File
-     */
-    public function getImageFile(): File
+    public function getImageFile()
     {
         return $this->imageFile;
+    }
+
+    /**
+     * @param File|null $imageFile
+     */
+    public function setImageFile(File $imageFile = null)
+    {
+        $this->imageFile = $imageFile;
+
+        if ($imageFile) {
+            $this->updatedAt = new \DateTime('now');
+        }
     }
 
     /**
@@ -279,6 +311,22 @@ class Product
     public function getUpdatedAt()
     {
         return $this->updatedAt;
+    }
+
+    /**
+     * @ORM\PrePersist()
+     */
+    public function onPrePersist()
+    {
+        $this->createdAt = new \DateTime('now');
+    }
+
+    /**
+     * @ORM\PreUpdate()
+     */
+    public function onPreUpdate()
+    {
+        $this->createdAt = new \DateTime('now');
     }
 }
 

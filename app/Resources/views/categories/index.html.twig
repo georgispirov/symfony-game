@@ -1,0 +1,8 @@
+{% include '::base.html.twig' %}
+
+<h1>Members</h1>
+<ul>
+    {% for key, category in categories %}
+        <li>{{ category.name }}</li>
+    {% endfor %}
+</ul>

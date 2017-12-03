@@ -1,0 +1,7 @@
+{% include '::base.html.twig' %}
+
+<ul>
+    {% for key, product in selectedCategory %}
+        <li>{{ product.name }}</li>
+    {% endfor %}
+</ul>

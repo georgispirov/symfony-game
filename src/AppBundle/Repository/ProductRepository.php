@@ -2,6 +2,7 @@
 
 namespace AppBundle\Repository;
 
+use AppBundle\Entity\Categories;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\QueryBuilder;
 
@@ -16,5 +17,16 @@ class ProductRepository extends EntityRepository implements IProductRepository
     public function invokeFindByBuilder(): QueryBuilder
     {
         return $this->createQueryBuilder($this->getClassMetadata()->getTableName());
+    }
+
+    /**
+     * @param string $name
+     * @return array
+     */
+    public function getProductsByCategory(string $name): array
+    {
+        /* @var Categories $category */
+        $category = $this->getEntityManager()->getRepository(Categories::class)->findByCategoryName($name);
+        return $this->findBy(['category' => $category->getId()]);
     }
 }
