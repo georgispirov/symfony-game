@@ -22,9 +22,9 @@ class CategoriesService implements ICategoriesService
     }
 
     /**
-     * @return array
+     * @return Categories[]
      */
-    public function getAllCategories() : array
+    public function getAllCategories(): array
     {
         return $this->em->getRepository(Categories::class)
                         ->findAll();
@@ -34,9 +34,19 @@ class CategoriesService implements ICategoriesService
      * @param int $id
      * @return object
      */
-    public function getCategoryByID(int $id) : object
+    public function getCategoryByID(int $id): object
     {
         return $this->em->getRepository(Categories::class)
                         ->find($id);
+    }
+
+    /**
+     * @param string $categoryName
+     * @return object
+     */
+    public function getCategoryByName(string $categoryName): object
+    {
+        return $this->em->getRepository(Categories::class)
+                        ->findByCategoryName($categoryName);
     }
 }

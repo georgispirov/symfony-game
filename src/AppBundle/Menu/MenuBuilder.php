@@ -11,39 +11,50 @@ class MenuBuilder implements ContainerAwareInterface
 {
     use ContainerAwareTrait;
 
+    const ITEM_CLASS = 'list-group-item';
+
     public function mainMenu(FactoryInterface $factory, array $options)
     {
-        $em   = $this->container->get('doctrine.orm.entity_manager');
         $menu = $factory->createItem('root');
 
         $menu->addChild('My Shopping Cart', ['route' => 'homepage'])
-             ->setAttribute('class', 'list-group-item');
+             ->setAttribute('class', self::ITEM_CLASS)
+             ->setExtra('translation_domain', false);
 
-        $menu->addChild('Categories', [
-                                                'route'    => 'showCategories',
-                                                'dropdown' => true,
-                                                'caret'    => true
-            ])->setAttribute('class', 'list-group-item');
+        $menu->addChild('Categories',
+                        [
+                            'route'    => 'showCategories',
+                            'dropdown' => true,
+                            'caret'    => true
+                        ])
+             ->setAttribute('class', self::ITEM_CLASS)
+             ->setExtra('translation_domain', false);
 
-        $subCategories = $em->getRepository(Categories::class)
-            ->findAll();
+        $subCategories = $this->container
+                              ->get('app.services.categories')
+                              ->getAllCategories();
 
+        /* @var Categories $category */
         foreach ($subCategories as $category) {
             $menu->getChild('Categories')
-                 ->addChild($category->getName(), [
-                                                       'route' => 'applyCategories',
-                                                       'routeParameters' => [
-                                                           'name' => $category->getName()
-                                                       ]
-                 ])->setAttribute('class', 'a');
+                 ->addChild($category->getName(),
+                            [
+                                'route' => 'applyCategories',
+                                'routeParameters' => [
+                                    'name' => $category->getName()
+                                ]
+                            ])
+                ->setAttribute('class', 'a')
+                ->setExtra('translation_domain', false);
         }
 
-        $menu->addChild('All Products', ['route' => 'homepage'])
-             ->setAttribute('class', 'list-group-item');
+        $menu->addChild('All Products', ['route' => 'allProducts'])
+             ->setAttribute('class', self::ITEM_CLASS)
+             ->setExtra('translation_domain', false);
 
         $menu->addChild('Add Product', ['route' => 'addProduct'])
-             ->setAttribute('class', 'list-group-item');
-
+             ->setAttribute('class', self::ITEM_CLASS)
+             ->setExtra('translation_domain', false);
 
         return $menu;
     }

@@ -16,4 +16,10 @@ interface ICategoriesService
      * @return object
      */
     public function getCategoryByID(int $id) : object;
+
+    /**
+     * @param string $categoryName
+     * @return object
+     */
+    public function getCategoryByName(string $categoryName): object;
 }

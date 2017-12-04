@@ -20,21 +20,25 @@ class AddProductType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $builder->add('title', null, ['label' => 'Title'])
-                ->add('description', TextareaType::class, ['label' => 'Description', 'required' => true])
-                ->add('price', MoneyType::class, ['label' => 'Price', 'required' => true])
-                ->add('quantity', IntegerType::class, ['label' => 'Quantity', 'required' => true])
-                ->add('imageFile', VichFileType::class, ['label' => 'Picture', 'required' => true])
-                ->add('category', EntityType::class, [
-                    'class' => 'AppBundle\Entity\Categories',
+        $builder->add('title', null, [
+                                'label' => 'Title'
+                ])->add('description', TextareaType::class, [
+                                'label' => 'Description', 'required'  => true
+                ])->add('price', MoneyType::class, [
+                                'label' => 'Price',       'required'  => true
+                ])->add('quantity', IntegerType::class, [
+                                'label' => 'Quantity',    'required'  => true
+                ])->add('imageFile', VichFileType::class, [
+                                'label' => 'Picture',     'required'  => true
+                ])->add('category', EntityType::class, [
+                    'class'         => 'AppBundle\Entity\Categories',
                     'query_builder' => function (EntityRepository $repository) {
                         return $repository->createQueryBuilder('c')
                                           ->orderBy('c.name', 'ASC');
                     },
                     'expanded' => false,
                     'multiple' => false
-                ])
-                ->add('Add Product', SubmitType::class);
+                ])->add('Add Product', SubmitType::class);
     }
 
     public function getBlockPrefix()
@@ -50,7 +54,8 @@ class AddProductType extends AbstractType
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
-            'data_class' => Product::class
+            'data_class'         => Product::class,
+            'translation_domain' => false
         ]);
     }
 }
