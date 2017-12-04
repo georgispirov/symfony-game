@@ -4,15 +4,25 @@ namespace AppBundle\Controller;
 
 use AppBundle\Entity\Product;
 use AppBundle\Form\AddProductType;
+use AppBundle\Services\ProductService;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 
 class ProductController extends Controller
 {
-    public function indexAction($name)
+    /**
+     * @var ProductService
+     */
+    private $productService;
+
+    /**
+     * ProductController constructor.
+     * @param $productService
+     */
+    public function __construct(ProductService $productService)
     {
-        return $this->render('', array('name' => $name));
+        $this->productService = $productService;
     }
 
     /**
@@ -36,8 +46,27 @@ class ProductController extends Controller
             return $this->redirectToRoute('homepage');
         }
 
-        return $this->render('::add_product.html.twig', [
+        return $this->render(':products:add_product.html.twig', [
             'form' => $form->createView()
+        ]);
+    }
+
+    /**
+     * @Route("/allProducts", name="allProducts")
+     * @param Request $request
+     * @return \Symfony\Component\HttpFoundation\Response
+     */
+    public function listAllProducts(Request $request)
+    {
+        $paginate        = $this->get('knp_paginator');
+        $allProducts     = $this->productService->getAll();
+        $data            = $paginate->paginate($allProducts,
+                                               $request->query
+                                                       ->getInt('page', 1)
+                                              );
+
+        return $this->render(':products:all_products.html.twig', [
+            'products' => $data
         ]);
     }
 }

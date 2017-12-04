@@ -1,0 +1,10 @@
+.shop-items {
+    display: block;
+    margin-bottom: 250px;
+    font-size: 25px;
+}
+
+.shop-items:after {
+    display: block;
+    border-top: 4px solid grey;
+}
