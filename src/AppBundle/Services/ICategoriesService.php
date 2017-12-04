@@ -2,7 +2,7 @@
 
 namespace AppBundle\Services;
 
-use Doctrine\ORM\QueryBuilder;
+use AppBundle\Entity\Categories;
 
 interface ICategoriesService
 {
@@ -19,7 +19,7 @@ interface ICategoriesService
 
     /**
      * @param string $categoryName
-     * @return object
+     * @return null|Categories
      */
-    public function getCategoryByName(string $categoryName): object;
+    public function getCategoryByName(string $categoryName);
 }
