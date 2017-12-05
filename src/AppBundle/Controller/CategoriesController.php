@@ -61,8 +61,8 @@ class CategoriesController extends Controller
         $productsByCategory = $pagination->paginate($data,
                                                     $request->query->getInt('page', 1));
 
-        return $this->render(':categories:selected_category.html.twig', [
-            'selectedCategory' => $productsByCategory
+        return $this->render(':products:all_products.html.twig', [
+            'products' => $productsByCategory
         ]);
     }
 }

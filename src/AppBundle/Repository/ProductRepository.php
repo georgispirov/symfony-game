@@ -3,6 +3,7 @@
 namespace AppBundle\Repository;
 
 use AppBundle\Entity\Categories;
+use AppBundle\Entity\Product;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\QueryBuilder;
 
@@ -28,5 +29,14 @@ class ProductRepository extends EntityRepository implements IProductRepository
         /* @var Categories $category */
         $category = $this->getEntityManager()->getRepository(Categories::class)->findByCategoryName($name);
         return $this->findBy(['category' => $category->getId()]);
+    }
+
+    /**
+     * @param int $id
+     * @return null|Product
+     */
+    public function findProductByID(int $id)
+    {
+        return $this->getEntityManager()->getRepository(Product::class)->findOneBy(['id' => $id]);
     }
 }

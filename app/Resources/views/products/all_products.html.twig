@@ -24,6 +24,9 @@
                     <p class="card-text">{{ product.description }}</p>
                     <h5>${{ product.price }}</h5>
                 </div>
+                <div class="btn btn-primary">
+                    <a href="{{ path('addOrderedProduct', { 'routeParams': product.id }) }}">Add To Cart</a>
+                </div>
             </div>
         </div>
     </div>

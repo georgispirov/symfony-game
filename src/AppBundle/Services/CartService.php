@@ -2,6 +2,7 @@
 
 namespace AppBundle\Services;
 
+use AppBundle\Entity\OrderedProducts;
 use AppBundle\Entity\Product;
 use Doctrine\ORM\EntityManagerInterface;
 use FOS\UserBundle\Model\UserInterface;
@@ -20,23 +21,23 @@ class CartService implements ICartService
     private $session;
 
     /**
-     * @var IOrderedProductsService
+     * @var OrderedProductsService
      */
-    private $ordered;
+    private $orderedProducts;
 
     /**
      * CartService constructor.
      * @param EntityManagerInterface $em
      * @param SessionInterface $session
-     * @param IOrderedProductsService $ordered
+     * @param OrderedProductsService $orderedProducts
      */
     public function __construct(EntityManagerInterface $em,
                                 SessionInterface $session,
-                                IOrderedProductsService $ordered)
+                                OrderedProductsService $orderedProducts)
     {
-        $this->em      = $em;
-        $this->session = $session;
-        $this->ordered = $ordered;
+        $this->em              = $em;
+        $this->session         = $session;
+        $this->orderedProducts = $orderedProducts;
     }
 
     /**
@@ -46,7 +47,15 @@ class CartService implements ICartService
      */
     public function addProduct(UserInterface $user, Product $product): bool
     {
-        // TODO: Implement addProduct() method.
+        if (null === $user) {
+            return false;
+        }
+
+        if (null === $product) {
+            return false;
+        }
+
+        return $this->orderedProducts->addOrderedProduct($user, $product);
     }
 
     /**
@@ -56,7 +65,60 @@ class CartService implements ICartService
      */
     public function removeProduct(UserInterface $user, Product $product): bool
     {
-        // TODO: Implement removeProduct() method.
+        if (null === $user) {
+            return false;
+        }
+
+        if (null === $product) {
+            return false;
+        }
+
+        return $this->orderedProducts->removeOrderedProduct($user, $product);
+    }
+
+    /**
+     * @param UserInterface $user
+     * @param Product $product
+     * @return bool
+     */
+    public function updateProduct(UserInterface $user, Product $product): bool
+    {
+        if (null === $user) {
+            return false;
+        }
+
+        if (null === $product) {
+            return false;
+        }
+
+        return $this->orderedProducts->updateOrderProduct($user, $product);
+    }
+
+    /**
+     * @param int $id
+     * @return OrderedProducts[]
+     */
+    public function getOrderedProductByUser(int $id): array
+    {
+        return $this->orderedProducts->getOrdersByUser($id);
+    }
+
+    /**
+     * @param int $id
+     * @return mixed
+     */
+    public function getOrderedProductByID(int $id)
+    {
+        return $this->orderedProducts->getOrderedProductByID($id);
+    }
+
+    /**
+     * @param array $products
+     * @return mixed
+     */
+    public function getTotalOfProducts(array $products): float
+    {
+        return $this->orderedProducts->getCheckoutFromAllProducts();
     }
 
     /**
@@ -66,14 +128,5 @@ class CartService implements ICartService
     public function userCheckout(UserInterface $user)
     {
         // TODO: Implement userCheckout() method.
-    }
-
-    /**
-     * @param array $products
-     * @return mixed
-     */
-    public function getTotalOfProducts(array $products)
-    {
-        // TODO: Implement getTotalOfProducts() method.
     }
 }

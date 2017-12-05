@@ -3,6 +3,7 @@
 namespace AppBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use FOS\UserBundle\Model\UserInterface;
 
 /**
  * OrderedProducts
@@ -27,6 +28,11 @@ class OrderedProducts
      * @ORM\Column(name="ordered_date", type="datetime")
      */
     private $orderedDate;
+
+    /**
+     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Product", cascade={"all"})
+     */
+    private $product;
 
     /**
      * @var bool
@@ -68,10 +74,10 @@ class OrderedProducts
     }
 
     /**
-     * @param User $user
+     * @param UserInterface $user
      * @return $this
      */
-    public function setUser(User $user)
+    public function setUser(UserInterface $user)
     {
         $this->user = $user;
         return $this;
@@ -147,6 +153,22 @@ class OrderedProducts
     public function getTotalCheck()
     {
         return $this->totalCheck;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getProduct()
+    {
+        return $this->product;
+    }
+
+    /**
+     * @param mixed $product
+     */
+    public function setProduct(Product $product)
+    {
+        $this->product = $product;
     }
 }
 

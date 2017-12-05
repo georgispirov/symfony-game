@@ -23,6 +23,10 @@ services:
          class: AppBundle\Services\CartService
          autowire: true
          public: true
+         arguments:
+            - "@doctrine.orm.entity_manager"
+            - "@session"
+            - "@app.services.ordered_products"
 
     app.services.product:
          class: AppBundle\Services\ProductService
@@ -34,17 +38,26 @@ services:
          autowire: true
          public: true
 
+    app.services.ordered_products:
+         class: AppBundle\Services\OrderedProductsService
+         autowire: true
+         public: true
 
     app.categories_controller_dependency:
          class: AppBundle\Controller\CategoriesController
          arguments:
-              -  "@app.services.categories"
-              -  "@app.services.product"
+              - "@app.services.categories"
+              - "@app.services.product"
 
     app.product_controller_dependency:
-             class: AppBundle\Controller\ProductController
-             arguments:
-                  -  "@app.services.product"
+         class: AppBundle\Controller\ProductController
+         arguments:
+              - "@app.services.product"
+
+    app.cart_controller_dependency:
+         class: AppBundle\Controller\CartController
+         arguments:
+              - "@app.services.cart_service"
 
     # default configuration for services in *this* file
     _defaults:

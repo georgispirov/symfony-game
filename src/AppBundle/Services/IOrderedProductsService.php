@@ -3,24 +3,46 @@
 namespace AppBundle\Services;
 
 use AppBundle\Entity\OrderedProducts;
+use AppBundle\Entity\Product;
+use FOS\UserBundle\Model\UserInterface;
 
 interface IOrderedProductsService
 {
     /**
-     * @param OrderedProducts $oder
+     * @param UserInterface $user
+     * @param Product $product
      * @return bool
      */
-    public function addOrder(OrderedProducts $oder) : bool;
+    public function addOrderedProduct(UserInterface $user, Product $product) : bool;
 
     /**
-     * @param OrderedProducts $oder
+     * @param UserInterface $user
+     * @param Product $product
      * @return bool
      */
-    public function removeOrder(OrderedProducts $oder) : bool;
+    public function removeOrderedProduct(UserInterface $user, Product $product) : bool;
 
     /**
-     * @param OrderedProducts $oder
+     * @param UserInterface $user
+     * @param Product $product
      * @return bool
      */
-    public function updateOrder(OrderedProducts $oder) : bool;
+    public function updateOrderProduct(UserInterface $user, Product $product) : bool;
+
+    /**
+     * @param int $id
+     * @return OrderedProducts[]
+     */
+    public function getOrdersByUser(int $id): array;
+
+    /**
+     * @return float
+     */
+    public function getCheckoutFromAllProducts(): float;
+
+    /**
+     * @param int $id
+     * @return mixed
+     */
+    public function getOrderedProductByID(int $id);
 }

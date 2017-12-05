@@ -3,7 +3,9 @@
 namespace AppBundle\Services;
 
 use AppBundle\Entity\OrderedProducts;
+use AppBundle\Entity\Product;
 use Doctrine\ORM\EntityManagerInterface;
+use FOS\UserBundle\Model\UserInterface;
 
 class OrderedProductsService implements IOrderedProductsService
 {
@@ -21,30 +23,61 @@ class OrderedProductsService implements IOrderedProductsService
         $this->em = $em;
     }
 
+
     /**
-     * @param OrderedProducts $oder
-     * @return bool
+     * @return float
      */
-    public function addOrder(OrderedProducts $oder): bool
+    public function getCheckoutFromAllProducts(): float
     {
-        // TODO: Implement addOrder() method.
+
     }
 
     /**
-     * @param OrderedProducts $oder
+     * @param UserInterface $user
+     * @param Product $product
      * @return bool
      */
-    public function removeOrder(OrderedProducts $oder): bool
+    public function addOrderedProduct(UserInterface $user, Product $product): bool
     {
-        // TODO: Implement removeOrder() method.
+        return $this->em->getRepository(OrderedProducts::class)
+                        ->addOrderedProduct($user, $product);
     }
 
     /**
-     * @param OrderedProducts $oder
+     * @param UserInterface $user
+     * @param Product $product
      * @return bool
      */
-    public function updateOrder(OrderedProducts $oder): bool
+    public function removeOrderedProduct(UserInterface $user, Product $product): bool
     {
-        // TODO: Implement updateOrder() method.
+        // TODO: Implement removeOrderedProduct() method.
+    }
+
+    /**
+     * @param UserInterface $user
+     * @param Product $product
+     * @return bool
+     */
+    public function updateOrderProduct(UserInterface $user, Product $product): bool
+    {
+        // TODO: Implement updateOrderProduct() method.
+    }
+
+    /**
+     * @param int $id
+     * @return OrderedProducts[]
+     */
+    public function getOrdersByUser(int $id): array
+    {
+        return $this->em->getRepository(OrderedProducts::class)->findAll();
+    }
+
+    /**
+     * @param int $id
+     * @return mixed
+     */
+    public function getOrderedProductByID(int $id)
+    {
+        return $this->em->getRepository(OrderedProducts::class);
     }
 }

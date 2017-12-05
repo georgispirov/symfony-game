@@ -23,7 +23,6 @@ class MenuBuilder implements ContainerAwareInterface
 
         $menu->addChild('Categories',
                         [
-                            'route'    => 'showCategories',
                             'dropdown' => true,
                             'caret'    => true
                         ])

@@ -26,7 +26,7 @@ class ProductService implements IProductService
     public function __construct(EntityManagerInterface $em,
                                 CategoriesService $categoriesService)
     {
-        $this->em = $em;
+        $this->em                = $em;
         $this->categoriesService = $categoriesService;
     }
 
@@ -50,5 +50,14 @@ class ProductService implements IProductService
                                     'category' => $this->categoriesService
                                                        ->getCategoryByName($categoryName)
                         ]);
+    }
+
+    /**
+     * @param int $id
+     * @return mixed
+     */
+    public function getProductByID(int $id)
+    {
+        return $this->em->getRepository(Product::class)->findProductByID($id);
     }
 }

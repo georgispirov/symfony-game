@@ -14,6 +14,13 @@
 {% include '::topnav.html.twig' %}
 
 {% if app.user %}
+<div class="container money-placement">
+    <span class="money-value">
+        <label for="money-content">Cash</label>
+        <p class="money-content">${{ app.user.money }}</p>
+    </span>
+</div>
+
 <div class="container">
     <div class="row">
         <div class="col-lg-3">

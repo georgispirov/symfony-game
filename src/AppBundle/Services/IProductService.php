@@ -16,4 +16,10 @@ interface IProductService
      * @return Product[]
      */
     public function getProductsByCategory(string $categoryName): array;
+
+    /**
+     * @param int $id
+     * @return mixed
+     */
+    public function getProductByID(int $id);
 }

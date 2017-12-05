@@ -4,6 +4,12 @@ body {
     background-image: url(https://subtlepatterns.com/patterns/kindajean.png);
 }
 
+.money-placement {
+    float: right;
+    margin-right: -800px;
+    margin-top: 45px;
+}
+
 .add-product {
     margin-top: -170px;
 }

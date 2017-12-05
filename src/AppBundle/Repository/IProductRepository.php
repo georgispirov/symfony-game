@@ -10,4 +10,10 @@ interface IProductRepository extends IShoppingCartFindBuilder
      * @return array
      */
     public function getProductsByCategory(string $name): array;
+
+    /**
+     * @param int $id
+     * @return mixed
+     */
+    public function findProductByID(int $id);
 }
