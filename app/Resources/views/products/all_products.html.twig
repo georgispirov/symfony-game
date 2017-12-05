@@ -5,6 +5,22 @@
     <link rel="stylesheet" href="{{ asset('css/items.css') }}">
 </head>
 
+{% if app.session.flashbag.has('success') %}
+    <div class="container col-xs-4 alert alert-success success-message-item-add-to-cart">
+        {% for flashMessage in app.session.flashbag.get('success') %}
+            {{ flashMessage }}
+        {% endfor %}
+    </div>
+{% endif %}
+
+{% if app.session.flashbag.has('error') %}
+    <div class="container col-xs-4 alert alert-danger error-message-item-add-to-cart">
+        {% for flashMessage in app.session.flashbag.get('error') %}
+            {{ flashMessage }}
+        {% endfor %}
+    </div>
+{% endif %}
+
 {% for key, product in products %}
 <body>
     <div class="row col-lg-10" style="margin-left: 400px; margin-top: -200px">

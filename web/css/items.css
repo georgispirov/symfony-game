@@ -8,3 +8,13 @@
     display: block;
     border-top: 4px solid grey;
 }
+
+.success-message-item-add-to-cart {
+    top: -200px;
+    left: 427px;
+}
+
+.error-message-item-add-to-cart {
+    top: -200px;
+    left: 427px;
+}

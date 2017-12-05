@@ -4,8 +4,8 @@ namespace AppBundle\Services;
 
 use AppBundle\Entity\OrderedProducts;
 use AppBundle\Entity\Product;
+use AppBundle\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
-use FOS\UserBundle\Model\UserInterface;
 
 class OrderedProductsService implements IOrderedProductsService
 {
@@ -33,32 +33,32 @@ class OrderedProductsService implements IOrderedProductsService
     }
 
     /**
-     * @param UserInterface $user
+     * @param User $user
      * @param Product $product
      * @return bool
      */
-    public function addOrderedProduct(UserInterface $user, Product $product): bool
+    public function addOrderedProduct(User $user, Product $product): bool
     {
         return $this->em->getRepository(OrderedProducts::class)
                         ->addOrderedProduct($user, $product);
     }
 
     /**
-     * @param UserInterface $user
+     * @param User $user
      * @param Product $product
      * @return bool
      */
-    public function removeOrderedProduct(UserInterface $user, Product $product): bool
+    public function removeOrderedProduct(User $user, Product $product): bool
     {
         // TODO: Implement removeOrderedProduct() method.
     }
 
     /**
-     * @param UserInterface $user
+     * @param User $user
      * @param Product $product
      * @return bool
      */
-    public function updateOrderProduct(UserInterface $user, Product $product): bool
+    public function updateOrderProduct(User $user, Product $product): bool
     {
         // TODO: Implement updateOrderProduct() method.
     }

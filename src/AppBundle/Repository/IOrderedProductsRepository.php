@@ -4,7 +4,7 @@ namespace AppBundle\Repository;
 
 use AppBundle\Entity\OrderedProducts;
 use AppBundle\Entity\Product;
-use FOS\UserBundle\Model\UserInterface;
+use AppBundle\Entity\User;
 
 interface IOrderedProductsRepository extends IShoppingCartFindBuilder
 {
@@ -15,11 +15,11 @@ interface IOrderedProductsRepository extends IShoppingCartFindBuilder
     public function getOrderedProductsByUser(int $id): array;
 
     /**
-     * @param UserInterface $user
+     * @param User $user
      * @param Product $product
      * @return bool
      */
-    public function addOrderedProduct(UserInterface $user, Product $product): bool;
+    public function addOrderedProduct(User $user, Product $product): bool;
 
     /**
      * @param int $id

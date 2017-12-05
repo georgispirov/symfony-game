@@ -4,36 +4,36 @@ namespace AppBundle\Services;
 
 use AppBundle\Entity\OrderedProducts;
 use AppBundle\Entity\Product;
-use FOS\UserBundle\Model\UserInterface;
+use AppBundle\Entity\User;
 
 interface ICartService
 {
     /**
-     * @param UserInterface $user
+     * @param User $user
      * @param Product $product
      * @return bool
      */
-    public function addProduct(UserInterface $user, Product $product) : bool;
+    public function addProduct(User $user, Product $product) : bool;
 
     /**
-     * @param UserInterface $user
+     * @param User $user
      * @param Product $product
      * @return bool
      */
-    public function removeProduct(UserInterface $user, Product $product) : bool;
+    public function removeProduct(User $user, Product $product) : bool;
 
     /**
-     * @param UserInterface $user
+     * @param User $user
      * @param Product $product
      * @return bool
      */
-    public function updateProduct(UserInterface $user, Product $product): bool;
+    public function updateProduct(User $user, Product $product): bool;
 
     /**
-     * @param UserInterface $user
+     * @param User $user
      * @return mixed
      */
-    public function userCheckout(UserInterface $user);
+    public function userCheckout(User $user);
 
     /**
      * @param array $products
@@ -52,4 +52,6 @@ interface ICartService
      * @return mixed
      */
     public function getOrderedProductByID(int $id);
+
+    public function hasUserEnoughCash(float $itemPrice, float $userCash): bool;
 }

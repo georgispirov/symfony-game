@@ -4,10 +4,9 @@ namespace AppBundle\Repository;
 
 use AppBundle\Entity\OrderedProducts;
 use AppBundle\Entity\Product;
+use AppBundle\Entity\User;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\QueryBuilder;
-use Exception;
-use FOS\UserBundle\Model\UserInterface;
 
 /**
  * OrderedProductsRepository
@@ -32,12 +31,12 @@ class OrderedProductsRepository extends EntityRepository implements IOrderedProd
     }
 
     /**
-     * @param UserInterface $user
+     * @param User $user
      * @param Product $product
      * @return bool
      * @throws \Exception
      */
-    public function addOrderedProduct(UserInterface $user, Product $product): bool
+    public function addOrderedProduct(User $user, Product $product): bool
     {
         $em = $this->getEntityManager();
 
@@ -50,6 +49,10 @@ class OrderedProductsRepository extends EntityRepository implements IOrderedProd
 
         $em->persist($orderedProduct);
         if (true === $em->getUnitOfWork()->isEntityScheduled($orderedProduct)) {
+            $userMoney = $user->getMoney() - $product->getPrice();
+            $em->flush();
+            $user->setMoney($userMoney);
+            $em->persist($user);
             $em->flush();
             return true;
         }

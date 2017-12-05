@@ -4,9 +4,10 @@ namespace AppBundle\Services;
 
 use AppBundle\Entity\OrderedProducts;
 use AppBundle\Entity\Product;
+use AppBundle\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
-use FOS\UserBundle\Model\UserInterface;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
+use Symfony\Component\Process\Exception\InvalidArgumentException;
 
 class CartService implements ICartService
 {
@@ -41,29 +42,33 @@ class CartService implements ICartService
     }
 
     /**
-     * @param UserInterface $user
+     * @param User $user
      * @param Product $product
      * @return bool
+     * @throws InvalidArgumentException
      */
-    public function addProduct(UserInterface $user, Product $product): bool
+    public function addProduct(User $user, Product $product): bool
     {
-        if (null === $user) {
-            return false;
+        if ( !$user instanceof User) {
+            throw new InvalidArgumentException('Please provide valid User');
         }
 
-        if (null === $product) {
-            return false;
+        if ( !$product instanceof Product) {
+            throw new InvalidArgumentException('Please provide valid Product');
         }
 
-        return $this->orderedProducts->addOrderedProduct($user, $product);
+        if (true === $this->hasUserEnoughCash($product->getPrice(), $user->getMoney())) {
+            return $this->orderedProducts->addOrderedProduct($user, $product);
+        }
+        return false;
     }
 
     /**
-     * @param UserInterface $user
+     * @param User $user
      * @param Product $product
      * @return bool
      */
-    public function removeProduct(UserInterface $user, Product $product): bool
+    public function removeProduct(User $user, Product $product): bool
     {
         if (null === $user) {
             return false;
@@ -77,11 +82,11 @@ class CartService implements ICartService
     }
 
     /**
-     * @param UserInterface $user
+     * @param User $user
      * @param Product $product
      * @return bool
      */
-    public function updateProduct(UserInterface $user, Product $product): bool
+    public function updateProduct(User $user, Product $product): bool
     {
         if (null === $user) {
             return false;
@@ -122,11 +127,19 @@ class CartService implements ICartService
     }
 
     /**
-     * @param UserInterface $user
+     * @param User $user
      * @return mixed
      */
-    public function userCheckout(UserInterface $user)
+    public function userCheckout(User $user)
     {
         // TODO: Implement userCheckout() method.
+    }
+
+    public function hasUserEnoughCash(float $itemPrice, float $userCash): bool
+    {
+        if ($itemPrice <= $userCash) {
+            return true;
+        }
+        return false;
     }
 }
