@@ -30,10 +30,10 @@ interface IOrderedProductsService
     public function updateOrderProduct(User $user, Product $product) : bool;
 
     /**
-     * @param int $id
-     * @return OrderedProducts[]
+     * @param User $user
+     * @return array
      */
-    public function getOrdersByUser(int $id): array;
+    public function getOrdersByUser(User $user): array;
 
     /**
      * @return float
@@ -42,7 +42,7 @@ interface IOrderedProductsService
 
     /**
      * @param int $id
-     * @return mixed
+     * @return OrderedProducts[]
      */
     public function getOrderedProductByID(int $id);
 }

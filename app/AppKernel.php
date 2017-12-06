@@ -19,6 +19,7 @@ class AppKernel extends Kernel
             new Vich\UploaderBundle\VichUploaderBundle(),
             new Knp\Bundle\PaginatorBundle\KnpPaginatorBundle(),
             new Knp\Bundle\MenuBundle\KnpMenuBundle(),
+            new APY\DataGridBundle\APYDataGridBundle(),
             new AppBundle\AppBundle(),
             new \FOS\UserBundle\FOSUserBundle(),
         ];

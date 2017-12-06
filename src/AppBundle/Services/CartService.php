@@ -100,12 +100,21 @@ class CartService implements ICartService
     }
 
     /**
-     * @param int $id
-     * @return OrderedProducts[]
+     * @param User $user
+     * @return array
      */
-    public function getOrderedProductByUser(int $id): array
+    public function getOrderedProductByUser(User $user): array
     {
-        return $this->orderedProducts->getOrdersByUser($id);
+        if ( !$user instanceof User) {
+            throw new InvalidArgumentException('Please provide valid User.');
+        }
+
+        $orderedProducts = $this->orderedProducts->getOrdersByUser($user);
+
+        if (sizeof($orderedProducts) > 0) {
+            return $orderedProducts;
+        }
+        return [];
     }
 
     /**

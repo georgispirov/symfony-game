@@ -1,4 +1,4 @@
-{{ include('topnav.html.twig') }}
+{{ include('base.html.twig') }}
 
 <head>
     <title>Cart</title>
@@ -7,11 +7,9 @@
     <link rel="stylesheet" href="{{ asset('css/topnav.css')}}">
 </head>
 <body>
-    {{ knp_menu_render('AppBundle:MenuBuilder:mainMenu') }}
-
     <div class="container">
         <div class="row">
-            111;
+            {{ grid(grid) }}
         </div>
     </div>
 </body>

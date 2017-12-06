@@ -6,6 +6,7 @@ use AppBundle\Entity\OrderedProducts;
 use AppBundle\Entity\Product;
 use AppBundle\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\Query;
 
 class OrderedProductsService implements IOrderedProductsService
 {
@@ -64,12 +65,13 @@ class OrderedProductsService implements IOrderedProductsService
     }
 
     /**
-     * @param int $id
-     * @return OrderedProducts[]
+     * @param User $user
+     * @return array
      */
-    public function getOrdersByUser(int $id): array
+    public function getOrdersByUser(User $user): array
     {
-        return $this->em->getRepository(OrderedProducts::class)->findAll();
+        return $this->em->getRepository(OrderedProducts::class)
+                        ->getOrderedProductsByUser($user);
     }
 
     /**

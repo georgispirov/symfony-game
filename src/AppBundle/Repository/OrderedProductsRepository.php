@@ -6,6 +6,7 @@ use AppBundle\Entity\OrderedProducts;
 use AppBundle\Entity\Product;
 use AppBundle\Entity\User;
 use Doctrine\ORM\EntityRepository;
+use Doctrine\ORM\Query;
 use Doctrine\ORM\QueryBuilder;
 
 /**
@@ -22,12 +23,13 @@ class OrderedProductsRepository extends EntityRepository implements IOrderedProd
     }
 
     /**
-     * @param int $id
-     * @return OrderedProducts[]
+     * @param User $user
+     * @return array
      */
-    public function getOrderedProductsByUser(int $id): array
+    public function getOrderedProductsByUser(User $user): array
     {
-
+        $query = $this->invokeFindByBuilder()->getQuery();
+        return $query->getResult(Query::HYDRATE_ARRAY);
     }
 
     /**

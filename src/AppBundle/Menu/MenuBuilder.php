@@ -17,7 +17,7 @@ class MenuBuilder implements ContainerAwareInterface
     {
         $menu = $factory->createItem('root');
 
-        $menu->addChild('My Shopping Cart', ['route' => 'homepage'])
+        $menu->addChild('My Shopping Cart', ['route' => 'showOrderedProductsByUser'])
              ->setAttribute('class', self::ITEM_CLASS)
              ->setExtra('translation_domain', false);
 

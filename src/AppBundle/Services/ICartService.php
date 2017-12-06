@@ -42,10 +42,10 @@ interface ICartService
     public function getTotalOfProducts(array $products): float;
 
     /**
-     * @param int $id
+     * @param User $user
      * @return OrderedProducts[]
      */
-    public function getOrderedProductByUser(int $id): array;
+    public function getOrderedProductByUser(User $user): array;
 
     /**
      * @param int $id

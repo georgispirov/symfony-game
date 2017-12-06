@@ -9,10 +9,10 @@ use AppBundle\Entity\User;
 interface IOrderedProductsRepository extends IShoppingCartFindBuilder
 {
     /**
-     * @param int $id
+     * @param User $user
      * @return OrderedProducts[]
      */
-    public function getOrderedProductsByUser(int $id): array;
+    public function getOrderedProductsByUser(User $user): array;
 
     /**
      * @param User $user

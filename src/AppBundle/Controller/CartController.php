@@ -2,9 +2,11 @@
 
 namespace AppBundle\Controller;
 
+use AppBundle\Entity\Product;
 use AppBundle\Services\CartService;
 use AppBundle\Services\OrderedProductsService;
 use AppBundle\Services\ProductService;
+use APY\DataGridBundle\Grid\Source\Vector;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -55,13 +57,12 @@ class CartController extends Controller
         $params  = $request->query->all();
         $product = $this->productService->getProductByID($params['routeParams']);
 
-        $referer = $request->headers->get('referer');
         if (true === $this->cartService->addProduct($user, $product)) {
             $this->session->getFlashBag()->add('success', 'You have successfully added this item to your cart.');
-            return $this->redirect($referer);
+            return $this->redirect($request->headers->get('referer'));
         }
         $this->session->getFlashBag()->add('error', 'You don\'t have enough money to buy this item.');
-        return $this->redirect($referer);
+        return $this->redirect($request->headers->get('referer'));
     }
 
     /**
@@ -93,11 +94,24 @@ class CartController extends Controller
     }
 
     /**
-     * @param int $id
-     * @return array
+     * @Route("cart/orderedProducts", name="showOrderedProductsByUser")
+     * @param Request $request
+     * @return Response
      */
-    public function getOrderedProductsByUserAction(int $id): array
+    public function getOrderedProductsByUserAction(Request $request): Response
     {
-        return $this->cartService->getOrderedProductByUser($id);
+        $grid    = $this->get('grid');
+        $user    = $this->get('security.token_storage')->getToken()->getUser();
+        $orderedProducts = $this->cartService->getOrderedProductByUser($user);
+
+        if (sizeof($orderedProducts) > 0) {
+            $vector = new Vector($orderedProducts);
+            $grid->setSource($vector);
+            return $grid->getGridResponse('cart/index.html.twig');
+        }
+        $this->session->getFlashBag()->add('notice',
+                                'No bought items added to your cart. Go and buy something.');
+
+        return $this->redirect($request->headers->get('referer'));
     }
 }
