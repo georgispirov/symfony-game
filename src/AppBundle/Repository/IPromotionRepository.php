@@ -4,7 +4,7 @@ namespace AppBundle\Repository;
 
 use Doctrine\ORM\QueryBuilder;
 
-interface IPromotionRepository extends IShoppingCartFindBuilder
+interface IPromotionRepository
 {
     /**
      * @return QueryBuilder

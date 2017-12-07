@@ -4,6 +4,7 @@ namespace AppBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use FOS\UserBundle\Model\UserInterface;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * OrderedProducts
@@ -30,7 +31,8 @@ class OrderedProducts
     private $orderedDate;
 
     /**
-     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Product", cascade={"all"})
+     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Product", inversedBy="ordered_products")
+     * @ORM\JoinColumn(nullable=false)
      */
     private $product;
 
@@ -42,11 +44,18 @@ class OrderedProducts
     private $confirmed;
 
     /**
+     * @ORM\Column(name="quantity", type="integer")
+     * @Assert\NotBlank(message="Quantity cannot be blank.")
+     * @Assert\GreaterThanOrEqual(value="1", message="Quantity must be at least 1.")
+     */
+    private $quantity;
+
+    /**
      * @var float
      *
-     * @ORM\Column(name="totalCheck", type="float")
+     * @ORM\Column(name="ordered_product_price", type="float")
      */
-    private $totalCheck;
+    private $orderedProductPrice;
 
     /**
      * @ORM\ManyToOne(targetEntity="AppBundle\Entity\User", inversedBy="ordered_products")
@@ -132,30 +141,6 @@ class OrderedProducts
     }
 
     /**
-     * Set totalCheck
-     *
-     * @param float $totalCheck
-     *
-     * @return OrderedProducts
-     */
-    public function setTotalCheck($totalCheck)
-    {
-        $this->totalCheck = $totalCheck;
-
-        return $this;
-    }
-
-    /**
-     * Get totalCheck
-     *
-     * @return float
-     */
-    public function getTotalCheck()
-    {
-        return $this->totalCheck;
-    }
-
-    /**
      * @return mixed
      */
     public function getProduct()
@@ -164,11 +149,43 @@ class OrderedProducts
     }
 
     /**
-     * @param mixed $product
+     * @param Product $product
      */
     public function setProduct(Product $product)
     {
         $this->product = $product;
+    }
+
+    /**
+     * @return float
+     */
+    public function getOrderedProductPrice(): float
+    {
+        return $this->orderedProductPrice;
+    }
+
+    /**
+     * @param float $orderedProductPrice
+     */
+    public function setOrderedProductPrice(float $orderedProductPrice)
+    {
+        $this->orderedProductPrice = $orderedProductPrice;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getQuantity()
+    {
+        return $this->quantity;
+    }
+
+    /**
+     * @param mixed $quantity
+     */
+    public function setQuantity($quantity)
+    {
+        $this->quantity = $quantity;
     }
 }
 

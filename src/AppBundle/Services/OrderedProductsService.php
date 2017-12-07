@@ -6,7 +6,6 @@ use AppBundle\Entity\OrderedProducts;
 use AppBundle\Entity\Product;
 use AppBundle\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\ORM\Query;
 
 class OrderedProductsService implements IOrderedProductsService
 {
@@ -45,13 +44,14 @@ class OrderedProductsService implements IOrderedProductsService
     }
 
     /**
-     * @param User $user
-     * @param Product $product
+     * @param OrderedProducts $product
      * @return bool
      */
-    public function removeOrderedProduct(User $user, Product $product): bool
+    public function removeOrderedProduct(OrderedProducts $product): bool
     {
-        // TODO: Implement removeOrderedProduct() method.
+        return $this->em->getRepository(OrderedProducts::class)
+                        ->removeOrderedProduct($product);
+
     }
 
     /**
@@ -80,6 +80,17 @@ class OrderedProductsService implements IOrderedProductsService
      */
     public function getOrderedProductByID(int $id)
     {
-        return $this->em->getRepository(OrderedProducts::class);
+        return $this->em->getRepository(OrderedProducts::class)
+                        ->findOrderedProductByID($id);
+    }
+
+    /**
+     * @param OrderedProducts $orderedProduct
+     * @return bool
+     */
+    public function increaseQuantity(OrderedProducts $orderedProduct): bool
+    {
+        return $this->em->getRepository(OrderedProducts::class)
+                        ->increaseQuantity($orderedProduct);
     }
 }

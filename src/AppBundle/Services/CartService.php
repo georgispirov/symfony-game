@@ -5,6 +5,10 @@ namespace AppBundle\Services;
 use AppBundle\Entity\OrderedProducts;
 use AppBundle\Entity\Product;
 use AppBundle\Entity\User;
+use APY\DataGridBundle\Grid\Action\RowAction;
+use APY\DataGridBundle\Grid\Column\Column;
+use APY\DataGridBundle\Grid\Exception\InvalidArgumentException as APYInvalidArgumentException;
+use APY\DataGridBundle\Grid\Grid;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\Process\Exception\InvalidArgumentException;
@@ -65,20 +69,25 @@ class CartService implements ICartService
 
     /**
      * @param User $user
-     * @param Product $product
+     * @param OrderedProducts $product
      * @return bool
      */
-    public function removeProduct(User $user, Product $product): bool
+    public function removeProduct(User $user, OrderedProducts $product): bool
     {
-        if (null === $user) {
+        if ( !$user instanceof User ) {
             return false;
         }
 
-        if (null === $product) {
+        if ( !$product instanceof OrderedProducts ) {
             return false;
         }
 
-        return $this->orderedProducts->removeOrderedProduct($user, $product);
+        if (true === $this->orderedProducts->removeOrderedProduct($product)) {
+            $user->setMoney($user->getMoney() + $product->getOrderedProductPrice());
+            return true;
+        }
+
+        return false;
     }
 
     /**
@@ -88,11 +97,11 @@ class CartService implements ICartService
      */
     public function updateProduct(User $user, Product $product): bool
     {
-        if (null === $user) {
+        if ( !$user instanceof User ) {
             return false;
         }
 
-        if (null === $product) {
+        if ( !$product instanceof OrderedProducts ) {
             return false;
         }
 
@@ -150,5 +159,71 @@ class CartService implements ICartService
             return true;
         }
         return false;
+    }
+
+    /**
+     * @param Product $product
+     * @return bool
+     * @throws InvalidArgumentException
+     */
+    public function isOrderedProductAlreadyBought(Product $product): bool
+    {
+        if ( !$product instanceof Product ) {
+            throw new InvalidArgumentException('Product must be a valid Entity');
+        }
+
+        $existingOrderedProduct = $this->em->getRepository(OrderedProducts::class)
+                                           ->findOrderedProductByID($product->getId());
+
+        if ($existingOrderedProduct instanceof OrderedProducts) {
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * @param OrderedProducts $orderedProduct
+     * @return bool
+     * @throws InvalidArgumentException
+     */
+    public function increaseQuantityOnAlreadyBoughtItem(OrderedProducts $orderedProduct): bool
+    {
+        if ( !$orderedProduct instanceof OrderedProducts) {
+            throw new InvalidArgumentException('Ordered Product must be a valid Entity.');
+        }
+
+        return $this->orderedProducts->increaseQuantity($orderedProduct);
+    }
+
+    /**
+     * @param Grid $grid
+     * @return Grid
+     */
+    public function orderedProductsDataGrid(Grid $grid): Grid
+    {
+        if ( !$grid instanceof Grid ) {
+            throw new APYInvalidArgumentException('Applied argument must be instance of Grid!');
+        }
+
+        $grid->setHiddenColumns(['orderedProductID']);
+
+        $updateColumn = new RowAction('Update', 'updateOrderedProduct');
+        $updateColumn->setRouteParametersMapping(['productID' => $grid->getColumn('orderedProductID')->getId()]);
+
+        $deleteColumn = new RowAction('Delete', 'removeOrderedProduct');
+        $deleteColumn->setRouteParametersMapping(['productID' => $grid->getColumn('orderedProductID')->getId()]);
+
+
+        $grid->getColumn('Product')->setTitle('Product Title');
+        $grid->getColumn('orderedDate')->setTitle('Ordered Date');
+        $grid->getColumn('Confirmed')->setValues([0 => 'No', 1 => 'Yes']);
+        $grid->addRowAction($updateColumn);
+        $grid->addRowAction($deleteColumn);
+
+        foreach ($grid->getColumns() as $column) { /* @var Column $column */
+            $column->setAlign('center');
+        }
+
+        return $grid;
     }
 }

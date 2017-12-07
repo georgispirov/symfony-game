@@ -2,9 +2,7 @@
 
 namespace AppBundle\Repository;
 
-use AppBundle\Entity\Categories;
-
-interface ICategoriesRepository extends IShoppingCartFindBuilder
+interface ICategoriesRepository
 {
     /**
      * @param string $name

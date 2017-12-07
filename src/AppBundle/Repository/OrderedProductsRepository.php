@@ -6,8 +6,6 @@ use AppBundle\Entity\OrderedProducts;
 use AppBundle\Entity\Product;
 use AppBundle\Entity\User;
 use Doctrine\ORM\EntityRepository;
-use Doctrine\ORM\Query;
-use Doctrine\ORM\QueryBuilder;
 
 /**
  * OrderedProductsRepository
@@ -17,19 +15,24 @@ use Doctrine\ORM\QueryBuilder;
  */
 class OrderedProductsRepository extends EntityRepository implements IOrderedProductsRepository
 {
-    public function invokeFindByBuilder(): QueryBuilder
-    {
-        return $this->createQueryBuilder($this->getClassMetadata()->getTableName());
-    }
-
     /**
      * @param User $user
      * @return array
      */
     public function getOrderedProductsByUser(User $user): array
     {
-        $query = $this->invokeFindByBuilder()->getQuery();
-        return $query->getResult(Query::HYDRATE_ARRAY);
+        $query = $this->getEntityManager()
+                      ->getRepository(OrderedProducts::class)
+                      ->createQueryBuilder('op')
+                      ->select('op.id as orderedProductID, pr.title AS Product, op.orderedDate, op.orderedProductPrice AS Price, 
+                                      op.confirmed AS Confirmed, u.username AS User')
+                      ->join('op.user','u')
+                      ->join('op.product', 'pr')
+                      ->where('u = :user')
+                      ->setParameter(':user', $user)
+                      ->getQuery();
+
+        return $query->getArrayResult();
     }
 
     /**
@@ -47,7 +50,7 @@ class OrderedProductsRepository extends EntityRepository implements IOrderedProd
         $orderedProduct->setOrderedDate(new \DateTime('now'));
         $orderedProduct->setConfirmed(false);
         $orderedProduct->setProduct($product);
-        $orderedProduct->setTotalCheck($product->getPrice());
+        $orderedProduct->setOrderedProductPrice($product->getPrice());
 
         $em->persist($orderedProduct);
         if (true === $em->getUnitOfWork()->isEntityScheduled($orderedProduct)) {
@@ -67,7 +70,44 @@ class OrderedProductsRepository extends EntityRepository implements IOrderedProd
      */
     public function findOrderedProductByID(int $id)
     {
+        return  $this->getEntityManager()
+                     ->getRepository(OrderedProducts::class)
+                     ->findOneBy(['id' => $id]);
+    }
+
+    /**
+     * @param OrderedProducts $product
+     * @return bool
+     */
+    public function removeOrderedProduct(OrderedProducts $product): bool
+    {
         $em = $this->getEntityManager();
-        return $em->getRepository(OrderedProducts::class)->findOneBy(['id' => $id]);
+        $em->remove($product);
+
+        if (true === $em->getUnitOfWork()->isScheduledForDelete($product)) {
+            $em->flush();
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * @param OrderedProducts $orderedProduct
+     * @return bool
+     */
+    public function increaseQuantity(OrderedProducts $orderedProduct): bool
+    {
+        $em = $this->getEntityManager();
+        $em->persist($orderedProduct);
+
+        if (true === $em->getUnitOfWork()->isScheduledForUpdate($orderedProduct)) {
+            $quantity = $orderedProduct->getQuantity() + 1;
+            $orderedProduct->setQuantity($quantity);
+            $em->flush();
+            return true;
+        }
+
+        return false;
     }
 }

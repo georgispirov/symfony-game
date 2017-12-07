@@ -6,7 +6,7 @@ use AppBundle\Entity\OrderedProducts;
 use AppBundle\Entity\Product;
 use AppBundle\Entity\User;
 
-interface IOrderedProductsRepository extends IShoppingCartFindBuilder
+interface IOrderedProductsRepository
 {
     /**
      * @param User $user
@@ -26,4 +26,16 @@ interface IOrderedProductsRepository extends IShoppingCartFindBuilder
      * @return mixed
      */
     public function findOrderedProductByID(int $id);
+
+    /**
+     * @param OrderedProducts $product
+     * @return bool
+     */
+    public function removeOrderedProduct(OrderedProducts $product): bool;
+
+    /**
+     * @param OrderedProducts $orderedProduct
+     * @return bool
+     */
+    public function increaseQuantity(OrderedProducts $orderedProduct): bool;
 }

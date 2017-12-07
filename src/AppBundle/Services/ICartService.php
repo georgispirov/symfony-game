@@ -5,6 +5,7 @@ namespace AppBundle\Services;
 use AppBundle\Entity\OrderedProducts;
 use AppBundle\Entity\Product;
 use AppBundle\Entity\User;
+use APY\DataGridBundle\Grid\Grid;
 
 interface ICartService
 {
@@ -17,10 +18,10 @@ interface ICartService
 
     /**
      * @param User $user
-     * @param Product $product
+     * @param OrderedProducts $product
      * @return bool
      */
-    public function removeProduct(User $user, Product $product) : bool;
+    public function removeProduct(User $user, OrderedProducts $product) : bool;
 
     /**
      * @param User $user
@@ -53,5 +54,28 @@ interface ICartService
      */
     public function getOrderedProductByID(int $id);
 
+    /**
+     * @param float $itemPrice
+     * @param float $userCash
+     * @return bool
+     */
     public function hasUserEnoughCash(float $itemPrice, float $userCash): bool;
+
+    /**
+     * @param Grid $grid
+     * @return Grid
+     */
+    public function orderedProductsDataGrid(Grid $grid): Grid;
+
+    /**
+     * @param Product $product
+     * @return bool
+     */
+    public function isOrderedProductAlreadyBought(Product $product): bool;
+
+    /**
+     * @param OrderedProducts $orderedProduct
+     * @return bool
+     */
+    public function increaseQuantityOnAlreadyBoughtItem(OrderedProducts $orderedProduct): bool;
 }

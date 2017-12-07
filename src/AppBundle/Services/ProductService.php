@@ -58,6 +58,7 @@ class ProductService implements IProductService
      */
     public function getProductByID(int $id)
     {
-        return $this->em->getRepository(Product::class)->findProductByID($id);
+        return $this->em->getRepository(Product::class)
+                        ->findProductByID($id);
     }
 }

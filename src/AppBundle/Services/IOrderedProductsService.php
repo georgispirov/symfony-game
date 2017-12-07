@@ -16,11 +16,10 @@ interface IOrderedProductsService
     public function addOrderedProduct(User $user, Product $product) : bool;
 
     /**
-     * @param User $user
-     * @param Product $product
+     * @param OrderedProducts $product
      * @return bool
      */
-    public function removeOrderedProduct(User $user, Product $product) : bool;
+    public function removeOrderedProduct(OrderedProducts $product) : bool;
 
     /**
      * @param User $user
@@ -45,4 +44,10 @@ interface IOrderedProductsService
      * @return OrderedProducts[]
      */
     public function getOrderedProductByID(int $id);
+
+    /**
+     * @param OrderedProducts $orderedProduct
+     * @return bool
+     */
+    public function increaseQuantity(OrderedProducts $orderedProduct): bool;
 }

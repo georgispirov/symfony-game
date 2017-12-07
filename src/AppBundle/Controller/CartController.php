@@ -15,8 +15,11 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class CartController extends Controller
 {
+    const SUCCESSFULLY_ITEM_BOUGHT = 'You have successfully added this item to your cart.';
+    const NON_SUCCESSFUL_ITEM_BOUGHT = 'You don\'t have enough money to buy this item.';
+
     /**
-     * @var OrderedProductsService
+     * @var CartService
      */
     private $cartService;
 
@@ -47,7 +50,7 @@ class CartController extends Controller
     }
 
     /**
-     * @Route("products/add", name="addOrderedProduct")
+     * @Route("products/orderProduct", name="addOrderedProduct")
      * @param Request $request
      * @return Response
      */
@@ -55,28 +58,47 @@ class CartController extends Controller
     {
         $user    = $this->get('security.token_storage')->getToken()->getUser();
         $params  = $request->query->all();
+        /* @var Product $product */
         $product = $this->productService->getProductByID($params['routeParams']);
 
+        if (true === $this->cartService->isOrderedProductAlreadyBought($product)) {
+            $orderedProduct = $this->cartService->getOrderedProductByID($product->getId());
+
+            if (true === $this->cartService->increaseQuantityOnAlreadyBoughtItem($orderedProduct)) {
+                $this->session->getFlashBag()->add('existing-order', self::SUCCESSFULLY_ITEM_BOUGHT);
+                return $this->redirect($request->headers->get('referer'));
+            }
+
+        }
+
         if (true === $this->cartService->addProduct($user, $product)) {
-            $this->session->getFlashBag()->add('success', 'You have successfully added this item to your cart.');
+            $this->session->getFlashBag()->add('success', self::SUCCESSFULLY_ITEM_BOUGHT);
             return $this->redirect($request->headers->get('referer'));
         }
-        $this->session->getFlashBag()->add('error', 'You don\'t have enough money to buy this item.');
+
+        $this->session->getFlashBag()->add('error', self::NON_SUCCESSFUL_ITEM_BOUGHT);
         return $this->redirect($request->headers->get('referer'));
     }
 
     /**
      * @Route("products/remove", name="removeOrderedProduct")
      * @param Request $request
-     * @return bool
+     * @return Response
      */
-    public function removeProductAction(Request $request): bool
+    public function removeProductAction(Request $request): Response
     {
-        $user    = $this->get('security.token_storage')->getToken()->getUser();
-        $id      = $request->attributes->get('_route_params');
-        $product = $this->cartService->getOrderedProductByID($id);
+        $user      = $this->get('security.token_storage')->getToken()->getUser();
+        $id        = $request->query->get('orderedProductID');
+        $product   = $this->cartService->getOrderedProductByID($id);
+        $isRemoved = $this->cartService->removeProduct($user, $product);
 
-        return $this->cartService->removeProduct($user, $product);
+        if (true === $isRemoved) {
+            $this->session->getFlashBag()->add('removedOrder', 'You have successfully removed the requested ordered product.');
+            return $this->redirect($request->headers->get('referer'));
+        }
+
+        $this->session->getFlashBag()->add('nonRemovedOrder', 'Unable to remove the requested ordered product.');
+        return $this->redirect($request->headers->get('referer'));
     }
 
     /**
@@ -87,7 +109,7 @@ class CartController extends Controller
     public function updateProductAction(Request $request): bool
     {
         $user    = $this->get('security.token_storage')->getToken()->getUser();
-        $id      = $request->attributes->get('_route_params');
+        $id      = $request->attributes->get('productID');
         $product = $this->cartService->getOrderedProductByID($id);
 
         return $this->cartService->updateProduct($user, $product);
@@ -107,11 +129,12 @@ class CartController extends Controller
         if (sizeof($orderedProducts) > 0) {
             $vector = new Vector($orderedProducts);
             $grid->setSource($vector);
+            $grid   = $this->cartService->orderedProductsDataGrid($grid);
             return $grid->getGridResponse('cart/index.html.twig');
         }
-        $this->session->getFlashBag()->add('notice',
+        $this->session->getFlashBag()->add('info',
                                 'No bought items added to your cart. Go and buy something.');
 
-        return $this->redirect($request->headers->get('referer'));
+        return $this->render('cart/index.html.twig');
     }
 }

@@ -4,7 +4,7 @@ namespace AppBundle\Repository;
 
 use Doctrine\ORM\QueryBuilder;
 
-interface ICommentsRepository extends IShoppingCartFindBuilder
+interface ICommentsRepository
 {
     /**
      * @return QueryBuilder
