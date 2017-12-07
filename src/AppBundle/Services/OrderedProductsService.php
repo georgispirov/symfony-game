@@ -75,6 +75,16 @@ class OrderedProductsService implements IOrderedProductsService
     }
 
     /**
+     * @param Product $product
+     * @return OrderedProducts|null|object
+     */
+    public function getOrderedProductByProduct(Product $product)
+    {
+        return $this->em->getRepository(OrderedProducts::class)
+                        ->findOrderedProductByProduct($product);
+    }
+
+    /**
      * @param int $id
      * @return mixed
      */
@@ -86,11 +96,23 @@ class OrderedProductsService implements IOrderedProductsService
 
     /**
      * @param OrderedProducts $orderedProduct
+     * @param Product $product
      * @return bool
      */
-    public function increaseQuantity(OrderedProducts $orderedProduct): bool
+    public function increaseQuantity(OrderedProducts $orderedProduct, Product $product): bool
     {
         return $this->em->getRepository(OrderedProducts::class)
-                        ->increaseQuantity($orderedProduct);
+                        ->increaseQuantity($orderedProduct, $product);
+    }
+
+    /**
+     * @param User $user
+     * @param Product $product
+     * @return OrderedProducts|null|object
+     */
+    public function getOrderByUserAndProduct(User $user, Product $product)
+    {
+        return $this->em->getRepository(OrderedProducts::class)
+                        ->findOrderedProductFromUserByID($user, $product);
     }
 }

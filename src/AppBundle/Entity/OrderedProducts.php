@@ -25,7 +25,6 @@ class OrderedProducts
 
     /**
      * @var \DateTime
-     *
      * @ORM\Column(name="ordered_date", type="datetime")
      */
     private $orderedDate;
@@ -52,7 +51,6 @@ class OrderedProducts
 
     /**
      * @var float
-     *
      * @ORM\Column(name="ordered_product_price", type="float")
      */
     private $orderedProductPrice;

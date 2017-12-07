@@ -41,13 +41,28 @@ interface IOrderedProductsService
 
     /**
      * @param int $id
-     * @return OrderedProducts[]
+     * @return mixed
      */
     public function getOrderedProductByID(int $id);
 
     /**
+     * @param Product $product
+     * @return mixed
+     */
+    public function getOrderedProductByProduct(Product $product);
+
+    /**
      * @param OrderedProducts $orderedProduct
+     * @param Product $product
      * @return bool
      */
-    public function increaseQuantity(OrderedProducts $orderedProduct): bool;
+    public function increaseQuantity(OrderedProducts $orderedProduct, Product $product): bool;
+
+    /**
+     * @param User $user
+     * @param Product $product
+     * @return mixed
+     * @internal param int $id
+     */
+    public function getOrderByUserAndProduct(User $user, Product $product);
 }

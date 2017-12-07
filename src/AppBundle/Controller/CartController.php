@@ -61,10 +61,10 @@ class CartController extends Controller
         /* @var Product $product */
         $product = $this->productService->getProductByID($params['routeParams']);
 
-        if (true === $this->cartService->isOrderedProductAlreadyBought($product)) {
-            $orderedProduct = $this->cartService->getOrderedProductByID($product->getId());
+        if (true === $this->cartService->isOrderedProductAlreadyBought($user, $product)) {
+            $orderedProduct = $this->cartService->getOrderedProductByProduct($product);
 
-            if (true === $this->cartService->increaseQuantityOnAlreadyBoughtItem($orderedProduct)) {
+            if (true === $this->cartService->increaseQuantityOnAlreadyBoughtItem($orderedProduct, $product)) {
                 $this->session->getFlashBag()->add('existing-order', self::SUCCESSFULLY_ITEM_BOUGHT);
                 return $this->redirect($request->headers->get('referer'));
             }
@@ -87,10 +87,10 @@ class CartController extends Controller
      */
     public function removeProductAction(Request $request): Response
     {
-        $user      = $this->get('security.token_storage')->getToken()->getUser();
-        $id        = $request->query->get('orderedProductID');
-        $product   = $this->cartService->getOrderedProductByID($id);
-        $isRemoved = $this->cartService->removeProduct($user, $product);
+        $user             = $this->get('security.token_storage')->getToken()->getUser();
+        $id               = $request->query->get('orderedProductID');
+        $orderedProduct   = $this->cartService->getOrderedProductByID($id);
+        $isRemoved        = $this->cartService->removeProduct($user, $orderedProduct);
 
         if (true === $isRemoved) {
             $this->session->getFlashBag()->add('removedOrder', 'You have successfully removed the requested ordered product.');

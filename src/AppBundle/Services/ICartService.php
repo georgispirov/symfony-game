@@ -49,6 +49,12 @@ interface ICartService
     public function getOrderedProductByUser(User $user): array;
 
     /**
+     * @param Product $product
+     * @return mixed
+     */
+    public function getOrderedProductByProduct(Product $product);
+
+    /**
      * @param int $id
      * @return mixed
      */
@@ -68,14 +74,16 @@ interface ICartService
     public function orderedProductsDataGrid(Grid $grid): Grid;
 
     /**
+     * @param User $user
      * @param Product $product
      * @return bool
      */
-    public function isOrderedProductAlreadyBought(Product $product): bool;
+    public function isOrderedProductAlreadyBought(User $user, Product $product): bool;
 
     /**
      * @param OrderedProducts $orderedProduct
+     * @param Product $product
      * @return bool
      */
-    public function increaseQuantityOnAlreadyBoughtItem(OrderedProducts $orderedProduct): bool;
+    public function increaseQuantityOnAlreadyBoughtItem(OrderedProducts $orderedProduct, Product $product): bool;
 }

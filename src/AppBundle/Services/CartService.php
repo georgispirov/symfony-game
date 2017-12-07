@@ -127,6 +127,15 @@ class CartService implements ICartService
     }
 
     /**
+     * @param Product $product
+     * @return OrderedProducts|null|object
+     */
+    public function getOrderedProductByProduct(Product $product)
+    {
+        return $this->orderedProducts->getOrderedProductByProduct($product);
+    }
+
+    /**
      * @param int $id
      * @return mixed
      */
@@ -162,37 +171,46 @@ class CartService implements ICartService
     }
 
     /**
+     * @param User $user
      * @param Product $product
      * @return bool
-     * @throws InvalidArgumentException
      */
-    public function isOrderedProductAlreadyBought(Product $product): bool
+    public function isOrderedProductAlreadyBought(User $user, Product $product): bool
     {
+        if ( !$user instanceof User ) {
+            throw new InvalidArgumentException('Applied User must be a valid Entity');
+        }
+
         if ( !$product instanceof Product ) {
             throw new InvalidArgumentException('Product must be a valid Entity');
         }
 
-        $existingOrderedProduct = $this->em->getRepository(OrderedProducts::class)
-                                           ->findOrderedProductByID($product->getId());
+        $existingOrderedProduct = $this->orderedProducts
+                                       ->getOrderByUserAndProduct($user, $product);
 
         if ($existingOrderedProduct instanceof OrderedProducts) {
             return true;
         }
+
         return false;
     }
 
     /**
      * @param OrderedProducts $orderedProduct
+     * @param Product $product
      * @return bool
-     * @throws InvalidArgumentException
      */
-    public function increaseQuantityOnAlreadyBoughtItem(OrderedProducts $orderedProduct): bool
+    public function increaseQuantityOnAlreadyBoughtItem(OrderedProducts $orderedProduct, Product $product): bool
     {
-        if ( !$orderedProduct instanceof OrderedProducts) {
+        if ( !$orderedProduct instanceof OrderedProducts ) {
             throw new InvalidArgumentException('Ordered Product must be a valid Entity.');
         }
 
-        return $this->orderedProducts->increaseQuantity($orderedProduct);
+        if ( !$product instanceof Product) {
+            throw new InvalidArgumentException('Product must be a valid Entity.');
+        }
+
+        return $this->orderedProducts->increaseQuantity($orderedProduct, $product);
     }
 
     /**
@@ -213,15 +231,35 @@ class CartService implements ICartService
         $deleteColumn = new RowAction('Delete', 'removeOrderedProduct');
         $deleteColumn->setRouteParametersMapping(['productID' => $grid->getColumn('orderedProductID')->getId()]);
 
-
         $grid->getColumn('Product')->setTitle('Product Title');
         $grid->getColumn('orderedDate')->setTitle('Ordered Date');
         $grid->getColumn('Confirmed')->setValues([0 => 'No', 1 => 'Yes']);
+
+        $grid->getColumn('Confirmed')->manipulateRenderCell(
+            function ($value, $row, $router) {
+                return (bool) $value;
+            }
+        );
+
+        $grid->getColumn('Quantity')->manipulateRenderCell(
+            function ($value, $row, $router) {
+                return (int) $value;
+            }
+        );
+
+        $grid->getColumn('Price')->manipulateRenderCell(
+            function ($value, $row, $router) {
+                return "$" . $value;
+            }
+        );
+
         $grid->addRowAction($updateColumn);
         $grid->addRowAction($deleteColumn);
 
-        foreach ($grid->getColumns() as $column) { /* @var Column $column */
+        /* @var Column $column */
+        foreach ($grid->getColumns() as $column) {
             $column->setAlign('center');
+
         }
 
         return $grid;

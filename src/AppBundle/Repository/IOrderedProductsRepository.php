@@ -22,10 +22,20 @@ interface IOrderedProductsRepository
     public function addOrderedProduct(User $user, Product $product): bool;
 
     /**
-     * @param int $id
+     * @param Product $product
      * @return mixed
      */
+    public function findOrderedProductByProduct(Product $product);
+
     public function findOrderedProductByID(int $id);
+
+    /**
+     * @param User $user
+     * @param Product $product
+     * @return mixed
+     * @internal param int $id
+     */
+    public function findOrderedProductFromUserByID(User $user, Product $product);
 
     /**
      * @param OrderedProducts $product
@@ -35,7 +45,8 @@ interface IOrderedProductsRepository
 
     /**
      * @param OrderedProducts $orderedProduct
+     * @param Product $product
      * @return bool
      */
-    public function increaseQuantity(OrderedProducts $orderedProduct): bool;
+    public function increaseQuantity(OrderedProducts $orderedProduct, Product $product): bool;
 }

@@ -25,7 +25,7 @@ class OrderedProductsRepository extends EntityRepository implements IOrderedProd
                       ->getRepository(OrderedProducts::class)
                       ->createQueryBuilder('op')
                       ->select('op.id as orderedProductID, pr.title AS Product, op.orderedDate, op.orderedProductPrice AS Price, 
-                                      op.confirmed AS Confirmed, u.username AS User')
+                                      op.quantity AS Quantity, op.confirmed AS Confirmed, u.username AS User')
                       ->join('op.user','u')
                       ->join('op.product', 'pr')
                       ->where('u = :user')
@@ -49,6 +49,7 @@ class OrderedProductsRepository extends EntityRepository implements IOrderedProd
         $orderedProduct->setUser($user);
         $orderedProduct->setOrderedDate(new \DateTime('now'));
         $orderedProduct->setConfirmed(false);
+        $orderedProduct->setQuantity(1);
         $orderedProduct->setProduct($product);
         $orderedProduct->setOrderedProductPrice($product->getPrice());
 
@@ -65,14 +66,16 @@ class OrderedProductsRepository extends EntityRepository implements IOrderedProd
     }
 
     /**
-     * @param int $id
-     * @return mixed
+     * @param Product $product
+     * @return OrderedProducts|null|object
      */
-    public function findOrderedProductByID(int $id)
+    public function findOrderedProductByProduct(Product $product)
     {
         return  $this->getEntityManager()
                      ->getRepository(OrderedProducts::class)
-                     ->findOneBy(['id' => $id]);
+                     ->findOneBy([
+                         'product' => $product
+                     ]);
     }
 
     /**
@@ -94,20 +97,50 @@ class OrderedProductsRepository extends EntityRepository implements IOrderedProd
 
     /**
      * @param OrderedProducts $orderedProduct
+     * @param Product $product
      * @return bool
      */
-    public function increaseQuantity(OrderedProducts $orderedProduct): bool
+    public function increaseQuantity(OrderedProducts $orderedProduct, Product $product): bool
     {
         $em = $this->getEntityManager();
-        $em->persist($orderedProduct);
+        $em->getUnitOfWork()->scheduleForUpdate($orderedProduct);
+
+        $quantity = $orderedProduct->getQuantity() + 1;
+        $increasePrice = $orderedProduct->getOrderedProductPrice() + $product->getPrice();
+
+        $orderedProduct->setQuantity($quantity);
+        $orderedProduct->setOrderedProductPrice($increasePrice);
+        $orderedProduct->setOrderedDate(new \DateTime('now'));
 
         if (true === $em->getUnitOfWork()->isScheduledForUpdate($orderedProduct)) {
-            $quantity = $orderedProduct->getQuantity() + 1;
-            $orderedProduct->setQuantity($quantity);
             $em->flush();
             return true;
         }
 
         return false;
+    }
+
+    /**
+     * @param User $user
+     * @param Product $product
+     * @return OrderedProducts|null|object
+     */
+    public function findOrderedProductFromUserByID(User $user, Product $product)
+    {
+        return $this->getEntityManager()
+                    ->getRepository(OrderedProducts::class)
+                    ->findOneBy([
+                        'user'      => $user,
+                        'product'   => $product
+                    ]);
+    }
+
+    public function findOrderedProductByID(int $id)
+    {
+        return $this->getEntityManager()
+                     ->getRepository(OrderedProducts::class)
+                     ->findOneBy([
+                         'id' => $id
+                     ]);
     }
 }
