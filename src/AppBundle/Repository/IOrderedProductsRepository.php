@@ -49,4 +49,11 @@ interface IOrderedProductsRepository
      * @return bool
      */
     public function increaseQuantity(OrderedProducts $orderedProduct, Product $product): bool;
+
+    /**
+     * @param OrderedProducts $orderedProduct
+     * @param Product $product
+     * @return bool
+     */
+    public function decreaseQuantity(OrderedProducts $orderedProduct, Product $product): bool;
 }

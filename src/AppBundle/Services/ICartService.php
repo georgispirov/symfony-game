@@ -18,10 +18,11 @@ interface ICartService
 
     /**
      * @param User $user
-     * @param OrderedProducts $product
+     * @param OrderedProducts $orderedProduct
+     * @param Product $product
      * @return bool
      */
-    public function removeProduct(User $user, OrderedProducts $product) : bool;
+    public function removeProduct(User $user, OrderedProducts $orderedProduct, Product $product) : bool;
 
     /**
      * @param User $user
@@ -81,9 +82,12 @@ interface ICartService
     public function isOrderedProductAlreadyBought(User $user, Product $product): bool;
 
     /**
+     * @param User $user
      * @param OrderedProducts $orderedProduct
      * @param Product $product
      * @return bool
      */
-    public function increaseQuantityOnAlreadyBoughtItem(OrderedProducts $orderedProduct, Product $product): bool;
+    public function increaseQuantityOnAlreadyBoughtItem(User $user,
+                                                        OrderedProducts $orderedProduct,
+                                                        Product $product): bool;
 }

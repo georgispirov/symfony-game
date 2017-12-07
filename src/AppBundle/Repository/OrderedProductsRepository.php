@@ -56,7 +56,6 @@ class OrderedProductsRepository extends EntityRepository implements IOrderedProd
         $em->persist($orderedProduct);
         if (true === $em->getUnitOfWork()->isEntityScheduled($orderedProduct)) {
             $userMoney = $user->getMoney() - $product->getPrice();
-            $em->flush();
             $user->setMoney($userMoney);
             $em->persist($user);
             $em->flush();
@@ -104,6 +103,8 @@ class OrderedProductsRepository extends EntityRepository implements IOrderedProd
     {
         $em = $this->getEntityManager();
         $em->getUnitOfWork()->scheduleForUpdate($orderedProduct);
+        $user = $orderedProduct->getUser();
+        $user->setMoney($user->getMoney() - $product->getPrice());
 
         $quantity = $orderedProduct->getQuantity() + 1;
         $increasePrice = $orderedProduct->getOrderedProductPrice() + $product->getPrice();
@@ -113,6 +114,7 @@ class OrderedProductsRepository extends EntityRepository implements IOrderedProd
         $orderedProduct->setOrderedDate(new \DateTime('now'));
 
         if (true === $em->getUnitOfWork()->isScheduledForUpdate($orderedProduct)) {
+            $em->persist($user);
             $em->flush();
             return true;
         }
@@ -142,5 +144,36 @@ class OrderedProductsRepository extends EntityRepository implements IOrderedProd
                      ->findOneBy([
                          'id' => $id
                      ]);
+    }
+
+    /**
+     * @param OrderedProducts $orderedProduct
+     * @param Product $product
+     * @return bool
+     */
+    public function decreaseQuantity(OrderedProducts $orderedProduct, Product $product): bool
+    {
+        $em = $this->getEntityManager();
+
+        $orderedProductQuantity = $orderedProduct->getQuantity();
+        $productQuantity        = $product->getQuantity();
+
+        $em->getUnitOfWork()->scheduleForUpdate($orderedProduct);
+        $em->getUnitOfWork()->scheduleForUpdate($product);
+
+        $orderedProduct->setQuantity($orderedProductQuantity - 1);
+        $product->setQuantity($productQuantity + 1);
+
+        $em->persist($orderedProduct);
+        $em->persist($product);
+
+        if (true === $em->getUnitOfWork()->isScheduledForUpdate($orderedProduct) &&
+            true === $em->getUnitOfWork()->isScheduledForUpdate($product))
+        {
+            $em->flush();
+            return true;
+        }
+
+        return false;
     }
 }

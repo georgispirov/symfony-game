@@ -2,6 +2,7 @@
 
 namespace AppBundle\Controller;
 
+use AppBundle\Entity\OrderedProducts;
 use AppBundle\Entity\Product;
 use AppBundle\Services\CartService;
 use AppBundle\Services\OrderedProductsService;
@@ -64,8 +65,10 @@ class CartController extends Controller
         if (true === $this->cartService->isOrderedProductAlreadyBought($user, $product)) {
             $orderedProduct = $this->cartService->getOrderedProductByProduct($product);
 
-            if (true === $this->cartService->increaseQuantityOnAlreadyBoughtItem($orderedProduct, $product)) {
-                $this->session->getFlashBag()->add('existing-order', self::SUCCESSFULLY_ITEM_BOUGHT);
+            if (true === $this->cartService->increaseQuantityOnAlreadyBoughtItem($user, $orderedProduct, $product)) {
+                $this->session->getFlashBag()->add('success', self::SUCCESSFULLY_ITEM_BOUGHT);
+                return $this->redirect($request->headers->get('referer'));
+            } else {
                 return $this->redirect($request->headers->get('referer'));
             }
 
@@ -89,8 +92,10 @@ class CartController extends Controller
     {
         $user             = $this->get('security.token_storage')->getToken()->getUser();
         $id               = $request->query->get('orderedProductID');
+        /* @var OrderedProducts $orderedProduct */
         $orderedProduct   = $this->cartService->getOrderedProductByID($id);
-        $isRemoved        = $this->cartService->removeProduct($user, $orderedProduct);
+        $product          = $this->productService->getProductByID($orderedProduct->getProduct()->getId());
+        $isRemoved        = $this->cartService->removeProduct($user, $orderedProduct, $product);
 
         if (true === $isRemoved) {
             $this->session->getFlashBag()->add('removedOrder', 'You have successfully removed the requested ordered product.');
@@ -129,7 +134,7 @@ class CartController extends Controller
         if (sizeof($orderedProducts) > 0) {
             $vector = new Vector($orderedProducts);
             $grid->setSource($vector);
-            $grid   = $this->cartService->orderedProductsDataGrid($grid);
+            $this->cartService->orderedProductsDataGrid($grid);
             return $grid->getGridResponse('cart/index.html.twig');
         }
         $this->session->getFlashBag()->add('info',
