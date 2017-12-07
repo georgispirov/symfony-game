@@ -9,6 +9,11 @@
     border-top: 4px solid grey;
 }
 
+.not-enough-money-message-ordering-item {
+    top: -200px;
+    left: 427px;
+}
+
 .success-message-item-add-to-cart {
     top: -200px;
     left: 427px;

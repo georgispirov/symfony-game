@@ -73,9 +73,9 @@ class OrderedProducts
     }
 
     /**
-     * @return mixed
+     * @return User
      */
-    public function getUser()
+    public function getUser(): User
     {
         return $this->user;
     }
@@ -139,9 +139,9 @@ class OrderedProducts
     }
 
     /**
-     * @return mixed
+     * @return Product
      */
-    public function getProduct()
+    public function getProduct(): Product
     {
         return $this->product;
     }

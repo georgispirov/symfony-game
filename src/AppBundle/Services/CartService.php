@@ -10,7 +10,7 @@ use APY\DataGridBundle\Grid\Column\Column;
 use APY\DataGridBundle\Grid\Exception\InvalidArgumentException as APYInvalidArgumentException;
 use APY\DataGridBundle\Grid\Grid;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Component\HttpFoundation\Session\SessionInterface;
+use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\Process\Exception\InvalidArgumentException;
 
 class CartService implements ICartService
@@ -21,7 +21,7 @@ class CartService implements ICartService
     private $em;
 
     /**
-     * @var SessionInterface
+     * @var Session
      */
     private $session;
 
@@ -33,11 +33,11 @@ class CartService implements ICartService
     /**
      * CartService constructor.
      * @param EntityManagerInterface $em
-     * @param SessionInterface $session
+     * @param Session $session
      * @param OrderedProductsService $orderedProducts
      */
     public function __construct(EntityManagerInterface $em,
-                                SessionInterface $session,
+                                Session $session,
                                 OrderedProductsService $orderedProducts)
     {
         $this->em              = $em;
@@ -69,21 +69,30 @@ class CartService implements ICartService
 
     /**
      * @param User $user
-     * @param OrderedProducts $product
+     * @param OrderedProducts $orderedProducts
+     * @param Product $product
      * @return bool
      */
-    public function removeProduct(User $user, OrderedProducts $product): bool
+    public function removeProduct(User $user, OrderedProducts $orderedProducts, Product $product): bool
     {
         if ( !$user instanceof User ) {
-            return false;
+            throw new InvalidArgumentException('Please provide valid User.');
         }
 
-        if ( !$product instanceof OrderedProducts ) {
-            return false;
+        if ( !$orderedProducts instanceof OrderedProducts ) {
+            throw new InvalidArgumentException('Please provide valid Product.');
         }
 
-        if (true === $this->orderedProducts->removeOrderedProduct($product)) {
-            $user->setMoney($user->getMoney() + $product->getOrderedProductPrice());
+        if ( !$product instanceof Product ) {
+            throw new InvalidArgumentException('Please provide valid Ordered Product.');
+        }
+
+        if ($orderedProducts->getQuantity() > 1) {
+            return $this->orderedProducts->decreaseQuantityOnOrderedProduct($orderedProducts, $product);
+        }
+
+        if (true === $this->orderedProducts->removeOrderedProduct($orderedProducts)) {
+            $user->setMoney($user->getMoney() + $orderedProducts->getOrderedProductPrice());
             return true;
         }
 
@@ -196,18 +205,30 @@ class CartService implements ICartService
     }
 
     /**
+     * @param User $user
      * @param OrderedProducts $orderedProduct
      * @param Product $product
      * @return bool
      */
-    public function increaseQuantityOnAlreadyBoughtItem(OrderedProducts $orderedProduct, Product $product): bool
+    public function increaseQuantityOnAlreadyBoughtItem(User $user,
+                                                        OrderedProducts $orderedProduct,
+                                                        Product $product): bool
     {
+        if ( !$user instanceof User ) {
+            throw new InvalidArgumentException('User must be a valid Entity.');
+        }
+
         if ( !$orderedProduct instanceof OrderedProducts ) {
             throw new InvalidArgumentException('Ordered Product must be a valid Entity.');
         }
 
         if ( !$product instanceof Product) {
             throw new InvalidArgumentException('Product must be a valid Entity.');
+        }
+
+        if ($user->getMoney() < $product->getPrice()) {
+            $this->session->getFlashBag()->add('not-enough-money', 'You don\'t have enough money to buy this item.');
+            return false;
         }
 
         return $this->orderedProducts->increaseQuantity($orderedProduct, $product);
@@ -259,7 +280,6 @@ class CartService implements ICartService
         /* @var Column $column */
         foreach ($grid->getColumns() as $column) {
             $column->setAlign('center');
-
         }
 
         return $grid;

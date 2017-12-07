@@ -56,7 +56,16 @@ interface IOrderedProductsService
      * @param Product $product
      * @return bool
      */
-    public function increaseQuantity(OrderedProducts $orderedProduct, Product $product): bool;
+    public function increaseQuantity(OrderedProducts $orderedProduct,
+                                     Product $product): bool;
+
+    /**
+     * @param OrderedProducts $orderedProducts
+     * @param Product $product
+     * @return bool
+     */
+    public function decreaseQuantityOnOrderedProduct(OrderedProducts $orderedProducts,
+        Product $product): bool;
 
     /**
      * @param User $user
