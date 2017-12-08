@@ -46,6 +46,9 @@ class OrderedProductsRepository extends EntityRepository implements IOrderedProd
     {
         $em = $this->getEntityManager();
 
+        $em->getUnitOfWork()->scheduleForUpdate($product);
+        $em->getUnitOfWork()->scheduleForUpdate($user);
+
         if ($product->getQuantity() > 1) {
             $product->setQuantity($product->getQuantity() - 1);
         } else {
@@ -54,6 +57,7 @@ class OrderedProductsRepository extends EntityRepository implements IOrderedProd
         }
 
         $orderedProduct = new OrderedProducts();
+
         $orderedProduct->setUser($user);
         $orderedProduct->setOrderedDate(new \DateTime('now'));
         $orderedProduct->setConfirmed(false);
@@ -62,20 +66,16 @@ class OrderedProductsRepository extends EntityRepository implements IOrderedProd
         $orderedProduct->setOrderedProductPrice($product->getPrice());
 
         $em->persist($orderedProduct);
-        $em->persist($product);
 
-        $em->getUnitOfWork()->scheduleForUpdate($product);
-        $em->getUnitOfWork()->scheduleForUpdate($user);
-
-        if (true === $em->getUnitOfWork()->isEntityScheduled($orderedProduct)
+        if (true === $em->getUnitOfWork()->isScheduledForInsert($orderedProduct)
             && true === $em->getUnitOfWork()->isScheduledForUpdate($user)
             && true === $em->getUnitOfWork()->isScheduledForUpdate($product)) {
                 $userMoney = $user->getMoney() - $product->getPrice();
                 $user->setMoney($userMoney);
-                $em->persist($user);
                 $em->flush();
                 return true;
         }
+
         return false;
     }
 
