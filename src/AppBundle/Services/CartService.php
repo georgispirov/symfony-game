@@ -53,11 +53,11 @@ class CartService implements ICartService
      */
     public function addProduct(User $user, Product $product): bool
     {
-        if ( !$user instanceof User) {
+        if ( !$user instanceof User ) {
             throw new InvalidArgumentException('Please provide valid User');
         }
 
-        if ( !$product instanceof Product) {
+        if ( !$product instanceof Product ) {
             throw new InvalidArgumentException('Please provide valid Product');
         }
 

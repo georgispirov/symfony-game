@@ -92,6 +92,13 @@ class Product
     private $user;
 
     /**
+     * @var bool
+     *
+     * @ORM\Column(name="out_of_stock", type="boolean")
+     */
+    private $outOfStock = false;
+
+    /**
      * @return mixed
      */
     public function getUser()
@@ -327,6 +334,22 @@ class Product
     public function onPreUpdate()
     {
         $this->createdAt = new \DateTime('now');
+    }
+
+    /**
+     * @return bool
+     */
+    public function isOutOfStock(): bool
+    {
+        return $this->outOfStock;
+    }
+
+    /**
+     * @param bool $outOfStock
+     */
+    public function setOutOfStock(bool $outOfStock)
+    {
+        $this->outOfStock = $outOfStock;
     }
 }
 

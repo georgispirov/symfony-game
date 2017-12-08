@@ -45,6 +45,13 @@ class OrderedProductsRepository extends EntityRepository implements IOrderedProd
     {
         $em = $this->getEntityManager();
 
+        if ($product->getQuantity() > 1) {
+            $product->setQuantity($product->getQuantity() - 1);
+        } else {
+            $product->setQuantity(0);
+            $product->setOutOfStock(true);
+        }
+
         $orderedProduct = new OrderedProducts();
         $orderedProduct->setUser($user);
         $orderedProduct->setOrderedDate(new \DateTime('now'));
@@ -54,12 +61,19 @@ class OrderedProductsRepository extends EntityRepository implements IOrderedProd
         $orderedProduct->setOrderedProductPrice($product->getPrice());
 
         $em->persist($orderedProduct);
-        if (true === $em->getUnitOfWork()->isEntityScheduled($orderedProduct)) {
-            $userMoney = $user->getMoney() - $product->getPrice();
-            $user->setMoney($userMoney);
-            $em->persist($user);
-            $em->flush();
-            return true;
+        $em->persist($product);
+
+        $em->getUnitOfWork()->scheduleForUpdate($product);
+        $em->getUnitOfWork()->scheduleForUpdate($user);
+
+        if (true === $em->getUnitOfWork()->isEntityScheduled($orderedProduct)
+            && true === $em->getUnitOfWork()->isScheduledForUpdate($user)
+            && true === $em->getUnitOfWork()->isScheduledForUpdate($product)) {
+                $userMoney = $user->getMoney() - $product->getPrice();
+                $user->setMoney($userMoney);
+                $em->persist($user);
+                $em->flush();
+                return true;
         }
         return false;
     }
@@ -109,14 +123,20 @@ class OrderedProductsRepository extends EntityRepository implements IOrderedProd
         $quantity = $orderedProduct->getQuantity() + 1;
         $increasePrice = $orderedProduct->getOrderedProductPrice() + $product->getPrice();
 
+        $product->setQuantity($product->getQuantity() - 1);
+
         $orderedProduct->setQuantity($quantity);
         $orderedProduct->setOrderedProductPrice($increasePrice);
         $orderedProduct->setOrderedDate(new \DateTime('now'));
 
-        if (true === $em->getUnitOfWork()->isScheduledForUpdate($orderedProduct)) {
-            $em->persist($user);
-            $em->flush();
-            return true;
+        $em->getUnitOfWork()->scheduleForUpdate($product);
+        $em->getUnitOfWork()->scheduleForUpdate($orderedProduct);
+
+        if (true === $em->getUnitOfWork()->isScheduledForUpdate($orderedProduct) &&
+            true === $em->getUnitOfWork()->isScheduledForUpdate($product)) {
+                $em->persist($user);
+                $em->flush();
+                return true;
         }
 
         return false;
