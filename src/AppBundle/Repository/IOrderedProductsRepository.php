@@ -38,10 +38,14 @@ interface IOrderedProductsRepository
     public function findOrderedProductFromUserByID(User $user, Product $product);
 
     /**
-     * @param OrderedProducts $product
+     * @param OrderedProducts $orderedProducts
+     * @param User $user
+     * @param Product $product
      * @return bool
      */
-    public function removeOrderedProduct(OrderedProducts $product): bool;
+    public function removeOrderedProduct(OrderedProducts $orderedProducts,
+                                         User $user,
+                                         Product $product): bool;
 
     /**
      * @param OrderedProducts $orderedProduct
@@ -53,7 +57,10 @@ interface IOrderedProductsRepository
     /**
      * @param OrderedProducts $orderedProduct
      * @param Product $product
+     * @param User $user
      * @return bool
      */
-    public function decreaseQuantity(OrderedProducts $orderedProduct, Product $product): bool;
+    public function decreaseQuantity(OrderedProducts $orderedProduct,
+                                     Product $product,
+                                     User $user): bool;
 }

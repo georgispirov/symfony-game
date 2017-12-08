@@ -81,7 +81,6 @@ class Product
     /**
      * @ORM\Column(name="quantity", type="integer")
      * @Assert\NotBlank(message="Quantity cannot be blank.")
-     * @Assert\GreaterThanOrEqual(value="1", message="Quantity must be at least 1.")
      */
     private $quantity;
 
@@ -140,10 +139,10 @@ class Product
 
 
     /**
-     * @param $quantity
+     * @param int $quantity
      * @return $this
      */
-    public function setQuantity($quantity)
+    public function setQuantity(int $quantity)
     {
         $this->quantity = $quantity;
         return $this;

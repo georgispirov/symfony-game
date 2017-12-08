@@ -3,6 +3,7 @@
 namespace AppBundle\Services;
 
 use AppBundle\Entity\Categories;
+use AppBundle\Entity\OrderedProducts;
 use AppBundle\Entity\Product;
 use Doctrine\ORM\EntityManagerInterface;
 
@@ -36,7 +37,7 @@ class ProductService implements IProductService
     public function getAll(): array
     {
         return $this->em->getRepository(Product::class)
-                        ->findAll();
+                        ->getAllActiveProducts();
     }
 
     /**

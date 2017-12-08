@@ -29,6 +29,7 @@ class OrderedProductsRepository extends EntityRepository implements IOrderedProd
                       ->join('op.user','u')
                       ->join('op.product', 'pr')
                       ->where('u = :user')
+                      ->andWhere('op.quantity > 0')
                       ->setParameter(':user', $user)
                       ->getQuery();
 
@@ -92,17 +93,33 @@ class OrderedProductsRepository extends EntityRepository implements IOrderedProd
     }
 
     /**
-     * @param OrderedProducts $product
+     * @param OrderedProducts $orderedProducts
+     * @param User $user
+     * @param Product $product
      * @return bool
      */
-    public function removeOrderedProduct(OrderedProducts $product): bool
+    public function removeOrderedProduct(OrderedProducts $orderedProducts,
+                                         User $user,
+                                         Product $product): bool
     {
         $em = $this->getEntityManager();
-        $em->remove($product);
 
-        if (true === $em->getUnitOfWork()->isScheduledForDelete($product)) {
-            $em->flush();
-            return true;
+        $em->getUnitOfWork()->scheduleForDelete($orderedProducts);
+        $em->getUnitOfWork()->scheduleForUpdate($user);
+        $em->getUnitOfWork()->scheduleForUpdate($product);
+
+        $em->remove($orderedProducts);
+
+        $product->setQuantity($product->getQuantity() + 1);
+
+        $user->setMoney($user->getMoney() + $orderedProducts->getOrderedProductPrice());
+
+        if (true === $em->getUnitOfWork()->isScheduledForDelete($orderedProducts)
+            && true === $em->getUnitOfWork()->isScheduledForUpdate($user)
+            && true === $em->getUnitOfWork()->isScheduledForUpdate($product))
+        {
+                $em->flush();
+                return true;
         }
 
         return false;
@@ -116,6 +133,7 @@ class OrderedProductsRepository extends EntityRepository implements IOrderedProd
     public function increaseQuantity(OrderedProducts $orderedProduct, Product $product): bool
     {
         $em = $this->getEntityManager();
+
         $em->getUnitOfWork()->scheduleForUpdate($orderedProduct);
         $user = $orderedProduct->getUser();
         $user->setMoney($user->getMoney() - $product->getPrice());
@@ -169,26 +187,29 @@ class OrderedProductsRepository extends EntityRepository implements IOrderedProd
     /**
      * @param OrderedProducts $orderedProduct
      * @param Product $product
+     * @param User $user
      * @return bool
      */
-    public function decreaseQuantity(OrderedProducts $orderedProduct, Product $product): bool
+    public function decreaseQuantity(OrderedProducts $orderedProduct,
+                                     Product $product,
+                                     User $user): bool
     {
         $em = $this->getEntityManager();
 
-        $orderedProductQuantity = $orderedProduct->getQuantity();
-        $productQuantity        = $product->getQuantity();
-
         $em->getUnitOfWork()->scheduleForUpdate($orderedProduct);
         $em->getUnitOfWork()->scheduleForUpdate($product);
+        $em->getUnitOfWork()->scheduleForUpdate($user);
 
-        $orderedProduct->setQuantity($orderedProductQuantity - 1);
-        $product->setQuantity($productQuantity + 1);
+        $orderedProduct->setQuantity($orderedProduct->getQuantity() - 1);
+        $orderedProduct->setOrderedProductPrice($orderedProduct->getOrderedProductPrice() - $product->getPrice());
 
-        $em->persist($orderedProduct);
-        $em->persist($product);
+        $product->setQuantity($product->getQuantity() + 1);
+
+        $user->setMoney($user->getMoney() + $product->getPrice());
 
         if (true === $em->getUnitOfWork()->isScheduledForUpdate($orderedProduct) &&
-            true === $em->getUnitOfWork()->isScheduledForUpdate($product))
+            true === $em->getUnitOfWork()->isScheduledForUpdate($product) &&
+            true === $em->getUnitOfWork()->isScheduledForUpdate($user))
         {
             $em->flush();
             return true;

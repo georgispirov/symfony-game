@@ -92,10 +92,10 @@ class CartController extends Controller
     {
         $user             = $this->get('security.token_storage')->getToken()->getUser();
         $id               = $request->query->get('orderedProductID');
+
         /* @var OrderedProducts $orderedProduct */
         $orderedProduct   = $this->cartService->getOrderedProductByID($id);
-        $product          = $this->productService->getProductByID($orderedProduct->getProduct()->getId());
-        $isRemoved        = $this->cartService->removeProduct($user, $orderedProduct, $product);
+        $isRemoved        = $this->cartService->removeProduct($user, $orderedProduct, $orderedProduct->getProduct());
 
         if (true === $isRemoved) {
             $this->session->getFlashBag()->add('removedOrder', 'You have successfully removed the requested ordered product.');

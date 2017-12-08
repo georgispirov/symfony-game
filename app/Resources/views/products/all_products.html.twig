@@ -1,7 +1,7 @@
 {% include '::base.html.twig' %}
 
 {% if app.session.flashbag.has('not-enough-money') %}
-    <div class="container col-xs-4 alert alert-danger not-enough-money-message-ordering-item">
+    <div class="col-xs-2 alert alert-danger not-enough-money-message-ordering-item">
         {% for flashMessage in app.session.flashbag.get('not-enough-money') %}
             {{ flashMessage }}
         {% endfor %}
@@ -9,7 +9,7 @@
 {% endif %}
 
 {% if app.session.flashbag.has('success') %}
-    <div class="container col-xs-4 alert alert-success success-message-item-add-to-cart">
+    <div class="col-xs-4 alert alert-success success-message-item-add-to-cart">
         {% for flashMessage in app.session.flashbag.get('success') %}
             {{ flashMessage }}
         {% endfor %}
@@ -17,7 +17,7 @@
 {% endif %}
 
 {% if app.session.flashbag.has('error') %}
-    <div class="container col-xs-4 alert alert-danger error-message-item-add-to-cart">
+    <div class="col-xs-4 alert alert-danger error-message-item-add-to-cart">
         {% for flashMessage in app.session.flashbag.get('error') %}
             {{ flashMessage }}
         {% endfor %}

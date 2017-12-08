@@ -2,6 +2,8 @@
 
 namespace AppBundle\Repository;
 
+use AppBundle\Entity\Product;
+
 interface IProductRepository
 {
 
@@ -16,4 +18,9 @@ interface IProductRepository
      * @return mixed
      */
     public function findProductByID(int $id);
+
+    /**
+     * @return Product[]
+     */
+    public function getAllActiveProducts(): array;
 }

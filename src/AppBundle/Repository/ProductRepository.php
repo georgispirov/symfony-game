@@ -27,7 +27,10 @@ class ProductRepository extends EntityRepository implements IProductRepository
     public function getProductsByCategory(string $name): array
     {
         /* @var Categories $category */
-        $category = $this->getEntityManager()->getRepository(Categories::class)->findByCategoryName($name);
+        $category = $this->getEntityManager()
+                         ->getRepository(Categories::class)
+                         ->findByCategoryName($name);
+
         return $this->findBy(['category' => $category->getId()]);
     }
 
@@ -37,6 +40,24 @@ class ProductRepository extends EntityRepository implements IProductRepository
      */
     public function findProductByID(int $id)
     {
-        return $this->getEntityManager()->getRepository(Product::class)->findOneBy(['id' => $id]);
+        return $this->getEntityManager()
+                    ->getRepository(Product::class)
+                    ->findOneBy([
+                        'id' => $id
+                    ]);
+    }
+
+    /**
+     * @return Product[]
+     */
+    public function getAllActiveProducts(): array
+    {
+        $query = $this->getEntityManager()
+                      ->getRepository(Product::class)
+                      ->createQueryBuilder('p')
+                      ->select('p')
+                      ->where('p.quantity > 0');
+
+        return $query->getQuery()->getResult();
     }
 }

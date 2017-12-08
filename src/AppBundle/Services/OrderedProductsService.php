@@ -6,6 +6,7 @@ use AppBundle\Entity\OrderedProducts;
 use AppBundle\Entity\Product;
 use AppBundle\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\HttpFoundation\Session\Session;
 
 class OrderedProductsService implements IOrderedProductsService
 {
@@ -15,12 +16,20 @@ class OrderedProductsService implements IOrderedProductsService
     private $em;
 
     /**
+     * @var Session
+     */
+    private $session;
+
+    /**
      * OrderedProductsService constructor.
      * @param EntityManagerInterface $em
+     * @param Session $session
      */
-    public function __construct(EntityManagerInterface $em)
+    public function __construct(EntityManagerInterface $em,
+                                Session $session)
     {
         $this->em = $em;
+        $this->session = $session;
     }
 
 
@@ -44,13 +53,14 @@ class OrderedProductsService implements IOrderedProductsService
     }
 
     /**
-     * @param OrderedProducts $product
+     * @param OrderedProducts $orderedProducts
+     * @param User $user
      * @return bool
      */
-    public function removeOrderedProduct(OrderedProducts $product): bool
+    public function removeOrderedProduct(OrderedProducts $orderedProducts, User $user): bool
     {
         return $this->em->getRepository(OrderedProducts::class)
-                        ->removeOrderedProduct($product);
+                        ->removeOrderedProduct($orderedProducts, $user, $orderedProducts->getProduct());
 
     }
 
@@ -120,12 +130,14 @@ class OrderedProductsService implements IOrderedProductsService
     /**
      * @param OrderedProducts $orderedProducts
      * @param Product $product
+     * @param User $user
      * @return bool
      */
     public function decreaseQuantityOnOrderedProduct(OrderedProducts $orderedProducts,
-                                                     Product $product): bool
+                                                     Product $product,
+                                                     User $user): bool
     {
         return $this->em->getRepository(OrderedProducts::class)
-                        ->decreaseQuantity($orderedProducts, $product);
+                        ->decreaseQuantity($orderedProducts, $product, $user);
     }
 }

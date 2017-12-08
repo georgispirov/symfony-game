@@ -88,11 +88,10 @@ class CartService implements ICartService
         }
 
         if ($orderedProducts->getQuantity() > 1) {
-            return $this->orderedProducts->decreaseQuantityOnOrderedProduct($orderedProducts, $product);
+            return $this->orderedProducts->decreaseQuantityOnOrderedProduct($orderedProducts, $product, $user);
         }
 
-        if (true === $this->orderedProducts->removeOrderedProduct($orderedProducts)) {
-            $user->setMoney($user->getMoney() + $orderedProducts->getOrderedProductPrice());
+        if (true === $this->orderedProducts->removeOrderedProduct($orderedProducts, $user)) {
             return true;
         }
 
@@ -123,7 +122,7 @@ class CartService implements ICartService
      */
     public function getOrderedProductByUser(User $user): array
     {
-        if ( !$user instanceof User) {
+        if ( !$user instanceof User ) {
             throw new InvalidArgumentException('Please provide valid User.');
         }
 
@@ -270,7 +269,7 @@ class CartService implements ICartService
 
         $grid->getColumn('Price')->manipulateRenderCell(
             function ($value, $row, $router) {
-                return "$" . $value;
+                return "$" . floatval($value);
             }
         );
 
