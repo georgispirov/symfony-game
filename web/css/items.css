@@ -4,6 +4,10 @@
     font-size: 25px;
 }
 
+.test-style {
+    margin-top: 110px;
+}
+
 .shop-items:after {
     display: block;
     border-top: 4px solid grey;
