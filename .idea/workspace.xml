@@ -116,8 +116,8 @@
       <file leaf-file-name="OrderedProductsService.php" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/AppBundle/Services/OrderedProductsService.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="385">
-              <caret line="73" column="44" lean-forward="false" selection-start-line="73" selection-start-column="44" selection-end-line="73" selection-end-column="44" />
+            <state relative-caret-position="333">
+              <caret line="71" column="5" lean-forward="true" selection-start-line="71" selection-start-column="5" selection-end-line="71" selection-end-column="5" />
               <folding />
             </state>
           </provider>
@@ -346,7 +346,7 @@
     <property name="SearchEverywhereHistoryKey" value="all&#9;FILE&#9;file:///var/www/symfony-shopping-cart/app/Resources/views/products/all_products.html.twig&#10;ba&#9;FILE&#9;file:///var/www/symfony-shopping-cart/app/Resources/views/base.html.twig&#10;topn&#9;FILE&#9;file:///var/www/symfony-shopping-cart/app/Resources/views/topnav.html.twig&#10;He&#9;null&#9;null&#10;Menu&#9;FILE&#9;file:///var/www/symfony-shopping-cart/src/AppBundle/Menu/MenuBuilder.php&#10;AddPr&#9;FILE&#9;file:///var/www/symfony-shopping-cart/src/AppBundle/Form/AddProductType.php&#10;Pro&#9;FILE&#9;file:///var/www/symfony-shopping-cart/src/AppBundle/Controller/ProductController.php&#10;Or&#9;FILE&#9;file:///var/www/symfony-shopping-cart/src/AppBundle/Services/OrderedProductsService.php&#10;config&#9;FILE&#9;file:///var/www/symfony-shopping-cart/app/config/config.yml&#10;Order&#9;FILE&#9;file:///var/www/symfony-shopping-cart/src/AppBundle/Repository/OrderedProductsRepository.php&#10;index&#9;FILE&#9;file:///var/www/symfony-shopping-cart/app/Resources/views/cart/index.html.twig&#10;App&#9;FILE&#9;file:///var/www/symfony-shopping-cart/app/AppKernel.php&#10;Produ&#9;null&#9;null&#10;Orde&#9;null&#9;null&#10;IO&#9;FILE&#9;file:///var/www/symfony-shopping-cart/src/AppBundle/Repository/IOrderedProductsRepository.php&#10;Prod&#9;null&#9;null&#10;Produc&#9;null&#9;null&#10;Men&#9;FILE&#9;file:///var/www/symfony-shopping-cart/src/AppBundle/Menu/MenuBuilder.php&#10;add&#9;FILE&#9;file:///var/www/symfony-shopping-cart/app/Resources/views/products/add_product.html.twig&#10;Ordere&#9;FILE&#9;file:///var/www/symfony-shopping-cart/src/AppBundle/Repository/OrderedProductsRepository.php&#10;MainMe&#9;null&#9;null&#10;item&#9;FILE&#9;file:///var/www/symfony-shopping-cart/web/css/items.css&#10;items.&#9;FILE&#9;file:///var/www/symfony-shopping-cart/web/css/items.css&#10;User&#9;FILE&#9;file:///var/www/symfony-shopping-cart/src/AppBundle/Entity/User.php&#10;ProductRe&#9;FILE&#9;file:///var/www/symfony-shopping-cart/src/AppBundle/Repository/IProductRepository.php&#10;IProd&#9;null&#9;null&#10;IPR&#9;null&#9;null&#10;ProductServ&#9;null&#9;null&#10;al&#9;FILE&#9;file:///var/www/symfony-shopping-cart/app/Resources/views/products/all_products.html.twig&#10;al_&#9;FILE&#9;file:///var/www/symfony-shopping-cart/app/Resources/views/products/all_products.html.twig&#10;redi&#9;null&#9;null&#10;AddPro&#9;FILE&#9;file:///var/www/symfony-shopping-cart/src/AppBundle/Form/AddProductType.php&#10;MainMen&#9;null&#9;null&#10;Categorie&#9;FILE&#9;file:///var/www/symfony-shopping-cart/src/AppBundle/Entity/Categories.php&#10;conf&#9;FILE&#9;file:///var/www/symfony-shopping-cart/app/config/config.yml&#10;style.css&#9;FILE&#9;file:///var/www/symfony-shopping-cart/web/css/style.css&#10;IPro&#9;null&#9;null&#10;Categ&#9;null&#9;null&#10;edit&#9;FILE&#9;file:///var/www/symfony-shopping-cart/app/Resources/FOSUserBundle/views/Profile/edit_content.html.twig&#10;RegistrationForm&#9;null&#9;null&#10;security.yml&#9;FILE&#9;file:///var/www/symfony-game/app/config/security.yml" />
     <property name="list.type.of.created.stylesheet" value="CSS" />
     <property name="php.override.implement.member.chooser.php.doc" value="NONE" />
-    <property name="settings.editor.selected.configurable" value="reference.webide.settings.project.settings.php" />
+    <property name="settings.editor.selected.configurable" value="settings.github" />
     <property name="nodejs_interpreter_path" value="/usr/bin/node" />
   </component>
   <component name="RecentsManager">
@@ -402,7 +402,7 @@
       <workItem from="1511251905825" duration="4781000" />
       <workItem from="1511473389471" duration="61096000" />
       <workItem from="1512669039247" duration="1531000" />
-      <workItem from="1512670610112" duration="13489000" />
+      <workItem from="1512670610112" duration="13680000" />
     </task>
     <task id="LOCAL-00001" summary="completed user">
       <created>1511425055524</created>
@@ -420,7 +420,7 @@
     </history-entry>
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="207396000" />
+    <option name="totallyTimeSpent" value="207587000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="64" y="-11" width="1857" height="1092" extended-state="6" />
@@ -870,8 +870,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/AppBundle/Services/OrderedProductsService.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="385">
-          <caret line="73" column="44" lean-forward="false" selection-start-line="73" selection-start-column="44" selection-end-line="73" selection-end-column="44" />
+        <state relative-caret-position="333">
+          <caret line="71" column="5" lean-forward="true" selection-start-line="71" selection-start-column="5" selection-end-line="71" selection-end-column="5" />
           <folding />
         </state>
       </provider>
