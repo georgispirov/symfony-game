@@ -14,13 +14,6 @@
 {% include '::topnav.html.twig' %}
 
 {% if app.user %}
-<div class="container money-placement">
-    <span class="money-value">
-        <label for="money-content">Cash</label>
-        <p class="money-content">${{ app.user.money }}</p>
-    </span>
-</div>
-
 <div class="container">
     <div class="col-lg-3">
         <h1>Shopping Cart</h1>
@@ -28,12 +21,14 @@
             {{ knp_menu_render('AppBundle:MenuBuilder:mainMenu') }}
         </div>
     </div>
-</div>
-{% endif %}
 
-    <div class="container">
-        {% block content %}{% endblock %}
-        {% block javascripts %}{% endblock %}
+    <div class="col-lg-1 money-placement pull-right">
+        <span class="money-value">
+            <label for="money-content">Cash</label>
+            <p class="money-content">${{ app.user.money }}</p>
+        </span>
     </div>
-</body>
-</html>
+{% endif %}
+{% block content %}{% endblock %}
+{% block javascripts %}{% endblock %}
+

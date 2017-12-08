@@ -1,10 +1,5 @@
 {% include '::base.html.twig' %}
 
-<head>
-    <meta charset="UTF-8">
-    <link rel="stylesheet" href="{{ asset('css/items.css') }}">
-</head>
-
 {% if app.session.flashbag.has('not-enough-money') %}
     <div class="container col-xs-4 alert alert-danger not-enough-money-message-ordering-item">
         {% for flashMessage in app.session.flashbag.get('not-enough-money') %}
@@ -30,42 +25,40 @@
 {% endif %}
 
 {% for key, product in products %}
-<div class="row col-lg-9 test-style">
-    <div class="shop-items col-lg-4 col-md-6 mb-4">
-        <div class="card h-100">
-            <a href="#">
-                <img class="card-img-top"
-                     src="{{ asset('uploads/images/products/' ~ product.image) }}"
-                     alt=""
-                     width="700px"
-                     height="400px">
-            </a>
-            <div class="card-body">
-                <div class="form-group">
-                    <label for="card-title">Title: </label>
-                    <span class="card-title">
-                        <a href="#">{{ product.title }}</a>
-                    </span>
-                </div>
-                <div class="form-group">
-                    <label for="card-text">Description: </label>
-                    <span class="card-text">{{ product.description }}</span>
-                </div>
+<div class="col-lg-8 test-style">
+    <div class="shop-items col-lg-12">
+        <div class="col-lg-5 cart-img">
+            <img class="img-responsive"
+             src="{{ asset('uploads/images/products/' ~ product.image) }}"
+             alt="">
+        </div>
 
-                <div class="form-group">
-                    <label for="product-price">Price: </label>
-                    <span class="product-price">${{ product.price }}</span>
-                </div>
-                <div class="form-group">
-                    <label for="product-quantity">Quantity: </label>
-                    <span class="product-quantity">{{ product.quantity }}</h3></span>
-                </div>
+        <div class="col-lg-7 card-body">
+            <div class="form-group">
+                <label for="card-title">Title: </label>
+                <span class="card-title">
+                    <a href="#">{{ product.title }}</a>
+                </span>
             </div>
             <div class="form-group">
-                <a href="{{ path('addOrderedProduct', { 'routeParams': product.id }) }}"
-                        class="btn btn-primary">Add To Cart</a>
+                <label for="card-text">Description: </label>
+                <span class="card-text">{{ product.description }}</span>
+            </div>
+
+            <div class="form-group">
+                <label for="product-price">Price: </label>
+                <span class="product-price">${{ product.price }}</span>
+            </div>
+            <div class="form-group">
+                <label for="product-quantity">Quantity: </label>
+                <span class="product-quantity">{{ product.quantity }}</h3></span>
             </div>
         </div>
+        <div class="form-group">
+            <a href="{{ path('addOrderedProduct', { 'routeParams': product.id }) }}"
+                    class="btn btn-primary">Add To Cart</a>
+        </div>
+        <div class="clearfix"></div>
     </div>
 </div>
 {% endfor %}

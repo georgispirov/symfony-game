@@ -1,7 +1,9 @@
 .ordered-product-items {
-    position:absolute;
-    left: 350px;
-    top: 200px;
+    margin-top: 65px;
+}
+
+.grid input, .grid select {
+    width: 100px !important;
 }
 
 .grid table
@@ -10,7 +12,7 @@
     border-collapse: collapse;
     color: #555555;
     font-size: 1em;
-    width: 70%;
+    width: 100%;
 }
 
 .grid td, .grid th

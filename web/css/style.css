@@ -5,21 +5,26 @@ body {
 }
 
 .money-placement {
-    float: right;
-    margin-right: -800px;
-    margin-top: 45px;
+    text-align: center;
+    margin-top: 15px;
+}
+
+.user-change-password {
+    margin-top: 60px;
 }
 
 .add-product {
-    margin-top: -170px;
-}
-
-.add-product-header {
-    margin-top: -100px;
+    margin-top: 60px;
 }
 
 .main-update-profile {
-    margin-top: -210px;
+    margin-top: 0px;
+}
+
+.shop-items {
+    padding-bottom: 20px;
+    border-bottom: 1px solid #ddd;
+    margin-bottom: 40px;
 }
 
 .form-signin {
@@ -60,4 +65,38 @@ body {
 .update-profile {
     display:inline;
     clear:left;
+}
+
+.container {
+    background: #fff;
+}
+
+nav.navbar .container {
+    background: none !important;
+}
+
+.test-style {
+    margin-top: 70px;
+    border: 1px solid #eee;
+    padding: 20px 0 50px 0;
+    margin-bottom: 50px;
+}
+
+.menu_level_1 {
+    list-style: none;
+    padding-left: 0;
+    height: 250px;
+    overflow-y: auto;
+}
+.menu_level_1 li a {
+    width: 100%;
+    display: inline-block;
+    color: #aaa;
+    text-decoration: none;
+    padding: 5px 5px;
+}
+
+.menu_level_1 li a:hover {
+    background: #aaa;
+    color: #fff;
 }

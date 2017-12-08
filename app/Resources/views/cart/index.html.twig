@@ -38,10 +38,8 @@
 </head>
 <body>
     {% if grid is not null %}
-        <div class="container ordered-product-items">
-            <div class="row">
-                {{ grid(grid) }}
-            </div>
+        <div class="col-lg-6 ordered-product-items">
+            {{ grid(grid) }}
         </div>
     {% endif %}
 </body>

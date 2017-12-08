@@ -12,7 +12,7 @@
           href="{{ asset('css/style.css') }}" />
 </head>
 
-<div class="col-lg-10 col-lg-offset-4 main-update-profile">
+<div class="col-lg-10 main-update-profile">
     {{ form_start(form, {
                             'action': path('fos_user_profile_edit'),
                             'attr': { 'class': 'fos_user_profile_edit' }
@@ -20,9 +20,9 @@
                  )
     }}
 
-    <div class="container user-update-container">
+    <div class="user-update-container">
         <h2>Edit Profile</h2>
-        <div class="container col-lg-6">
+        <div class="col-lg-12">
             {{ form_widget(form) }}
             <div class="update-profile">
                 <div class="col-xs-2">
