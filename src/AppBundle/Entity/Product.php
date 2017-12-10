@@ -91,13 +91,6 @@ class Product
     private $quantity;
 
     /**
-     * @var
-     * @ORM\Column(name="promotion_id", type="integer")
-     * @ORM\OneToOne(targetEntity="AppBundle\Entity\Promotion")
-     */
-    private $promotionID;
-
-    /**
      * @var User
      * @ORM\ManyToOne(targetEntity="AppBundle\Entity\User", inversedBy="products")
      */
@@ -135,7 +128,7 @@ class Product
     }
 
     /**
-     * @return mixed
+     * @return null|Categories
      */
     public function getCategory()
     {
@@ -380,20 +373,9 @@ class Product
         $this->updatedBy = $updatedBy;
     }
 
-    /**
-     * @return mixed
-     */
-    public function getPromotionID()
+    public function __toString()
     {
-        return $this->promotionID;
-    }
-
-    /**
-     * @param mixed $promotionID
-     */
-    public function setPromotionID($promotionID)
-    {
-        $this->promotionID = $promotionID;
+        return $this->getTitle();
     }
 }
 

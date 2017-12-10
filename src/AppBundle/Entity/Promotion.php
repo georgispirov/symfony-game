@@ -48,10 +48,11 @@ class Promotion
     private $endDate;
 
     /**
-     * @var ArrayCollection
-     * @ORM\ManyToMany(targetEntity="AppBundle\Entity\Product", mappedBy="promotions")
+     * @var integer
+     * @ORM\Column(name="product", type="integer")
+     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Product")
      */
-    private $products;
+    private $product;
 
     /**
      * @var boolean
@@ -65,11 +66,6 @@ class Promotion
      * @ORM\OneToOne(targetEntity="AppBundle\Entity\Categories")
      */
     private $category;
-
-    public function __construct()
-    {
-        $this->products = new ArrayCollection();
-    }
 
     /**
      * Get id
@@ -187,6 +183,22 @@ class Promotion
     public function setIsActive(bool $isActive)
     {
         $this->isActive = $isActive;
+    }
+
+    /**
+     * @return null|Product
+     */
+    public function getProduct()
+    {
+        return $this->product;
+    }
+
+    /**
+     * @param Product $product
+     */
+    public function setProduct(Product $product)
+    {
+        $this->product = $product;
     }
 }
 

@@ -2,6 +2,8 @@
 
 namespace AppBundle\Controller;
 
+use AppBundle\Entity\Promotion;
+use AppBundle\Form\AddPromotionType;
 use AppBundle\Services\PromotionService;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
@@ -46,7 +48,12 @@ class PromotionsController extends Controller
      */
     public function addPromotionAction(Request $request): Response
     {
-        return $this->render('promotions/add_promotion.html.twig');
+        $promotion = new Promotion();
+        $form      = $this->createForm(AddPromotionType::class, $promotion, ['method' => 'POST']);
+
+        return $this->render('promotions/add_promotion.html.twig', [
+            'form' => $form->createView()
+        ]);
     }
 
     /**

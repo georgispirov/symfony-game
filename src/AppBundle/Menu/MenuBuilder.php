@@ -65,9 +65,11 @@ class MenuBuilder implements ContainerAwareInterface
              ->setAttribute('class', self::ITEM_CLASS)
              ->setExtra('translation_domain', false);
 
-        $menu->addChild('Promotions')
-             ->setAttribute('class', self::ITEM_CLASS)
-             ->setExtra('translation_domain', false);
+        if ($user->hasRole('ROLE_ADMIN')) {
+            $menu->addChild('Promotions')
+                 ->setAttribute('class', self::ITEM_CLASS)
+                 ->setExtra('translation_domain', false);
+        }
 
         if ($user->hasRole('ROLE_ADMIN')) {
             foreach ($this->promotionsSubMenu as $cellName => $route) {
