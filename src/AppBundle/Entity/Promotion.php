@@ -53,6 +53,19 @@ class Promotion
      */
     private $products;
 
+    /**
+     * @var boolean
+     * @ORM\Column(name="is_active", type="boolean")
+     */
+    private $isActive;
+
+    /**
+     * @var integer
+     * @ORM\Column(name="category", type="integer")
+     * @ORM\OneToOne(targetEntity="AppBundle\Entity\Categories")
+     */
+    private $category;
+
     public function __construct()
     {
         $this->products = new ArrayCollection();
@@ -158,6 +171,22 @@ class Promotion
     public function getCategory()
     {
         return $this->category;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isActive(): bool
+    {
+        return $this->isActive;
+    }
+
+    /**
+     * @param bool $isActive
+     */
+    public function setIsActive(bool $isActive)
+    {
+        $this->isActive = $isActive;
     }
 }
 

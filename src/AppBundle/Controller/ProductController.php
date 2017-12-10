@@ -115,14 +115,14 @@ class ProductController extends Controller
      */
     public function updateProductAction(Request $request): Response
     {
-        $productID = $request->query->get('updateProductID');
-        $product   = $this->productService->getProductByID($productID); /* @var Product $product */
+        $productID = $request->query->getInt('productID');
+        $product   = $this->productService->getProductByID($productID);
         $user      = $this->get('security.token_storage')->getToken()->getUser(); /* @var User $user */
         $form      = $this->createForm(UpdateProductType::class, $product, ['method' => 'POST']);
 
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
-            
+
             if (true === $this->productService->updateProduct($product, $user)) {
                 $this->session->getFlashBag()->add('success-on-updating-product', 'Successfully updated product.');
                 return $this->redirect($request->headers->get('referer'));
@@ -133,7 +133,8 @@ class ProductController extends Controller
         }
 
         return $this->render(':products:update_product.html.twig', [
-            'form' => $form->createView()
+            'form'    => $form->createView(),
+            'product' => $product
         ]);
     }
 }

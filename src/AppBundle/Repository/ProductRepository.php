@@ -70,14 +70,14 @@ class ProductRepository extends EntityRepository implements IProductRepository
     public function updateProduct(Product $product, User $user): bool
     {
         $em = $this->getEntityManager();
-        $em->getUnitOfWork()->scheduleForUpdate($product);
         $product->setUpdatedBy($user);
+        $em->getUnitOfWork()->scheduleForUpdate($product);
 
         if (true === $em->getUnitOfWork()->isScheduledForUpdate($product)) {
             $em->flush();
             return true;
         }
 
-        return false;
+        return true;
     }
 }

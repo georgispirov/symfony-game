@@ -3,9 +3,12 @@
 namespace AppBundle\Menu;
 
 use AppBundle\Entity\Categories;
+use AppBundle\Entity\User;
 use Knp\Menu\FactoryInterface;
+use Knp\Menu\ItemInterface;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerAwareTrait;
+use Symfony\Component\Security\Csrf\TokenStorage\TokenStorageInterface;
 
 class MenuBuilder implements ContainerAwareInterface
 {
@@ -13,8 +16,15 @@ class MenuBuilder implements ContainerAwareInterface
 
     const ITEM_CLASS = 'list-group-item';
 
+    private $promotionsSubMenu  = [
+        'List Active Promotions' => ['route' => 'listPromotions'],
+        'Add Promotion'          => ['route' => 'addPromotion']
+    ];
+
     public function mainMenu(FactoryInterface $factory, array $options)
     {
+        /* @var User $user */
+        $user = $this->container->get('security.token_storage')->getToken()->getUser();
         $menu = $factory->createItem('root');
 
         $menu->addChild('My Shopping Cart', ['route' => 'showOrderedProductsByUser'])
@@ -55,9 +65,22 @@ class MenuBuilder implements ContainerAwareInterface
              ->setAttribute('class', self::ITEM_CLASS)
              ->setExtra('translation_domain', false);
 
-        $menu->addChild('Promotions', ['route' => 'homepage'])
+        $menu->addChild('Promotions')
              ->setAttribute('class', self::ITEM_CLASS)
              ->setExtra('translation_domain', false);
+
+        if ($user->hasRole('ROLE_ADMIN')) {
+            foreach ($this->promotionsSubMenu as $cellName => $route) {
+                $menu->getChild('Promotions')
+                     ->addChild($cellName, $route)
+                     ->setAttribute('class', self::ITEM_CLASS)
+                     ->setExtra('translation_domain', false);
+            }
+
+            $menu->addChild('User Management')
+                 ->setAttribute('class', self::ITEM_CLASS)
+                 ->setExtra('translation_domain', false);
+        }
 
         return $menu;
     }

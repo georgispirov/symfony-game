@@ -3,7 +3,7 @@
 <div class="col-lg-6 update-product">
     <h2 class="add-product-header">Update Product</h2> <br/>
     {{ form_start(form, {
-        'action': path('updateProduct'),
+        'action': path('updateProduct', { 'productID': product.id }),
         }
     )
     }}

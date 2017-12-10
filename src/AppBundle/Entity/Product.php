@@ -80,7 +80,7 @@ class Product
 
     /**
      * @var User
-     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\User", inversedBy="products")
+     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\User")
      */
     private $updatedBy = null;
 
@@ -89,6 +89,13 @@ class Product
      * @Assert\NotBlank(message="Quantity cannot be blank.")
      */
     private $quantity;
+
+    /**
+     * @var
+     * @ORM\Column(name="promotion_id", type="integer")
+     * @ORM\OneToOne(targetEntity="AppBundle\Entity\Promotion")
+     */
+    private $promotionID;
 
     /**
      * @var User
@@ -371,6 +378,22 @@ class Product
     public function setUpdatedBy(User $updatedBy)
     {
         $this->updatedBy = $updatedBy;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getPromotionID()
+    {
+        return $this->promotionID;
+    }
+
+    /**
+     * @param mixed $promotionID
+     */
+    public function setPromotionID($promotionID)
+    {
+        $this->promotionID = $promotionID;
     }
 }
 
