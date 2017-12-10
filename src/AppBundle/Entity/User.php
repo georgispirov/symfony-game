@@ -36,6 +36,20 @@ class User extends BaseUser implements UserInterface
     protected $products;
 
     /**
+     * @var
+     * @ORM\Column(name="total_check", type="integer")
+     */
+    protected $totalCheck;
+
+    /**
+     * User constructor.
+     */
+    public function __construct()
+    {
+        parent::__construct();
+    }
+
+    /**
      * @return int
      */
     public function getId()
@@ -83,9 +97,20 @@ class User extends BaseUser implements UserInterface
         $this->products = $products;
     }
 
-    public function __construct()
+    /**
+     * @return mixed
+     */
+    public function getTotalCheck()
     {
-        parent::__construct();
+        return $this->totalCheck;
+    }
+
+    /**
+     * @param mixed $totalCheck
+     */
+    public function setTotalCheck($totalCheck)
+    {
+        $this->totalCheck = $totalCheck;
     }
 }
 

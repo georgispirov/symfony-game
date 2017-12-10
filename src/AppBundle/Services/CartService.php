@@ -225,12 +225,23 @@ class CartService implements ICartService
             throw new InvalidArgumentException('Product must be a valid Entity.');
         }
 
-        if ($user->getMoney() < $product->getPrice()) {
+        $sumFromProductAndAllOrderedProducts = $product->getPrice() + $this->orderedProducts->getCheckoutFromAllProducts();
+
+        if ($user->getMoney() < $product->getPrice() || $user->getMoney() < $sumFromProductAndAllOrderedProducts) {
             $this->session->getFlashBag()->add('not-enough-money', 'You don\'t have enough money to buy this item.');
             return false;
         }
 
         return $this->orderedProducts->increaseQuantity($orderedProduct, $product);
+    }
+
+    /**
+     * @param User $user
+     * @return float
+     */
+    public function getDifferenceMoneyAndOrderedProductsPrice(User $user): float
+    {
+        return $user->getMoney() - $this->orderedProducts->getCheckoutFromAllProducts();
     }
 
     /**
@@ -243,7 +254,11 @@ class CartService implements ICartService
             throw new APYInvalidArgumentException('Applied argument must be instance of Grid!');
         }
 
-        $grid->setHiddenColumns(['orderedProductID']);
+        $grid->setHiddenColumns(['orderedProductID', 'viewProductID']);
+        $grid->setLimits([5,5,5]);
+
+        $productColumn = new RowAction('View', 'viewProduct');
+        $productColumn->setRouteParametersMapping(['viewProductID' => $grid->getColumn('viewProductID')]);
 
         $updateColumn = new RowAction('Update', 'updateOrderedProduct');
         $updateColumn->setRouteParametersMapping(['productID' => $grid->getColumn('orderedProductID')->getId()]);
@@ -251,9 +266,15 @@ class CartService implements ICartService
         $deleteColumn = new RowAction('Delete', 'removeOrderedProduct');
         $deleteColumn->setRouteParametersMapping(['productID' => $grid->getColumn('orderedProductID')->getId()]);
 
-        $grid->getColumn('Product')->setTitle('Product Title');
-        $grid->getColumn('orderedDate')->setTitle('Ordered Date');
-        $grid->getColumn('Confirmed')->setValues([0 => 'No', 1 => 'Yes']);
+        $grid->getColumn('orderedDate')
+             ->setTitle('Ordered Date')
+             ->setOperators(['slike']);
+
+        $grid->getColumn('User')
+             ->setOperators(['slike']);
+
+        $grid->getColumn('Confirmed')
+             ->setValues([0 => 'No', 1 => 'Yes']);
 
         $grid->getColumn('Confirmed')->manipulateRenderCell(
             function ($value, $row, $router) {
@@ -261,18 +282,28 @@ class CartService implements ICartService
             }
         );
 
+        $grid->getColumn('Price')
+             ->manipulateRenderCell(function ($value, $row, $router) {
+             /* @var $value  integer */
+             /* @var $row    \APY\DataGridBundle\Grid\Row */
+             /* @var $router \Symfony\Bundle\FrameworkBundle\Routing\Router */
+              return '$' . $value;
+             });
+
+        $grid->getColumn('Quantity')
+             ->setFilterable(true)
+             ->setFilterType('input')
+             ->setOperators(['eq']);
+
         $grid->getColumn('Quantity')->manipulateRenderCell(
             function ($value, $row, $router) {
-                return (int) $value;
+                return intval($value);
             }
         );
 
-        $grid->getColumn('Price')->manipulateRenderCell(
-            function ($value, $row, $router) {
-                return "$" . floatval($value);
-            }
-        );
+        $grid->getColumn('Price')->setOperators(['eq']);
 
+        $grid->addRowAction($productColumn);
         $grid->addRowAction($updateColumn);
         $grid->addRowAction($deleteColumn);
 

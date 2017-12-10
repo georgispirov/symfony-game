@@ -7,12 +7,15 @@ use AppBundle\Entity\Product;
 use AppBundle\Services\CartService;
 use AppBundle\Services\OrderedProductsService;
 use AppBundle\Services\ProductService;
+use APY\DataGridBundle\Grid\Column\DateTimeColumn;
 use APY\DataGridBundle\Grid\Source\Vector;
+use Doctrine\DBAL\Schema\Column;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Validator\Constraints\Date;
 
 class CartController extends Controller
 {
@@ -141,5 +144,14 @@ class CartController extends Controller
                                 'No bought items added to your cart. Go and buy something.');
 
         return $this->render('cart/index.html.twig');
+    }
+
+    /**
+     * @param Request $request
+     * @return Response
+     */
+    public function cartCheckoutAction(Request $request): Response
+    {
+
     }
 }

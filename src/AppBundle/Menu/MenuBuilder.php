@@ -55,6 +55,10 @@ class MenuBuilder implements ContainerAwareInterface
              ->setAttribute('class', self::ITEM_CLASS)
              ->setExtra('translation_domain', false);
 
+        $menu->addChild('Promotions', ['route' => 'homepage'])
+             ->setAttribute('class', self::ITEM_CLASS)
+             ->setExtra('translation_domain', false);
+
         return $menu;
     }
 }

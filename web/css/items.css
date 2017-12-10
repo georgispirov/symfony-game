@@ -1,7 +1,7 @@
 .shop-items {
     display: block;
-    margin-bottom: 250px;
-    font-size: 25px;
+    margin-bottom: 30px;
+    font-size: 15px;
 }
 
 .test-style {
@@ -14,21 +14,27 @@
 }
 
 .not-enough-money-message-ordering-item {
-    top: -200px;
-    left: 427px;
+    margin-top: 75px;
+    margin-left: 40px;
+}
+
+
+.error-message-item-add-to-cart {
+    margin-top: 75px;
+    margin-left: 40px;
 }
 
 .success-message-item-add-to-cart {
-    top: -200px;
-    left: 427px;
-}
-
-.error-message-item-add-to-cart {
-    top: -200px;
-    left: 427px;
+    margin-top: 75px;
+    margin-left: 40px;
 }
 
 .info-message-no-items-in-grid {
-    top: -200px;
-    left: 427px;
+    margin-top: 75px;
+    margin-left: 40px;
+}
+
+.success-message-removed-ordered-item {
+    margin-top: 75px;
+    margin-left: 40px;
 }

@@ -3,6 +3,7 @@
 namespace AppBundle\Services;
 
 use AppBundle\Entity\Product;
+use AppBundle\Entity\User;
 
 interface IProductService
 {
@@ -22,4 +23,11 @@ interface IProductService
      * @return mixed
      */
     public function getProductByID(int $id);
+
+    /**
+     * @param Product $product
+     * @param User $user
+     * @return bool
+     */
+    public function updateProduct(Product $product, User $user): bool;
 }

@@ -4,6 +4,7 @@ namespace AppBundle\Repository;
 
 use AppBundle\Entity\Categories;
 use AppBundle\Entity\Product;
+use AppBundle\Entity\User;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\QueryBuilder;
 
@@ -59,5 +60,24 @@ class ProductRepository extends EntityRepository implements IProductRepository
                       ->where('p.quantity > 0');
 
         return $query->getQuery()->getResult();
+    }
+
+    /**
+     * @param Product $product
+     * @param User $user
+     * @return bool
+     */
+    public function updateProduct(Product $product, User $user): bool
+    {
+        $em = $this->getEntityManager();
+        $em->getUnitOfWork()->scheduleForUpdate($product);
+        $product->setUpdatedBy($user);
+
+        if (true === $em->getUnitOfWork()->isScheduledForUpdate($product)) {
+            $em->flush();
+            return true;
+        }
+
+        return false;
     }
 }

@@ -79,6 +79,12 @@ class Product
     private $updatedAt;
 
     /**
+     * @var User
+     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\User", inversedBy="products")
+     */
+    private $updatedBy = null;
+
+    /**
      * @ORM\Column(name="quantity", type="integer")
      * @Assert\NotBlank(message="Quantity cannot be blank.")
      */
@@ -349,6 +355,22 @@ class Product
     public function setOutOfStock(bool $outOfStock)
     {
         $this->outOfStock = $outOfStock;
+    }
+
+    /**
+     * @return User
+     */
+    public function getUpdatedBy(): User
+    {
+        return $this->updatedBy;
+    }
+
+    /**
+     * @param User $updatedBy
+     */
+    public function setUpdatedBy(User $updatedBy)
+    {
+        $this->updatedBy = $updatedBy;
     }
 }
 

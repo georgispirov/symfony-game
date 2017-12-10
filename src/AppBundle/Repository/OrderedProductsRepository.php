@@ -24,8 +24,8 @@ class OrderedProductsRepository extends EntityRepository implements IOrderedProd
         $query = $this->getEntityManager()
                       ->getRepository(OrderedProducts::class)
                       ->createQueryBuilder('op')
-                      ->select('op.id as orderedProductID, pr.title AS Product, op.orderedDate, op.orderedProductPrice AS Price, 
-                                      op.quantity AS Quantity, op.confirmed AS Confirmed, u.username AS User')
+                      ->select('op.id as orderedProductID, pr.title AS Product, op.orderedDate, pr.id AS viewProductID,
+                                      op.quantity AS Quantity, op.confirmed AS Confirmed, u.username AS User, op.orderedProductPrice AS Price')
                       ->join('op.user','u')
                       ->join('op.product', 'pr')
                       ->where('u = :user')
@@ -45,16 +45,7 @@ class OrderedProductsRepository extends EntityRepository implements IOrderedProd
     public function addOrderedProduct(User $user, Product $product): bool
     {
         $em = $this->getEntityManager();
-
-        $em->getUnitOfWork()->scheduleForUpdate($product);
         $em->getUnitOfWork()->scheduleForUpdate($user);
-
-        if ($product->getQuantity() > 1) {
-            $product->setQuantity($product->getQuantity() - 1);
-        } else {
-            $product->setQuantity(0);
-            $product->setOutOfStock(true);
-        }
 
         $orderedProduct = new OrderedProducts();
 
@@ -68,10 +59,8 @@ class OrderedProductsRepository extends EntityRepository implements IOrderedProd
         $em->persist($orderedProduct);
 
         if (true === $em->getUnitOfWork()->isScheduledForInsert($orderedProduct)
-            && true === $em->getUnitOfWork()->isScheduledForUpdate($user)
-            && true === $em->getUnitOfWork()->isScheduledForUpdate($product)) {
-                $userMoney = $user->getMoney() - $product->getPrice();
-                $user->setMoney($userMoney);
+            && true === $em->getUnitOfWork()->isScheduledForUpdate($user)) {
+                $user->setTotalCheck($user->getTotalCheck() + $product->getPrice());
                 $em->flush();
                 return true;
         }
@@ -106,17 +95,13 @@ class OrderedProductsRepository extends EntityRepository implements IOrderedProd
 
         $em->getUnitOfWork()->scheduleForDelete($orderedProducts);
         $em->getUnitOfWork()->scheduleForUpdate($user);
-        $em->getUnitOfWork()->scheduleForUpdate($product);
 
         $em->remove($orderedProducts);
 
-        $product->setQuantity($product->getQuantity() + 1);
-
-        $user->setMoney($user->getMoney() + $orderedProducts->getOrderedProductPrice());
+        $user->setTotalCheck($user->getTotalCheck() - $product->getPrice());
 
         if (true === $em->getUnitOfWork()->isScheduledForDelete($orderedProducts)
-            && true === $em->getUnitOfWork()->isScheduledForUpdate($user)
-            && true === $em->getUnitOfWork()->isScheduledForUpdate($product))
+            && true === $em->getUnitOfWork()->isScheduledForUpdate($user))
         {
                 $em->flush();
                 return true;
@@ -136,25 +121,21 @@ class OrderedProductsRepository extends EntityRepository implements IOrderedProd
 
         $em->getUnitOfWork()->scheduleForUpdate($orderedProduct);
         $user = $orderedProduct->getUser();
-        $user->setMoney($user->getMoney() - $product->getPrice());
 
-        $quantity = $orderedProduct->getQuantity() + 1;
+        $user->setTotalCheck($user->getTotalCheck() + $product->getPrice());
+
+        $quantity      = $orderedProduct->getQuantity() + 1;
         $increasePrice = $orderedProduct->getOrderedProductPrice() + $product->getPrice();
-
-        $product->setQuantity($product->getQuantity() - 1);
 
         $orderedProduct->setQuantity($quantity);
         $orderedProduct->setOrderedProductPrice($increasePrice);
         $orderedProduct->setOrderedDate(new \DateTime('now'));
 
-        $em->getUnitOfWork()->scheduleForUpdate($product);
         $em->getUnitOfWork()->scheduleForUpdate($orderedProduct);
 
-        if (true === $em->getUnitOfWork()->isScheduledForUpdate($orderedProduct) &&
-            true === $em->getUnitOfWork()->isScheduledForUpdate($product)) {
-                $em->persist($user);
-                $em->flush();
-                return true;
+        if (true === $em->getUnitOfWork()->isScheduledForUpdate($orderedProduct)) {
+            $em->flush();
+            return true;
         }
 
         return false;
@@ -197,18 +178,14 @@ class OrderedProductsRepository extends EntityRepository implements IOrderedProd
         $em = $this->getEntityManager();
 
         $em->getUnitOfWork()->scheduleForUpdate($orderedProduct);
-        $em->getUnitOfWork()->scheduleForUpdate($product);
         $em->getUnitOfWork()->scheduleForUpdate($user);
 
         $orderedProduct->setQuantity($orderedProduct->getQuantity() - 1);
         $orderedProduct->setOrderedProductPrice($orderedProduct->getOrderedProductPrice() - $product->getPrice());
 
-        $product->setQuantity($product->getQuantity() + 1);
-
-        $user->setMoney($user->getMoney() + $product->getPrice());
+        $user->setTotalCheck($user->getTotalCheck() - $product->getPrice());
 
         if (true === $em->getUnitOfWork()->isScheduledForUpdate($orderedProduct) &&
-            true === $em->getUnitOfWork()->isScheduledForUpdate($product) &&
             true === $em->getUnitOfWork()->isScheduledForUpdate($user))
         {
             $em->flush();
@@ -216,5 +193,19 @@ class OrderedProductsRepository extends EntityRepository implements IOrderedProd
         }
 
         return false;
+    }
+
+    /**
+     * @return float
+     */
+    public function getCheckoutFromAllProducts(): float
+    {
+        $query = $this->getEntityManager()
+                      ->getRepository(OrderedProducts::class)
+                      ->createQueryBuilder('op')
+                      ->select('SUM (op.orderedProductPrice)');
+
+        return $query->getQuery()
+                     ->getSingleScalarResult();
     }
 }

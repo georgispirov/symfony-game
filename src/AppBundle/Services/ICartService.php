@@ -90,4 +90,10 @@ interface ICartService
     public function increaseQuantityOnAlreadyBoughtItem(User $user,
                                                         OrderedProducts $orderedProduct,
                                                         Product $product): bool;
+
+    /**
+     * @param User $user
+     * @return float
+     */
+    public function getDifferenceMoneyAndOrderedProductsPrice(User $user): float;
 }

@@ -2,6 +2,7 @@
 
 namespace AppBundle\Entity;
 
+use APY\DataGridBundle\Grid\Mapping\Column;
 use Doctrine\ORM\Mapping as ORM;
 use FOS\UserBundle\Model\UserInterface;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -30,8 +31,8 @@ class OrderedProducts
     private $orderedDate;
 
     /**
-     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Product", inversedBy="ordered_products")
-     * @ORM\JoinColumn(nullable=false)
+     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Product")
+     * @ORM\JoinColumn(nullable=false, referencedColumnName="id")
      */
     private $product;
 
@@ -56,8 +57,8 @@ class OrderedProducts
     private $orderedProductPrice;
 
     /**
-     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\User", inversedBy="ordered_products")
-     * @ORM\JoinColumn(nullable=false)
+     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\User")
+     * @ORM\JoinColumn(nullable=false, referencedColumnName="id")
      */
     private $user;
 

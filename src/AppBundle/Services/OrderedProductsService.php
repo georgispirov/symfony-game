@@ -38,7 +38,8 @@ class OrderedProductsService implements IOrderedProductsService
      */
     public function getCheckoutFromAllProducts(): float
     {
-
+        return $this->em->getRepository(OrderedProducts::class)
+                        ->getCheckoutFromAllProducts();
     }
 
     /**

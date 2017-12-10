@@ -63,4 +63,9 @@ interface IOrderedProductsRepository
     public function decreaseQuantity(OrderedProducts $orderedProduct,
                                      Product $product,
                                      User $user): bool;
+
+    /**
+     * @return float
+     */
+    public function getCheckoutFromAllProducts(): float;
 }

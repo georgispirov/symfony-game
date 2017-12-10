@@ -3,6 +3,7 @@
 namespace AppBundle\Repository;
 
 use AppBundle\Entity\Product;
+use AppBundle\Entity\User;
 
 interface IProductRepository
 {
@@ -23,4 +24,11 @@ interface IProductRepository
      * @return Product[]
      */
     public function getAllActiveProducts(): array;
+
+    /**
+     * @param Product $product
+     * @param User $user
+     * @return bool
+     */
+    public function updateProduct(Product $product, User $user): bool;
 }

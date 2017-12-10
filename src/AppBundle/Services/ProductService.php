@@ -5,6 +5,7 @@ namespace AppBundle\Services;
 use AppBundle\Entity\Categories;
 use AppBundle\Entity\OrderedProducts;
 use AppBundle\Entity\Product;
+use AppBundle\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
 
 class ProductService implements IProductService
@@ -55,11 +56,22 @@ class ProductService implements IProductService
 
     /**
      * @param int $id
-     * @return mixed
+     * @return null|Product
      */
     public function getProductByID(int $id)
     {
         return $this->em->getRepository(Product::class)
                         ->findProductByID($id);
+    }
+
+    /**
+     * @param Product $product
+     * @param User $user
+     * @return bool
+     */
+    public function updateProduct(Product $product, User $user): bool
+    {
+        return $this->em->getRepository(Product::class)
+                        ->updateProduct($product, $user);
     }
 }

@@ -2,6 +2,13 @@
     margin-top: 65px;
 }
 
+.user-total-check {
+    margin-top: 15px;
+    margin-right: -140px;
+    float: right;
+    border-bottom: 2px solid;
+}
+
 .grid input, .grid select {
     width: 100px !important;
 }

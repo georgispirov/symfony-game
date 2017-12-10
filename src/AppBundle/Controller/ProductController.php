@@ -3,10 +3,15 @@
 namespace AppBundle\Controller;
 
 use AppBundle\Entity\Product;
+use AppBundle\Entity\User;
 use AppBundle\Form\AddProductType;
+use AppBundle\Form\UpdateProductType;
+use AppBundle\Services\OrderedProductsService;
 use AppBundle\Services\ProductService;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\Routing\Annotation\Route;
 
 class ProductController extends Controller
@@ -17,12 +22,28 @@ class ProductController extends Controller
     private $productService;
 
     /**
-     * ProductController constructor.
-     * @param $productService
+     * @var OrderedProductsService
      */
-    public function __construct(ProductService $productService)
+    private $orderedProductService;
+
+    /**
+     * @var Session
+     */
+    private $session;
+
+    /**
+     * ProductController constructor.
+     * @param ProductService $productService
+     * @param Session $session
+     * @param OrderedProductsService $orderedProductService
+     */
+    public function __construct(ProductService $productService,
+                                Session $session,
+                                OrderedProductsService $orderedProductService)
     {
-        $this->productService = $productService;
+        $this->productService        = $productService;
+        $this->orderedProductService = $orderedProductService;
+        $this->session               = $session;
     }
 
     /**
@@ -67,6 +88,52 @@ class ProductController extends Controller
 
         return $this->render(':products:all_products.html.twig', [
             'products' => $data
+        ]);
+    }
+
+    /**
+     * @Route("/view/product", name="viewProduct")
+     * @param Request $request
+     * @return Response
+     */
+    public function previewProduct(Request $request): Response
+    {
+        $productID = $request->query->get('viewProductID');
+
+        /* @var Product $product */
+        $product   = $this->productService->getProductByID($productID);
+
+        return $this->render(':products:view_product.html.twig', [
+            'product' => $product
+        ]);
+    }
+
+    /**
+     * @Route("/update/product", name="updateProduct")
+     * @param Request $request
+     * @return Response
+     */
+    public function updateProductAction(Request $request): Response
+    {
+        $productID = $request->query->get('updateProductID');
+        $product   = $this->productService->getProductByID($productID); /* @var Product $product */
+        $user      = $this->get('security.token_storage')->getToken()->getUser(); /* @var User $user */
+        $form      = $this->createForm(UpdateProductType::class, $product, ['method' => 'POST']);
+
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
+            
+            if (true === $this->productService->updateProduct($product, $user)) {
+                $this->session->getFlashBag()->add('success-on-updating-product', 'Successfully updated product.');
+                return $this->redirect($request->headers->get('referer'));
+            }
+
+            $this->session->getFlashBag()->add('failure-on-updating-product', 'Unable to update the product');
+            return $this->redirect($request->headers->get('referer'));
+        }
+
+        return $this->render(':products:update_product.html.twig', [
+            'form' => $form->createView()
         ]);
     }
 }
