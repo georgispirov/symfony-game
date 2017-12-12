@@ -80,4 +80,20 @@ class ProductRepository extends EntityRepository implements IProductRepository
 
         return true;
     }
+
+    /**
+     * @param int $categoryID
+     * @return array
+     * @internal param string $categoryName
+     */
+    public function getProductsByCategoryOnArray(int $categoryID): array
+    {
+        $query = $this->getEntityManager()
+                      ->getRepository(Product::class)
+                      ->createQueryBuilder('p')
+                      ->where('p.category = :categoryID')
+                      ->setParameter(':categoryID', $categoryID);
+
+        return $query->getQuery()->getArrayResult();
+    }
 }

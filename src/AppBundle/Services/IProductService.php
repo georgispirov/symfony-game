@@ -30,4 +30,11 @@ interface IProductService
      * @return bool
      */
     public function updateProduct(Product $product, User $user): bool;
+
+    /**
+     * @param int $categoryID
+     * @return array
+     * @internal param string $categoryName
+     */
+    public function getProductsByCategoryOnArray(int $categoryID): array;
 }

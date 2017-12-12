@@ -2,12 +2,15 @@
 
 namespace AppBundle\Controller;
 
+use AppBundle\Entity\Categories;
 use AppBundle\Repository\ICategoriesRepository;
 use AppBundle\Services\CategoriesService;
 use AppBundle\Services\ICategoriesService;
 use AppBundle\Services\IProductService;
 use AppBundle\Services\ProductService;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -64,5 +67,23 @@ class CategoriesController extends Controller
         return $this->render(':products:all_products.html.twig', [
             'products' => $productsByCategory
         ]);
+    }
+
+    /**
+     * @Route("/getProductsByCategory", name="getProductsByCategory")
+     * @Method(methods={"POST"})
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function getProductsByCategoryAction(Request $request): JsonResponse
+    {
+        $data = [];
+
+        if (true === $request->isXmlHttpRequest()) {
+            $categoryID = $request->request->get('categoryID');
+            $data[]   = $this->productService->getProductsByCategoryOnArray($categoryID);
+        }
+
+        return new JsonResponse($data);
     }
 }

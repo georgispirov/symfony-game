@@ -31,4 +31,10 @@ interface IProductRepository
      * @return bool
      */
     public function updateProduct(Product $product, User $user): bool;
+
+    /**
+     * @param int $categoryID
+     * @return array
+     */
+    public function getProductsByCategoryOnArray(int $categoryID): array;
 }

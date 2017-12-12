@@ -32,9 +32,9 @@ class CategoriesService implements ICategoriesService
 
     /**
      * @param int $id
-     * @return object
+     * @return null|Categories
      */
-    public function getCategoryByID(int $id): object
+    public function getCategoryByID(int $id)
     {
         return $this->em->getRepository(Categories::class)
                         ->find($id);

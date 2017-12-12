@@ -48,24 +48,28 @@ class Promotion
     private $endDate;
 
     /**
-     * @var integer
-     * @ORM\Column(name="product", type="integer")
-     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Product")
-     */
-    private $product;
-
-    /**
      * @var boolean
      * @ORM\Column(name="is_active", type="boolean")
      */
     private $isActive;
 
     /**
-     * @var integer
-     * @ORM\Column(name="category", type="integer")
-     * @ORM\OneToOne(targetEntity="AppBundle\Entity\Categories")
+     * @var ArrayCollection $product
+     * @ORM\ManyToMany(targetEntity="AppBundle\Entity\Product")
+     */
+    private $product;
+
+    /**
+     * @var ArrayCollection $category
+     * @ORM\ManyToMany(targetEntity="AppBundle\Entity\Categories")
      */
     private $category;
+
+    public function __construct()
+    {
+        $this->product  = new ArrayCollection();
+        $this->category = new ArrayCollection();
+    }
 
     /**
      * Get id
@@ -150,29 +154,9 @@ class Promotion
     }
 
     /**
-     * @param Category $category
-     * @return $this
-     */
-    public function setCategory(Category $category)
-    {
-        $this->category = $category;
-        return $this;
-    }
-
-    /**
-     * Get category
-     *
-     * @return string
-     */
-    public function getCategory()
-    {
-        return $this->category;
-    }
-
-    /**
      * @return bool
      */
-    public function isActive(): bool
+    public function isActive()
     {
         return $this->isActive;
     }
@@ -186,7 +170,23 @@ class Promotion
     }
 
     /**
-     * @return null|Product
+     * @return mixed
+     */
+    public function getCategory()
+    {
+        return $this->category;
+    }
+
+    /**
+     * @param mixed $category
+     */
+    public function setCategory($category)
+    {
+        $this->category = $category;
+    }
+
+    /**
+     * @return mixed
      */
     public function getProduct()
     {
@@ -194,11 +194,27 @@ class Promotion
     }
 
     /**
-     * @param Product $product
+     * @param mixed $product
      */
-    public function setProduct(Product $product)
+    public function setProduct($product)
     {
         $this->product = $product;
+    }
+
+    /**
+     * @param Product $products
+     */
+    public function addProductsToPromotion(Product $products)
+    {
+        $this->product[] = $products;
+    }
+
+    /**
+     * @param Categories $categories
+     */
+    public function addCategoryToPromotion(Categories $categories)
+    {
+        $this->category[] = $categories;
     }
 }
 

@@ -17,8 +17,9 @@ class MenuBuilder implements ContainerAwareInterface
     const ITEM_CLASS = 'list-group-item';
 
     private $promotionsSubMenu  = [
-        'List Active Promotions' => ['route' => 'listPromotions'],
-        'Add Promotion'          => ['route' => 'addPromotion']
+        'List Active Promotions'                => ['route' => 'listPromotions'],
+        'Add Products To Promotion'             => ['route' => 'addPromotion'],
+        'Add Categories To Promotion'           => ['route' => 'homepage']
     ];
 
     public function mainMenu(FactoryInterface $factory, array $options)
@@ -66,12 +67,11 @@ class MenuBuilder implements ContainerAwareInterface
              ->setExtra('translation_domain', false);
 
         if ($user->hasRole('ROLE_ADMIN')) {
-            $menu->addChild('Promotions')
-                 ->setAttribute('class', self::ITEM_CLASS)
-                 ->setExtra('translation_domain', false);
-        }
 
-        if ($user->hasRole('ROLE_ADMIN')) {
+            $menu->addChild('Promotions')
+                ->setAttribute('class', self::ITEM_CLASS)
+                ->setExtra('translation_domain', false);
+
             foreach ($this->promotionsSubMenu as $cellName => $route) {
                 $menu->getChild('Promotions')
                      ->addChild($cellName, $route)

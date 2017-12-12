@@ -74,4 +74,14 @@ class ProductService implements IProductService
         return $this->em->getRepository(Product::class)
                         ->updateProduct($product, $user);
     }
+
+    /**
+     * @param int $categoryID
+     * @return array
+     */
+    public function getProductsByCategoryOnArray(int $categoryID): array
+    {
+        return $this->em->getRepository(Product::class)
+                        ->getProductsByCategoryOnArray($categoryID);
+    }
 }

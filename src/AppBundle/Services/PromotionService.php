@@ -4,9 +4,11 @@ namespace AppBundle\Services;
 
 use AppBundle\Entity\Categories;
 use AppBundle\Entity\Promotion;
+use AppBundle\Repository\PromotionRepository;
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
+use Symfony\Component\Process\Exception\InvalidArgumentException;
 
 class PromotionService implements IPromotionService
 {
@@ -68,7 +70,12 @@ class PromotionService implements IPromotionService
      */
     public function applyPromotionForProducts(Promotion $promotion): bool
     {
+        if ( !$promotion instanceof Promotion ) {
+            throw new InvalidArgumentException('Applied argument must be valid Promotion Entity!');
+        }
 
+        return $this->em->getRepository(Promotion::class)
+                        ->addPromotionForProducts($promotion);
     }
 
     /**

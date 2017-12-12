@@ -2,6 +2,7 @@
 
 namespace AppBundle\Repository;
 
+use AppBundle\Entity\Promotion;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\QueryBuilder;
 
@@ -13,32 +14,50 @@ use Doctrine\ORM\QueryBuilder;
  */
 class PromotionRepository extends EntityRepository implements IPromotionRepository
 {
+    public function invokeFindByBuilder(): QueryBuilder
+    {
+        return $this->createQueryBuilder($this->getClassMetadata()->getTableName());
+    }
+
     /**
-     * @return QueryBuilder
+     * @param Promotion $promotion
+     * @return bool
      */
-    public function getActivePromotions(): QueryBuilder
+    public function addPromotionForProducts(Promotion $promotion): bool
+    {
+        $em = $this->getEntityManager();
+        $promotion->setCategory(null);
+        $em->persist($promotion);
+
+        if (true === $em->getUnitOfWork()->isScheduledForInsert($promotion)) {
+            $em->flush();
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * @return array
+     */
+    public function getActivePromotions(): array
     {
         // TODO: Implement getActivePromotions() method.
     }
 
     /**
-     * @return QueryBuilder
+     * @return array
      */
-    public function getAllPromotions(): QueryBuilder
+    public function getAllPromotions(): array
     {
         // TODO: Implement getAllPromotions() method.
     }
 
     /**
-     * @return QueryBuilder
+     * @return null|Promotion
      */
-    public function getPromotionByInterval(): QueryBuilder
+    public function getPromotionByInterval()
     {
         // TODO: Implement getPromotionByInterval() method.
-    }
-
-    public function invokeFindByBuilder(): QueryBuilder
-    {
-        return $this->createQueryBuilder($this->getClassMetadata()->getTableName());
     }
 }

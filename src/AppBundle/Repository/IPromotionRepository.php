@@ -2,22 +2,29 @@
 
 namespace AppBundle\Repository;
 
+use AppBundle\Entity\Promotion;
 use Doctrine\ORM\QueryBuilder;
 
 interface IPromotionRepository
 {
     /**
-     * @return QueryBuilder
+     * @return array
      */
-    public function getActivePromotions() : QueryBuilder;
+    public function getActivePromotions() : array;
 
     /**
-     * @return QueryBuilder
+     * @return array
      */
-    public function getAllPromotions() : QueryBuilder;
+    public function getAllPromotions() : array;
 
     /**
-     * @return QueryBuilder
+     * @return null|Promotion
      */
-    public function getPromotionByInterval() : QueryBuilder;
+    public function getPromotionByInterval();
+
+    /**
+     * @param Promotion $promotion
+     * @return bool
+     */
+    public function addPromotionForProducts(Promotion $promotion): bool;
 }

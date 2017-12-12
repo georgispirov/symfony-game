@@ -12,3 +12,26 @@
         {{ form_widget(form) }}
     </div>
 </div>
+
+<script type="text/javascript">
+    $('#app_add_promotion_category').click(function () {
+        var categoryID = $(this).val();
+        $.ajax({
+            'url': "/app_dev.php/getProductsByCategory",
+            'type': "POST",
+            'dataType': "json",
+            'data': { 'categoryID': categoryID },
+            'success': function (data) {
+                var workArray = data[0];
+                var currentProducts = $('#app_add_promotion_product');
+                currentProducts.attr("disabled", false);
+                currentProducts.empty();
+                $.each(workArray, function (k, v) {
+                    currentProducts.append($("<option></option>")
+                                   .attr("value", v['id'])
+                                   .text(v['title']));
+                });
+            }
+        });
+    });
+</script>
