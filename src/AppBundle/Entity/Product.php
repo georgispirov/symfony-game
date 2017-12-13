@@ -2,6 +2,7 @@
 
 namespace AppBundle\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\HttpFoundation\File\File;
@@ -97,11 +98,22 @@ class Product
     private $user;
 
     /**
+     * @var
+     * @ORM\ManyToMany(targetEntity="AppBundle\Entity\Promotion")
+     */
+    private $promotion;
+
+    /**
      * @var bool
      *
      * @ORM\Column(name="out_of_stock", type="boolean")
      */
     private $outOfStock = false;
+
+    public function __construct()
+    {
+        $this->promotion = new ArrayCollection();
+    }
 
     /**
      * @return mixed
@@ -376,6 +388,24 @@ class Product
     public function __toString()
     {
         return $this->getTitle();
+    }
+
+    public function addPromotionToProduct(Promotion $promotion)
+    {
+        if ($this->promotion->contains($promotion)) {
+            return;
+        }
+
+        $this->promotion->add($promotion);
+    }
+
+    public function removePromotionFromProduct(Promotion $promotion)
+    {
+        if (!$this->promotion->contains($promotion)) {
+            return;
+        }
+
+        $this->promotion->remove($promotion);
     }
 }
 

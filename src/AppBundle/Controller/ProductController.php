@@ -3,11 +3,15 @@
 namespace AppBundle\Controller;
 
 use AppBundle\Entity\Product;
+use AppBundle\Entity\Promotion;
 use AppBundle\Entity\User;
 use AppBundle\Form\AddProductType;
 use AppBundle\Form\UpdateProductType;
+use AppBundle\Grid\ViewProductsByCategoryGrid;
 use AppBundle\Services\OrderedProductsService;
 use AppBundle\Services\ProductService;
+use APY\DataGridBundle\Grid\Source\Entity;
+use APY\DataGridBundle\Grid\Source\Vector;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -136,5 +140,30 @@ class ProductController extends Controller
             'form'    => $form->createView(),
             'product' => $product
         ]);
+    }
+
+    /**
+     * @Route("/getProductsByCategory", name="productsByCategory")
+     * @param Request $request
+     * @return Response
+     */
+    public function getProductsByPromotion(Request $request): Response
+    {
+        $authorization = $this->get('security.authorization_checker');
+
+        $grid      = $this->get('grid');
+        $promotion = $this->get('doctrine.orm.entity_manager')->getRepository(Promotion::class)
+                                                              ->getPromotionByID($request->query->get('id'));
+
+        $products  = $this->productService->getProductsByPromotion($promotion);
+
+        if (sizeof($products) > 0) {
+            $vector    = new Vector($products);
+            $grid->setSource($vector);
+            $viewProductsByCategoryGrid = new ViewProductsByCategoryGrid();
+            $viewProductsByCategoryGrid->viewProductsByCategory($grid);
+        }
+
+        return $grid->getGridResponse('products/products_by_category.html.twig');
     }
 }

@@ -3,6 +3,7 @@
 namespace AppBundle\Repository;
 
 use AppBundle\Entity\Product;
+use AppBundle\Entity\Promotion;
 use AppBundle\Entity\User;
 
 interface IProductRepository
@@ -37,4 +38,10 @@ interface IProductRepository
      * @return array
      */
     public function getProductsByCategoryOnArray(int $categoryID): array;
+
+    /**
+     * @param Promotion $promotion
+     * @return array
+     */
+    public function getProductsByPromotion(Promotion $promotion): array;
 }

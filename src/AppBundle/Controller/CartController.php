@@ -4,6 +4,7 @@ namespace AppBundle\Controller;
 
 use AppBundle\Entity\OrderedProducts;
 use AppBundle\Entity\Product;
+use AppBundle\Grid\CartGrid;
 use AppBundle\Services\CartService;
 use AppBundle\Services\OrderedProductsService;
 use AppBundle\Services\ProductService;
@@ -137,7 +138,8 @@ class CartController extends Controller
         if (sizeof($orderedProducts) > 0) {
             $vector = new Vector($orderedProducts);
             $grid->setSource($vector);
-            $this->cartService->orderedProductsDataGrid($grid);
+            $cartGrid = new CartGrid();
+            $cartGrid->orderedProductsDataGrid($grid);
             return $grid->getGridResponse('cart/index.html.twig');
         }
         $this->session->getFlashBag()->add('info',

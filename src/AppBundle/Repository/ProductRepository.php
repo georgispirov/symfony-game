@@ -4,8 +4,10 @@ namespace AppBundle\Repository;
 
 use AppBundle\Entity\Categories;
 use AppBundle\Entity\Product;
+use AppBundle\Entity\Promotion;
 use AppBundle\Entity\User;
 use Doctrine\ORM\EntityRepository;
+use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\ORM\QueryBuilder;
 
 /**
@@ -93,6 +95,22 @@ class ProductRepository extends EntityRepository implements IProductRepository
                       ->createQueryBuilder('p')
                       ->where('p.category = :categoryID')
                       ->setParameter(':categoryID', $categoryID);
+
+        return $query->getQuery()->getArrayResult();
+    }
+
+    /**
+     * @param Promotion $promotion
+     * @return array
+     */
+    public function getProductsByPromotion(Promotion $promotion): array
+    {
+        $query = $this->getEntityManager()
+                      ->getRepository(Product::class)
+                      ->createQueryBuilder('product')
+                      ->join('product.promotion', 'promotion')
+                      ->where('promotion = :promotion')
+                      ->setParameter(':promotion', $promotion);
 
         return $query->getQuery()->getArrayResult();
     }

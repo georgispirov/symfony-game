@@ -69,12 +69,6 @@ interface ICartService
     public function hasUserEnoughCash(float $itemPrice, float $userCash): bool;
 
     /**
-     * @param Grid $grid
-     * @return Grid
-     */
-    public function orderedProductsDataGrid(Grid $grid): Grid;
-
-    /**
      * @param User $user
      * @param Product $product
      * @return bool

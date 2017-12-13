@@ -40,16 +40,15 @@ class AddPromotionType extends AbstractType
                     'required'      =>  true,
                     'class'         =>  Product::class,
                     'multiple'      =>  true,
-                    'disabled'      =>  true,
                     'query_builder' =>  function (EntityRepository $er) use ($builder) {
                         return $er->createQueryBuilder('p')
                                   ->orderBy('p.title', 'ASC');
                     }
               ])->add('isActive', ChoiceType::class, [
-                    'label' => 'Active',
-                    'choices' => [
-                        'No' => false,
-                        'Yes' => true
+                    'label'    => 'Active',
+                    'choices'  => [
+                            'No'   => false,
+                            'Yes'  => true
                     ],
                     'required' => true,
               ])->add('Add Promotion', SubmitType::class, [
@@ -58,13 +57,12 @@ class AddPromotionType extends AbstractType
                     ]
               ]);
 
-        $builder->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event) {
+        $builder->addEventListener(FormEvents::POST_SET_DATA, function (FormEvent $event) {
             $form    = $event->getForm();
-            $product =  $form->get('product')->getData();
+            $product =  $form->get('product')->getConfig()->getData();
 
             if (null === $product) {
                 $form->get('product')->addError(new FormError('At least one Product must be selected.'));
-//                $form->get('product')->s
                 $event->stopPropagation();
             }
         });

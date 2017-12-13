@@ -1,1 +1,21 @@
 {% include 'base.html.twig' %}
+
+<head>
+    <link rel="stylesheet" href="{{ asset('css/grid-ordered-products.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/grid-promotions.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/items.css') }}">
+</head>
+
+{% if app.session.flashbag.has('non-existing-promotions') %}
+    <div class="col-xs-4 alert alert-danger non-existing-promotions">
+        {% for flashMessage in app.session.flashbag.get('non-existing-promotions') %}
+            {{ flashMessage }}
+        {% endfor %}
+    </div>
+{% endif %}
+
+{% if grid is not null %}
+    <div class="col-lg-7 promotions-grid-table">
+        {{ grid(grid) }}
+    </div>
+{% endif %}

@@ -55,21 +55,15 @@ class Promotion
 
     /**
      * @var ArrayCollection $product
-     * @ORM\ManyToMany(targetEntity="AppBundle\Entity\Product")
+     * @ORM\ManyToMany(targetEntity="AppBundle\Entity\Product", mappedBy="product")
      */
     private $product;
 
     /**
      * @var ArrayCollection $category
-     * @ORM\ManyToMany(targetEntity="AppBundle\Entity\Categories")
+     * @ORM\ManyToMany(targetEntity="AppBundle\Entity\Categories", mappedBy="categories")
      */
     private $category;
-
-    public function __construct()
-    {
-        $this->product  = new ArrayCollection();
-        $this->category = new ArrayCollection();
-    }
 
     /**
      * Get id
@@ -199,22 +193,6 @@ class Promotion
     public function setProduct($product)
     {
         $this->product = $product;
-    }
-
-    /**
-     * @param Product $products
-     */
-    public function addProductsToPromotion(Product $products)
-    {
-        $this->product[] = $products;
-    }
-
-    /**
-     * @param Categories $categories
-     */
-    public function addCategoryToPromotion(Categories $categories)
-    {
-        $this->category[] = $categories;
     }
 }
 

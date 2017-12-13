@@ -3,6 +3,7 @@
 namespace AppBundle\Services;
 
 use AppBundle\Entity\Product;
+use AppBundle\Entity\Promotion;
 use AppBundle\Entity\User;
 
 interface IProductService
@@ -37,4 +38,10 @@ interface IProductService
      * @internal param string $categoryName
      */
     public function getProductsByCategoryOnArray(int $categoryID): array;
+
+    /**
+     * @param Promotion $promotion
+     * @return array
+     */
+    public function getProductsByPromotion(Promotion $promotion): array;
 }

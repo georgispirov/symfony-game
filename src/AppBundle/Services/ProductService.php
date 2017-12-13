@@ -5,6 +5,7 @@ namespace AppBundle\Services;
 use AppBundle\Entity\Categories;
 use AppBundle\Entity\OrderedProducts;
 use AppBundle\Entity\Product;
+use AppBundle\Entity\Promotion;
 use AppBundle\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
 
@@ -83,5 +84,15 @@ class ProductService implements IProductService
     {
         return $this->em->getRepository(Product::class)
                         ->getProductsByCategoryOnArray($categoryID);
+    }
+
+    /**
+     * @param Promotion $promotion
+     * @return array
+     */
+    public function getProductsByPromotion(Promotion $promotion): array
+    {
+        return $this->em->getRepository(Product::class)
+                        ->getProductsByPromotion($promotion);
     }
 }

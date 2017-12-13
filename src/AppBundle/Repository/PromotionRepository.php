@@ -42,7 +42,9 @@ class PromotionRepository extends EntityRepository implements IPromotionReposito
      */
     public function getActivePromotions(): array
     {
-        // TODO: Implement getActivePromotions() method.
+        return $this->getEntityManager()
+                    ->getRepository(Promotion::class)
+                    ->findAll();
     }
 
     /**
@@ -59,5 +61,21 @@ class PromotionRepository extends EntityRepository implements IPromotionReposito
     public function getPromotionByInterval()
     {
         // TODO: Implement getPromotionByInterval() method.
+    }
+
+    /**
+     * @param int $promotionID
+     * @return null|Promotion
+     */
+    public function getPromotionByID(int $promotionID)
+    {
+        $stmt = $this->getEntityManager()
+                     ->getRepository(Promotion::class)
+                     ->createQueryBuilder('promotion')
+                     ->where('promotion.id = :promotionID')
+                     ->setParameter('promotionID', $promotionID);
+
+        return $stmt->getQuery()
+                    ->getOneOrNullResult();
     }
 }

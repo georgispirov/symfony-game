@@ -1,0 +1,20 @@
+{% include 'base.html.twig' %}
+
+{{ grid(grid) }}
+
+<script>
+    $(document).ready(function() {
+        var imageFile = $('.grid-column-image').text();
+        $.ajax({
+            url: "/app_dev.php/preview/image",
+            type: "POST",
+            dataType: "json",
+            data: {'filename': imageFile},
+            success: function (data) {
+                alert(data);
+//                $('.grid-column-image').attr('src', "data:image/png;base64," + data);
+                $('.grid-column-image').append('<img src="data:image/jpg;base64,' + data + '" />');
+            }
+        });
+    });
+</script>

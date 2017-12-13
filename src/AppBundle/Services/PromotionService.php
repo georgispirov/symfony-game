@@ -3,6 +3,7 @@
 namespace AppBundle\Services;
 
 use AppBundle\Entity\Categories;
+use AppBundle\Entity\Product;
 use AppBundle\Entity\Promotion;
 use AppBundle\Repository\PromotionRepository;
 use Doctrine\Common\Persistence\ManagerRegistry;
@@ -85,5 +86,50 @@ class PromotionService implements IPromotionService
     public function removePromotionForProducts(Promotion $promotion): bool
     {
 
+    }
+
+    /**
+     * @return array
+     */
+    public function getAllPromotions(): array
+    {
+        return $this->em->getRepository(Promotion::class)
+                        ->getActivePromotions();
+    }
+
+    /**
+     * @return array
+     */
+    public function getAllActivePromotion(): array
+    {
+        // TODO: Implement getAllActivePromotion() method.
+    }
+
+    /**
+     * @param string $startDate
+     * @param string $endDate
+     * @return array
+     */
+    public function getAllPromotionsByDateInterval(string $startDate, string $endDate): array
+    {
+        // TODO: Implement getAllPromotionsByDateInterval() method.
+    }
+
+    /**
+     * @param Categories $category
+     * @return array
+     */
+    public function getAllPromotionsByCategory(Categories $category): array
+    {
+        // TODO: Implement getAllPromotionsByCategory() method.
+    }
+
+    /**
+     * @param Product $product
+     * @return array
+     */
+    public function getAllPromotionsByProduct(Product $product): array
+    {
+        // TODO: Implement getAllPromotionsByProduct() method.
     }
 }

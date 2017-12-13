@@ -2,6 +2,7 @@
 
 namespace AppBundle\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -27,6 +28,17 @@ class Categories
      * @ORM\Column(name="name", type="string", length=255)
      */
     private $name;
+
+    /**
+     * @var
+     * @ORM\ManyToMany(targetEntity="AppBundle\Entity\Promotion")
+     */
+    private $promotion;
+
+    public function __construct()
+    {
+        $this->promotion = new ArrayCollection();
+    }
 
     /**
      * Get id
@@ -65,6 +77,24 @@ class Categories
     public function __toString()
     {
         return $this->getName();
+    }
+
+    public function addPromotionsToCategory(Promotion $promotion)
+    {
+        if ($this->promotion->contains($promotion)) {
+            return;
+        }
+
+        $this->promotion->add($promotion);
+    }
+
+    public function removePromotionsFromCategory(Promotion $promotion)
+    {
+        if (!$this->promotion->contains($promotion)) {
+            return;
+        }
+
+        $this->promotion->remove($promotion);
     }
 }
 
