@@ -81,7 +81,7 @@ class CategoriesController extends Controller
 
         if (true === $request->isXmlHttpRequest()) {
             $categoryID = $request->request->get('categoryID');
-            $data[]   = $this->productService->getProductsByCategoryOnArray($categoryID);
+            $data[]     = $this->productService->getProductsByCategoryOnArray($categoryID);
         }
 
         return new JsonResponse($data);

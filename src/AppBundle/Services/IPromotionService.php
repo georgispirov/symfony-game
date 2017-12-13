@@ -64,4 +64,11 @@ interface IPromotionService
      * @return array
      */
     public function getAllPromotionsByProduct(Product $product): array;
+
+    /**
+     * @param Promotion $promotion
+     * @param Categories $categories
+     * @return array
+     */
+    public function getProductsByPromotionAndCategory(Promotion $promotion, Categories $categories): array;
 }

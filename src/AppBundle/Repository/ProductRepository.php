@@ -114,4 +114,23 @@ class ProductRepository extends EntityRepository implements IProductRepository
 
         return $query->getQuery()->getArrayResult();
     }
+
+    /**
+     * @param Promotion $promotion
+     * @param Categories $categories
+     * @return array
+     */
+    public function getProductByPromotionAndCategory(Promotion $promotion, Categories $categories): array
+    {
+        $query = $this->getEntityManager()
+                      ->getRepository(Product::class)
+                      ->createQueryBuilder('product')
+                      ->join('product.promotion', 'promotion')
+                      ->where('promotion <> :promotion')
+                      ->andWhere('product.category = :category')
+                      ->setParameter(':promotion', $promotion)
+                      ->setParameter(':category', $categories);
+
+        return $query->getQuery()->getArrayResult();
+    }
 }

@@ -2,15 +2,17 @@
 
 namespace AppBundle\Controller;
 
+use AppBundle\Entity\Categories;
 use AppBundle\Entity\Promotion;
 use AppBundle\Form\AddPromotionType;
+use AppBundle\Form\ProductsOnExistingPromotionType;
 use AppBundle\Grid\PromotionsGrid;
 use AppBundle\Services\ProductService;
 use AppBundle\Services\PromotionService;
 use APY\DataGridBundle\Grid\Source\Entity;
-use APY\DataGridBundle\Grid\Source\Vector;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Session\Session;
@@ -136,5 +138,51 @@ class PromotionsController extends Controller
     public function addCategoryToPromotion(Request $request): Response
     {
         
+    }
+
+    /**
+     * @Route("/products/toExistingPromotion", name="productsOnExistingPromotion")
+     * @param Request $request
+     * @return Response
+     */
+    public function addProductsToExistingPromotionAction(Request $request): Response
+    {
+        $promotion = new Promotion();
+        $form = $this->createForm(ProductsOnExistingPromotionType::class, $promotion, ['method' => 'POST']);
+
+
+        return $this->render('promotions/add_products_on_existing_promotion_html.twig',[
+            'form' => $form->createView()
+        ]);
+    }
+
+    /**
+     * @Route("/categories/toExistingPromotion", name="categoriesOnExistingPromotion")
+     * @param Request $request
+     * @return Response
+     */
+    public function addCategoriesToExistingPromotion(Request $request): Response
+    {
+
+    }
+
+    /**
+     * @Route("/products/byPromotion", name="productsByPromotion")
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function getProductsByPromotionAction(Request $request): JsonResponse
+    {
+        $data = [];
+
+        if (true === $request->isXmlHttpRequest()) {
+            $categoryID  = $request->request->get('categoryID');
+            $promotionID = $request->request->get('promotionID');
+            $promotion   = $this->getDoctrine()->getRepository(Promotion::class)->getPromotionByID($promotionID);
+            $category    = $this->getDoctrine()->getRepository(Categories::class)->findOneBy(['id' => $categoryID]);
+            $data []     = $this->promotionService->getProductsByPromotionAndCategory($promotion, $category);
+        }
+
+        return new JsonResponse($data);
     }
 }

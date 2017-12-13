@@ -1,0 +1,39 @@
+{% include 'base.html.twig' %}
+
+<div class="col-lg-6 add-products-to-existing-promotion">
+    <h2 class="add-product-header">Add Products To Existing Promotion</h2> <br/>
+    {{ form_start(form, {
+        'action': path('productsOnExistingPromotion'),
+    }
+    )
+    }}
+
+    <div class="add-product-form-widget col-lg-12">
+        {{ form_widget(form) }}
+    </div>
+</div>
+
+<script type="text/javascript">
+    $('#app_products_on_existing_promotion_category').change(function () {
+        var categoryID = $(this).val();
+        var promotionID = $('#app_products_on_existing_promotion_discount').val();
+        $.ajax({
+            'url': "/app_dev.php/products/byPromotion",
+            'type': "POST",
+            'dataType': "json",
+            'data': { 'categoryID': categoryID, 'promotionID': promotionID },
+            'success': function (data) {
+                var workArray = data[0];
+                console.log(workArray);
+                var currentProducts = $('#app_products_on_existing_promotion_product');
+                currentProducts.attr("disabled", false);
+                currentProducts.empty();
+                $.each(workArray, function (k, v) {
+                    currentProducts.append($("<option></option>")
+                        .attr("value", v['id'])
+                        .text(v['title']));
+                });
+            }
+        });
+    });
+</script>

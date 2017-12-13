@@ -194,5 +194,10 @@ class Promotion
     {
         $this->product = $product;
     }
+
+    public function __toString()
+    {
+        return (string) $this->discount;
+    }
 }
 

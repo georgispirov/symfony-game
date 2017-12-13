@@ -4,16 +4,16 @@
 
 <script>
     $(document).ready(function() {
-        var imageFile = $('.grid-column-image').text();
+        var imageColumn = $('.grid-column-image');
+        var imageFile = imageColumn.text();
         $.ajax({
             url: "/app_dev.php/preview/image",
             type: "POST",
             dataType: "json",
             data: {'filename': imageFile},
             success: function (data) {
-                alert(data);
-//                $('.grid-column-image').attr('src', "data:image/png;base64," + data);
-                $('.grid-column-image').append('<img src="data:image/jpg;base64,' + data + '" />');
+                imageColumn.text('');
+                $('.grid-column-image').append('<img src="' + data + '" width="150px" height="100px" />');
             }
         });
     });

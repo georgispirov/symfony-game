@@ -19,7 +19,9 @@ class MenuBuilder implements ContainerAwareInterface
     private $promotionsSubMenu  = [
         'List Active Promotions'                => ['route' => 'listPromotions'],
         'Add Products To Promotion'             => ['route' => 'addPromotion'],
-        'Add Categories To Promotion'           => ['route' => 'homepage']
+        'Add Categories To Promotion'           => ['route' => 'homepage'],
+        'Add Products To Existing Promotion'    => ['route' => 'productsOnExistingPromotion'],
+        'Add Categories To Existing Promotion'  => ['route' => 'homepage']
     ];
 
     public function mainMenu(FactoryInterface $factory, array $options)

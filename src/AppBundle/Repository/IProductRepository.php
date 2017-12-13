@@ -2,6 +2,7 @@
 
 namespace AppBundle\Repository;
 
+use AppBundle\Entity\Categories;
 use AppBundle\Entity\Product;
 use AppBundle\Entity\Promotion;
 use AppBundle\Entity\User;
@@ -44,4 +45,11 @@ interface IProductRepository
      * @return array
      */
     public function getProductsByPromotion(Promotion $promotion): array;
+
+    /**
+     * @param Promotion $promotion
+     * @param Categories $categories
+     * @return array
+     */
+    public function getProductByPromotionAndCategory(Promotion $promotion, Categories $categories): array;
 }
