@@ -143,7 +143,7 @@ class ProductController extends Controller
     }
 
     /**
-     * @Route("/getProductsByCategory", name="productsByCategory")
+     * @Route("/getProductsByPromotion", name="productsByActivePromotion")
      * @param Request $request
      * @return Response
      */
@@ -162,8 +162,10 @@ class ProductController extends Controller
             $grid->setSource($vector);
             $viewProductsByCategoryGrid = new ViewProductsByCategoryGrid();
             $viewProductsByCategoryGrid->viewProductsByCategory($grid);
+            return $grid->getGridResponse('products/products_by_category.html.twig', ['promotion' => $promotion]);
         }
 
-        return $grid->getGridResponse('products/products_by_category.html.twig');
+        $this->session->getFlashBag()->add('no-products-in-active-promotion', 'There are no products in selected Active Promotion!');
+        return $this->render('products/products_by_category.html.twig', ['promotion' => $promotion]);
     }
 }

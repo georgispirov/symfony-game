@@ -67,8 +67,7 @@ interface IPromotionService
 
     /**
      * @param Promotion $promotion
-     * @param Categories $categories
      * @return array
      */
-    public function getProductsByPromotionAndCategory(Promotion $promotion, Categories $categories): array;
+    public function getNonExistingProductsInPromotion(Promotion $promotion): array;
 }

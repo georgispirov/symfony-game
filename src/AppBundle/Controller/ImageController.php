@@ -16,13 +16,20 @@ class ImageController extends Controller
      */
     public function getImageAction(Request $request): JsonResponse
     {
-        $filename = $request->request->get('filename');
-        $response = null;
-        $absPathFile = dirname($this->get('kernel')->getRootDir()) . '/web/uploads/images/products/' . $filename;
-        if (file_exists($absPathFile)) {
-            $absPathFile = '/uploads/images/products/' . $filename;
-            $response = new JsonResponse($absPathFile);
+        $files = $request->request->get('filenameArray');
+        $absPathFiles = [];
+
+        if (sizeof($files) < 1) {
+            return new JsonResponse();
         }
-        return $response;
+
+        foreach ($files as $filename) {
+            $absPathFile = dirname($this->get('kernel')->getRootDir()) . '/web/uploads/images/products/' . $filename;
+            if (file_exists($absPathFile)) {
+                $absPathFiles[] = '/uploads/images/products/' . $filename;
+            }
+        }
+
+        return new JsonResponse($absPathFiles);
     }
 }

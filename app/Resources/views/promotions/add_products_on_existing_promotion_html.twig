@@ -14,20 +14,19 @@
 </div>
 
 <script type="text/javascript">
-    $('#app_products_on_existing_promotion_category').change(function () {
-        var categoryID = $(this).val();
-        var promotionID = $('#app_products_on_existing_promotion_discount').val();
+    $('#app_products_on_existing_promotion_discount').change(function () {
+        var promotionID = $(this).val();
         $.ajax({
-            'url': "/app_dev.php/products/byPromotion",
+            'url': "/app_dev.php/nonExistingProducts/byPromotion",
             'type': "POST",
             'dataType': "json",
-            'data': { 'categoryID': categoryID, 'promotionID': promotionID },
+            'data': { 'promotionID': promotionID },
             'success': function (data) {
                 var workArray = data[0];
-                console.log(workArray);
                 var currentProducts = $('#app_products_on_existing_promotion_product');
                 currentProducts.attr("disabled", false);
                 currentProducts.empty();
+                console.log(workArray);
                 $.each(workArray, function (k, v) {
                     currentProducts.append($("<option></option>")
                         .attr("value", v['id'])

@@ -7,6 +7,7 @@ use AppBundle\Entity\Product;
 use AppBundle\Entity\Promotion;
 use AppBundle\Entity\User;
 use Doctrine\ORM\EntityRepository;
+use Doctrine\ORM\Query\Expr;
 use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\ORM\QueryBuilder;
 
@@ -117,19 +118,18 @@ class ProductRepository extends EntityRepository implements IProductRepository
 
     /**
      * @param Promotion $promotion
-     * @param Categories $categories
      * @return array
      */
-    public function getProductByPromotionAndCategory(Promotion $promotion, Categories $categories): array
+    public function getNonExistingProductsInPromotion(Promotion $promotion): array
     {
         $query = $this->getEntityManager()
                       ->getRepository(Product::class)
                       ->createQueryBuilder('product')
-                      ->join('product.promotion', 'promotion')
+                      ->join('product.promotion', 'promotion', Join::WITH)
                       ->where('promotion <> :promotion')
-                      ->andWhere('product.category = :category')
-                      ->setParameter(':promotion', $promotion)
-                      ->setParameter(':category', $categories);
+                      ->setParameters([
+                          ':promotion' => $promotion,
+                  ]);
 
         return $query->getQuery()->getArrayResult();
     }

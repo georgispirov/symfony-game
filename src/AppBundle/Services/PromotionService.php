@@ -135,20 +135,15 @@ class PromotionService implements IPromotionService
 
     /**
      * @param Promotion $promotion
-     * @param Categories $categories
      * @return array
      */
-    public function getProductsByPromotionAndCategory(Promotion $promotion, Categories $categories): array
+    public function getNonExistingProductsInPromotion(Promotion $promotion): array
     {
         if ( !$promotion instanceof Promotion ) {
             throw new InvalidArgumentException('Promotion must be a valid entity!');
         }
 
-        if ( !$categories instanceof Categories ) {
-            throw new InvalidArgumentException('Category must be a valid entity!');
-        }
-
         return $this->em->getRepository(Product::class)
-                        ->getProductByPromotionAndCategory($promotion, $categories);
+                        ->getNonExistingProductsInPromotion($promotion);
     }
 }

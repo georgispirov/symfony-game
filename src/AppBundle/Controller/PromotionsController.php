@@ -67,7 +67,6 @@ class PromotionsController extends Controller
         }
 
         $promotions = $this->promotionService->getAllPromotions();
-
         $grid = $this->get('grid');
         $grid->setSource(new Entity('AppBundle:Promotion'));
         $promotionsGrid = new PromotionsGrid();
@@ -150,7 +149,6 @@ class PromotionsController extends Controller
         $promotion = new Promotion();
         $form = $this->createForm(ProductsOnExistingPromotionType::class, $promotion, ['method' => 'POST']);
 
-
         return $this->render('promotions/add_products_on_existing_promotion_html.twig',[
             'form' => $form->createView()
         ]);
@@ -167,22 +165,20 @@ class PromotionsController extends Controller
     }
 
     /**
-     * @Route("/products/byPromotion", name="productsByPromotion")
+     * @Route("/nonExistingProducts/byPromotion", name="nonExistingProductsInPromotion")
      * @param Request $request
      * @return JsonResponse
      */
-    public function getProductsByPromotionAction(Request $request): JsonResponse
+    public function getNonExistingProductsByPromotionAction(Request $request): JsonResponse
     {
         $data = [];
 
         if (true === $request->isXmlHttpRequest()) {
-            $categoryID  = $request->request->get('categoryID');
             $promotionID = $request->request->get('promotionID');
             $promotion   = $this->getDoctrine()->getRepository(Promotion::class)->getPromotionByID($promotionID);
-            $category    = $this->getDoctrine()->getRepository(Categories::class)->findOneBy(['id' => $categoryID]);
-            $data []     = $this->promotionService->getProductsByPromotionAndCategory($promotion, $category);
+            $data[]      = $this->promotionService->getNonExistingProductsInPromotion($promotion);
         }
-
+        $this->get('logger')->error('hahaha', ['haha' => $data]);
         return new JsonResponse($data);
     }
 }

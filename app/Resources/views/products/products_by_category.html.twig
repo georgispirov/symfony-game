@@ -1,19 +1,43 @@
 {% include 'base.html.twig' %}
 
-{{ grid(grid) }}
+<head>
+    <link rel="stylesheet" href="{{ asset('css/grid-ordered-products.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/products-promotion.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/items.css') }}">
+</head>
+
+{% if app.session.flashbag.has('no-products-in-active-promotion') %}
+    <div class="col-xs-4 alert alert-info no-products-in-active-promotion">
+        {% for flashMessage in app.session.flashbag.get('no-products-in-active-promotion') %}
+            {{ flashMessage }}
+        {% endfor %}
+    </div>
+{% endif %}
+
+<div class="col-lg-7 products-by-promotion-grid-table">
+    <h2>Promotion with discount: %{{ promotion.discount }}</h2>
+    <p>Promotion interval: <b>{{ promotion.startDate|date("m-d-Y h:i:sA") }}</b> -- <b>{{ promotion.endDate|date("m-d-Y h:i:sA") }}</b></p>
+    {% if grid is not null %}
+        {{ grid(grid) }}
+    {% endif %}
+</div>
 
 <script>
     $(document).ready(function() {
-        var imageColumn = $('.grid-column-image');
-        var imageFile = imageColumn.text();
+        var workArray = [];
+        $('.grid-column-image').each(function (key, value) {
+           workArray.push(value.innerHTML);
+        });
         $.ajax({
             url: "/app_dev.php/preview/image",
             type: "POST",
             dataType: "json",
-            data: {'filename': imageFile},
+            data: { "filenameArray" : workArray },
             success: function (data) {
-                imageColumn.text('');
-                $('.grid-column-image').append('<img src="' + data + '" width="150px" height="100px" />');
+                $('.grid-column-image').each(function (key, value) {
+                    $(this).text("");
+                    $(this).append('<img src="' + data[key] + '" width="150px" height="100px" />');
+                });
             }
         });
     });

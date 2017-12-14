@@ -10,6 +10,8 @@ use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\FormEvent;
+use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class ProductsOnExistingPromotionType extends AbstractType
@@ -17,24 +19,17 @@ class ProductsOnExistingPromotionType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder->add('discount', EntityType::class, [
-            'label'         => 'Discounts',
+            'label'         => 'Discount',
             'class'         =>  Promotion::class,
             'query_builder' =>  function (EntityRepository $er)  {
                 return $er->createQueryBuilder('prom')
                           ->orderBy('prom.startDate', 'ASC');
             }
-        ])->add('category', EntityType::class, [
-            'class'         =>  Categories::class,
-            'label'         => 'Categories',
-            'query_builder' =>  function (EntityRepository $er) {
-                return $er->createQueryBuilder('c')
-                          ->orderBy('c.name', 'ASC');
-            }
         ])->add('product', EntityType::class, [
             'label'         =>  'Products',
-            'disabled'      =>   true,
             'multiple'      =>   true,
             'class'         =>   Product::class,
+            'disabled'      =>   true,
             'query_builder' =>   function (EntityRepository $er) {
                 return $er->createQueryBuilder('prod')
                           ->orderBy('prod.title', 'ASC');
@@ -44,8 +39,6 @@ class ProductsOnExistingPromotionType extends AbstractType
                         'class' => 'btn btn-primary'
                       ]
         ]);
-
-
     }
 
     public function getName()

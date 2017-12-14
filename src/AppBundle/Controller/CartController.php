@@ -6,17 +6,13 @@ use AppBundle\Entity\OrderedProducts;
 use AppBundle\Entity\Product;
 use AppBundle\Grid\CartGrid;
 use AppBundle\Services\CartService;
-use AppBundle\Services\OrderedProductsService;
 use AppBundle\Services\ProductService;
-use APY\DataGridBundle\Grid\Column\DateTimeColumn;
 use APY\DataGridBundle\Grid\Source\Vector;
-use Doctrine\DBAL\Schema\Column;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\Validator\Constraints\Date;
 
 class CartController extends Controller
 {
