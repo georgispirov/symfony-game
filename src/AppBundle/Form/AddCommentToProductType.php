@@ -5,6 +5,7 @@ namespace AppBundle\Form;
 use AppBundle\Entity\Comments;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
+use Symfony\Component\Form\Extension\Core\Type\RangeType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -16,8 +17,19 @@ class AddCommentToProductType extends AbstractType
     {
         $builder->add('comment', TextareaType::class, [
             'label' => 'Review'
-        ])->add('vote', IntegerType::class, [
-            'label' => 'Rating'
+        ])->add('vote', RangeType::class, [
+            'label' => 'Rating',
+            'attr'  => [
+                'min' => 1,
+                'max' => 5,
+                "data-provide" => "slider",
+                "data-slider-ticks" => "[1,2,3,4,5]",
+                "data-slider-min" => "1",
+                "data-slider-max" => "5",
+                "data-slider-step" => "1",
+                "data-slider-value" => "1",
+                "style" => "width:100%;"
+            ],
         ])->add('Comment', SubmitType::class, ['attr' => ['class' => 'btn btn-primary']]);
     }
 

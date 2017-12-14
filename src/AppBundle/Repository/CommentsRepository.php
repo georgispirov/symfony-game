@@ -34,6 +34,8 @@ class CommentsRepository extends EntityRepository implements ICommentsRepository
                     ->getRepository(Comments::class)
                     ->findBy([
                         'product' => $product
+                    ], [
+                        'votedDate' => 'DESC'
                     ]);
     }
 

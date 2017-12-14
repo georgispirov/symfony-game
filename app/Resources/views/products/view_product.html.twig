@@ -1,5 +1,12 @@
 {% include 'base.html.twig' %}
 
+<head>
+    <link rel="stylesheet" type="text/css" href="//netdna.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css">
+    <link rel="stylesheet" type="text/css" href="{{ asset('css/comments.css') }}">
+    <script src="{{ asset('js/bootstrap-slider/bootstrap-slider.js') }}"></script>
+    <link rel="stylesheet" href="{{ asset('js/bootstrap-slider/css/bootstrap-slider.css') }}">
+</head>
+
 <div class="col-lg-6 add-product">
     <h2 class="add-product-header">Product: {{ product.title }}</h2> <br/>
 
@@ -42,11 +49,38 @@
     </div>
 </div>
 
-<div class="col-lg-8 product-comments">
+<div class="col-lg-6 product-comments">
     <h2>Product Comments</h2>
     {% if existingComments|length > 0 %}
         {% for key, comment in existingComments %}
-            {{ comment.vote }}
+            <div class="container">
+                <div class="row">
+                    <div class="col-sm-8">
+                        <div class="panel panel-white post panel-shadow">
+                            <div class="post-heading">
+                                <div class="pull-left image">
+                                    {#<img src="http://bootdey.com/img/Content/user_1.jpg" class="img-circle avatar" alt="user profile image">#}
+                                </div>
+                                <div class="pull-left meta">
+                                    <div class="title h5">
+                                        <a href="#"><b>{{ comment.user.username }}</b></a>
+                                        made a post.
+                                    </div>
+                                    <h6 class="text-muted time">{{ comment.votedDate|date("m/d/y") }}</h6>
+                                </div>
+                            </div>
+                            <div class="post-description">
+                                <b>Comment: </b><p>{{ comment.comment }}</p>
+                                <div class="stats">
+                                    <b>Vote: </b><span class="vote-value-comment-product">{{ comment.vote }}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         {% endfor %}
+    {% else %}
+        <h2>There are no comments for this Product.</h2>
     {% endif %}
 </div>
