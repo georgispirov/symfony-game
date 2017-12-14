@@ -122,11 +122,14 @@ class ProductRepository extends EntityRepository implements IProductRepository
      */
     public function getNonExistingProductsInPromotion(Promotion $promotion): array
     {
+        $qb = $this->createQueryBuilder('product.promotion');
+
         $query = $this->getEntityManager()
                       ->getRepository(Product::class)
                       ->createQueryBuilder('product')
-                      ->join('product.promotion', 'promotion', Join::WITH)
+                      ->innerJoin('product.promotion', 'promotion', Join::WITH)
                       ->where('promotion <> :promotion')
+                      ->orWhere('promotion.id is null')
                       ->setParameters([
                           ':promotion' => $promotion,
                   ]);
