@@ -2,6 +2,9 @@
 
 namespace AppBundle\Repository;
 
+use AppBundle\Entity\Comments;
+use AppBundle\Entity\Product;
+use AppBundle\Entity\User;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\QueryBuilder;
 
@@ -22,15 +25,45 @@ class CommentsRepository extends EntityRepository implements ICommentsRepository
     }
 
     /**
-     * @return QueryBuilder
+     * @param Product $product
+     * @return array
      */
-    public function getCommentOnCertainProduct(): QueryBuilder
+    public function getCommentsOnCertainProduct(Product $product): array
     {
-        // TODO: Implement getCommentOnCertainProduct() method.
+        return $this->getEntityManager()
+                    ->getRepository(Comments::class)
+                    ->findBy([
+                        'product' => $product
+                    ]);
     }
 
     public function invokeFindByBuilder(): QueryBuilder
     {
         return $this->createQueryBuilder($this->getClassMetadata()->getTableName());
+    }
+
+    /**
+     * @param Comments $comments
+     * @param Product $product
+     * @param User $user
+     * @return bool
+     */
+    public function addCommentOnProduct(Comments $comments,
+                                        Product $product,
+                                        User $user): bool
+    {
+        $em = $this->getEntityManager();
+
+        $comments->setUser($user);
+        $comments->setProduct($product);
+        $comments->setVotedDate(new \DateTime('now'));
+        $em->persist($comments);
+
+        if (true === $em->getUnitOfWork()->isScheduledForInsert($comments)) {
+            $em->flush();
+            return true;
+        }
+
+        return false;
     }
 }

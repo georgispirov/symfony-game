@@ -2,15 +2,17 @@
 
 namespace AppBundle\Controller;
 
+use AppBundle\Entity\Comments;
 use AppBundle\Entity\Product;
 use AppBundle\Entity\Promotion;
 use AppBundle\Entity\User;
+use AppBundle\Form\AddCommentToProductType;
 use AppBundle\Form\AddProductType;
 use AppBundle\Form\UpdateProductType;
 use AppBundle\Grid\ViewProductsByCategoryGrid;
+use AppBundle\Services\CommentsService;
 use AppBundle\Services\OrderedProductsService;
 use AppBundle\Services\ProductService;
-use APY\DataGridBundle\Grid\Source\Entity;
 use APY\DataGridBundle\Grid\Source\Vector;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
@@ -20,6 +22,10 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class ProductController extends Controller
 {
+    const SUCCESSFULLY_ADDED_COMMENT     = 'Comment was successfully added to Product.';
+
+    const NON_SUCCESSFULLY_ADDED_COMMENT = 'Failed adding comment on Product.';
+
     /**
      * @var ProductService
      */
@@ -36,18 +42,26 @@ class ProductController extends Controller
     private $session;
 
     /**
+     * @var CommentsService
+     */
+    private $commentsService;
+
+    /**
      * ProductController constructor.
      * @param ProductService $productService
      * @param Session $session
+     * @param CommentsService $commentsService
      * @param OrderedProductsService $orderedProductService
      */
     public function __construct(ProductService $productService,
                                 Session $session,
+                                CommentsService $commentsService,
                                 OrderedProductsService $orderedProductService)
     {
         $this->productService        = $productService;
         $this->orderedProductService = $orderedProductService;
         $this->session               = $session;
+        $this->commentsService       = $commentsService;
     }
 
     /**
@@ -102,13 +116,31 @@ class ProductController extends Controller
      */
     public function previewProduct(Request $request): Response
     {
+        $comments  = new Comments();
         $productID = $request->query->get('viewProductID');
+        $form      = $this->createForm(AddCommentToProductType::class, $comments, ['method' => 'POST']);
+
+        $form->handleRequest($request);
 
         /* @var Product $product */
         $product   = $this->productService->getProductByID($productID);
+        $existingCommentsOnProduct = $this->commentsService->getCommentsOnProduct($product);
+        $user      = $this->get('security.token_storage')->getToken()->getUser();
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            if (true === $this->commentsService->addCommentOnProduct($comments, $product, $user)) {
+                $this->session->getFlashBag()->add('successfully-added-comment-on-product', self::SUCCESSFULLY_ADDED_COMMENT);
+                return $this->redirect($request->headers->get('referer'));
+            }
+
+            $this->session->getFlashBag()->add('not-successfully-added-comment', self::NON_SUCCESSFULLY_ADDED_COMMENT);
+            return $this->redirect($request->headers->get('referer'));
+        }
 
         return $this->render(':products:view_product.html.twig', [
-            'product' => $product
+            'form'             => $form->createView(),
+            'existingComments' => $existingCommentsOnProduct,
+            'product'          => $product
         ]);
     }
 

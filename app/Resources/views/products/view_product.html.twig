@@ -29,3 +29,24 @@
         </div>
     </div>
 </div>
+
+<div class="col-lg-6 add-comment-to-product">
+    <h2 class="add-comment-on-product-header">Add Comment</h2> <br/>
+    {{ form_start(form, {
+            'action': path('viewProduct', { 'viewProductID' : product.id }),
+        })
+    }}
+
+    <div class="update-product-form-widget col-lg-12">
+        {{ form_widget(form) }}
+    </div>
+</div>
+
+<div class="col-lg-8 product-comments">
+    <h2>Product Comments</h2>
+    {% if existingComments|length > 0 %}
+        {% for key, comment in existingComments %}
+            {{ comment.vote }}
+        {% endfor %}
+    {% endif %}
+</div>

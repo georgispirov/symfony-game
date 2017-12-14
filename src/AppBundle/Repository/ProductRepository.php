@@ -129,7 +129,6 @@ class ProductRepository extends EntityRepository implements IProductRepository
                       ->createQueryBuilder('product')
                       ->innerJoin('product.promotion', 'promotion', Join::WITH)
                       ->where('promotion <> :promotion')
-                      ->orWhere('promotion.id is null')
                       ->setParameters([
                           ':promotion' => $promotion,
                   ]);
