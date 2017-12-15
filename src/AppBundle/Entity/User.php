@@ -15,6 +15,8 @@ use Symfony\Component\Security\Core\User\UserInterface;
  */
 class User extends BaseUser implements UserInterface
 {
+    const ROLE_EDITOR = 'ROLE_EDITOR';
+
     /**
      * @var int
      *

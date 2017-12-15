@@ -11,7 +11,7 @@ class UserManagementGrid implements UserManagementGridInterface
     public function userManagementGrid(Grid $grid): Grid
     {
         $promoteAction = new RowAction('Set Roles', 'setUserRoles');
-        $promoteAction->setRouteParametersMapping(['userID' => $grid->getColumn('id')->getId()]);
+        $promoteAction->setRouteParametersMapping(['id' => $grid->getColumn('id')->getId()]);
 
         $grid->setHiddenColumns(['id', 'password', 'salt', 'confirmationToken', 'passwordRequestedAt', 'usernameCanonical', 'totalCheck', 'emailCanonical']);
         $grid->getColumn('username')->setOperators([Column::OPERATOR_SLIKE])->setTitle('Username');

@@ -1,1 +1,16 @@
 {% include 'base.html.twig' %}
+
+{{ user }}
+
+<div class="col-lg-6 user-roles">
+    <h2 class="add-product-header">User Roles</h2> <br/>
+    {{ form_start(form, {
+        'action': path('setUserRoles', { 'id' : user.id}),
+        }
+    )
+    }}
+
+    <div class="user-roles-form-type col-lg-12">
+        {{ form_widget(form) }}
+    </div>
+</div>

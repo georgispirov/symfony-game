@@ -32,4 +32,14 @@ class UserManagementService implements IUserManagementService
         return $this->em->getRepository(User::class)
                         ->getAllUsers();
     }
+
+    /**
+     * @param int $id
+     * @return null|User
+     */
+    public function getUserByID(int $id)
+    {
+        return $this->em->getRepository(User::class)
+                        ->getUserByID($id);
+    }
 }

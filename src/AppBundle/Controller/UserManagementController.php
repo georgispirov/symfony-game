@@ -3,10 +3,12 @@
 namespace AppBundle\Controller;
 
 use AppBundle\Entity\User;
+use AppBundle\Form\UserManagementType;
 use AppBundle\Grid\UserManagementGrid;
 use AppBundle\Services\UserManagementService;
 use APY\DataGridBundle\Grid\Source\Entity;
 use APY\DataGridBundle\Grid\Source\Vector;
+use ReflectionClass;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
@@ -56,6 +58,13 @@ class UserManagementController extends Controller
      */
     public function setUserRolesAction(Request $request): Response
     {
-        return $this->render(':user_management:set_user_roles.html.twig');
+        $userID = $request->query->get('id');
+        $user   = $this->userManagementService->getUserByID($userID);
+        $form   = $this->createForm(UserManagementType::class, $user, ['method' => 'POST', 'user' => $user]);
+
+        return $this->render(':user_management:set_user_roles.html.twig', [
+            'user' => $user,
+            'form' => $form->createView()
+        ]);
     }
 }

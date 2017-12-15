@@ -25,4 +25,20 @@ class UserRepository extends EntityRepository implements IUserRepository
                     ->getQuery()
                     ->getArrayResult();
     }
+
+    /**
+     * @param int $id
+     * @return null|User
+     */
+    public function getUserByID(int $id)
+    {
+        return $this->getEntityManager()
+                    ->getRepository(User::class)
+                    ->createQueryBuilder('u')
+                    ->where('u.id = :id')
+                    ->setParameters([
+                        ':id' => $id
+                    ])->getQuery()
+                      ->getOneOrNullResult();
+    }
 }
