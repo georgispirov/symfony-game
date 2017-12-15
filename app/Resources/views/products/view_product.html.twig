@@ -7,6 +7,22 @@
     <link rel="stylesheet" href="{{ asset('js/bootstrap-slider/css/bootstrap-slider.css') }}">
 </head>
 
+{% if app.session.flashbag.has('successfully-added-comment-on-product') %}
+    <div class="col-xs-4 alert alert-info successfully-added-comment-on-product">
+        {% for flashMessage in app.session.flashbag.get('successfully-added-comment-on-product') %}
+            {{ flashMessage }}
+        {% endfor %}
+    </div>
+{% endif %}
+
+{% if app.session.flashbag.has('not-successfully-added-comment') %}
+    <div class="col-xs-4 alert alert-info not-successfully-added-comment">
+        {% for flashMessage in app.session.flashbag.get('not-successfully-added-comment') %}
+            {{ flashMessage }}
+        {% endfor %}
+    </div>
+{% endif %}
+
 <div class="col-lg-6 add-product">
     <h2 class="add-product-header">Product: {{ product.title }}</h2> <br/>
 

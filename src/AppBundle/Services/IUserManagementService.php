@@ -1,8 +1,8 @@
 <?php
 
-namespace AppBundle\Repository;
+namespace AppBundle\Services;
 
-interface IUserRepository
+interface IUserManagementService
 {
     /**
      * @return array

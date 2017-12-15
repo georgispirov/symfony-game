@@ -81,7 +81,7 @@ class MenuBuilder implements ContainerAwareInterface
                      ->setExtra('translation_domain', false);
             }
 
-            $menu->addChild('User Management')
+            $menu->addChild('User Management', ['route' => 'getAllUsers'])
                  ->setAttribute('class', self::ITEM_CLASS)
                  ->setExtra('translation_domain', false);
         }

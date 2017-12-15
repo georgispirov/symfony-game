@@ -2,8 +2,8 @@
 
 namespace AppBundle\Repository;
 
+use AppBundle\Entity\User;
 use Doctrine\ORM\EntityRepository;
-use Doctrine\ORM\QueryBuilder;
 
 /**
  * UserRepository
@@ -13,8 +13,16 @@ use Doctrine\ORM\QueryBuilder;
  */
 class UserRepository extends EntityRepository implements IUserRepository
 {
-    public function invokeFindByBuilder(): QueryBuilder
+    /**
+     * @return array
+     */
+    public function getAllUsers(): array
     {
-        return $this->createQueryBuilder($this->getClassMetadata()->getTableName());
+        return $this->getEntityManager()
+                    ->getRepository(User::class)
+                    ->createQueryBuilder('u')
+                    ->orderBy('u.username', 'ASC')
+                    ->getQuery()
+                    ->getArrayResult();
     }
 }
