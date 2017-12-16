@@ -4,38 +4,26 @@ namespace AppBundle\Form;
 
 use AppBundle\Entity\User;
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\Exception\LogicException;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-class UserManagementType extends AbstractType
+class DemoteUserRolesType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         /* @var User $user */
         $user = $options['user'];
 
-        /* @var array $roles */
-        $roles = $options['roles'];
-
-        $allRoles   = array_keys($roles);
-        $difference = array_diff($allRoles, $user->getRoles());
-
-        $keys   = array_values($difference);
-        $result = array_combine($keys, $difference);
-
-        if ( !$user instanceof User ) {
-            throw new LogicException('Applied user for setting roles must be a valid Entity.');
-        }
+        $currentRoles = array_combine($user->getRoles(), $user->getRoles());
 
         $builder->add('roles', ChoiceType::class, [
-            'label'         => 'Set Roles',
-            'multiple'      =>  true,
-            'choices'       =>  $result,
-            'required'      =>  true
-        ])->add('Set Roles', SubmitType::class, [
+            'label'    => 'Demote Roles',
+            'multiple' => true,
+            'choices'  => $currentRoles,
+            'required' => true
+        ])->add('Demote', SubmitType::class, [
             'attr' => [
                 'class' => 'btn btn-primary'
             ]
@@ -44,7 +32,7 @@ class UserManagementType extends AbstractType
 
     public function getName()
     {
-        return 'app_user_management';
+        return 'app_demote_user_roles';
     }
 
     public function getBlockPrefix()
@@ -57,8 +45,7 @@ class UserManagementType extends AbstractType
         $resolver->setDefaults([
             'data_class'         => User::class,
             'translation_domain' => false,
-            'user'               => null,
-            'roles'              => []
+            'user'               => null
         ]);
     }
 }

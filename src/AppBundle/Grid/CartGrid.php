@@ -2,18 +2,24 @@
 
 namespace AppBundle\Grid;
 
+use AppBundle\Entity\Product;
 use APY\DataGridBundle\Grid\Action\RowAction;
 use APY\DataGridBundle\Grid\Column\Column;
+use APY\DataGridBundle\Grid\Exception\InvalidArgumentException;
 use APY\DataGridBundle\Grid\Grid;
 use APY\DataGridBundle\Grid\Exception\InvalidArgumentException as APYInvalidArgumentException;
+use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\Mapping\JoinColumn;
+use Symfony\Component\Security\Core\Encoder\EncoderFactoryInterface;
 
 class CartGrid implements CartGridInterface
 {
     /**
      * @param Grid $grid
+     * @param EntityManagerInterface $em
      * @return Grid
      */
-    public function orderedProductsDataGrid(Grid $grid): Grid
+    public function orderedProductsDataGrid(Grid $grid, EntityManagerInterface $em): Grid
     {
         if ( !$grid instanceof Grid ) {
             throw new APYInvalidArgumentException('Applied argument must be instance of Grid!');
@@ -33,13 +39,26 @@ class CartGrid implements CartGridInterface
 
         $grid->getColumn('orderedDate')
             ->setTitle('Ordered Date')
-            ->setOperators(['slike']);
+            ->setOperators([Column::OPERATOR_SLIKE]);
 
         $grid->getColumn('User')
-            ->setOperators(['slike']);
+            ->setOperators([Column::OPERATOR_SLIKE]);
 
         $grid->getColumn('Confirmed')
             ->setValues([0 => 'No', 1 => 'Yes']);
+
+        $grid->getColumn('Product')->manipulateRenderCell(function ($value, $row, $router) use ($em) {
+            /* @var $value  string */
+            /* @var $row    \APY\DataGridBundle\Grid\Row */
+            /* @var $router \Symfony\Bundle\FrameworkBundle\Routing\Router */
+            $product = $em->getRepository(Product::class)->findOneBy(['title' => $value]);
+
+            if ( !$product instanceof Product ) {
+                throw new InvalidArgumentException('Applied Ordered Product must be valid to be represented Product image.');
+            }
+
+            return $product->getImage();
+        });
 
         $grid->getColumn('Confirmed')->manipulateRenderCell(
             function ($value, $row, $router) {
@@ -66,7 +85,7 @@ class CartGrid implements CartGridInterface
             }
         );
 
-        $grid->getColumn('Price')->setOperators(['eq']);
+        $grid->getColumn('Price')->setOperators([Column::OPERATOR_EQ]);
 
         $grid->addRowAction($productColumn);
         $grid->addRowAction($updateColumn);

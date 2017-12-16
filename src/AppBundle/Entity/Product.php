@@ -99,7 +99,7 @@ class Product
 
     /**
      * @var
-     * @ORM\ManyToMany(targetEntity="AppBundle\Entity\Promotion")
+     * @ORM\ManyToMany(targetEntity="AppBundle\Entity\Promotion", mappedBy="product")
      */
     private $promotion;
 

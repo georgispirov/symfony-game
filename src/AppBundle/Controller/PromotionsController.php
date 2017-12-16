@@ -2,7 +2,6 @@
 
 namespace AppBundle\Controller;
 
-use AppBundle\Entity\Categories;
 use AppBundle\Entity\Promotion;
 use AppBundle\Form\AddPromotionType;
 use AppBundle\Form\ProductsOnExistingPromotionType;
@@ -15,7 +14,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpFoundation\Session\Session;
+use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 
@@ -33,7 +32,7 @@ class PromotionsController extends Controller
     private $promotionService;
 
     /**
-     * @var Session
+     * @var SessionInterface
      */
     private $session;
 
@@ -44,7 +43,7 @@ class PromotionsController extends Controller
 
     public function __construct(PromotionService $promotionService,
                                 ProductService $productService,
-                                Session $session)
+                                SessionInterface $session)
     {
 
         $this->promotionService = $promotionService;

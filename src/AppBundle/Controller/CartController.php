@@ -11,7 +11,7 @@ use APY\DataGridBundle\Grid\Source\Vector;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpFoundation\Session\Session;
+use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\Routing\Annotation\Route;
 
 class CartController extends Controller
@@ -30,19 +30,19 @@ class CartController extends Controller
     private $productService;
 
     /**
-     * @var Session
+     * @var SessionInterface
      */
     private $session;
 
     /**
      * CartController constructor.
      * @param CartService $cartService
-     * @param Session $session
+     * @param SessionInterface $session
      * @param ProductService $productService
      * @internal param $orderedProducts
      */
     public function __construct(CartService $cartService,
-                                Session $session,
+                                SessionInterface $session,
                                 ProductService $productService)
     {
         $this->cartService    = $cartService;
@@ -135,11 +135,10 @@ class CartController extends Controller
             $vector = new Vector($orderedProducts);
             $grid->setSource($vector);
             $cartGrid = new CartGrid();
-            $cartGrid->orderedProductsDataGrid($grid);
+            $cartGrid->orderedProductsDataGrid($grid, $this->get('doctrine.orm.entity_manager'));
             return $grid->getGridResponse('cart/index.html.twig');
         }
-        $this->session->getFlashBag()->add('info',
-                                'No bought items added to your cart. Go and buy something.');
+        $this->addFlash('info', 'No bought items added to your cart. Go and buy something.');
 
         return $this->render('cart/index.html.twig');
     }

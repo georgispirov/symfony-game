@@ -17,7 +17,7 @@ use APY\DataGridBundle\Grid\Source\Vector;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpFoundation\Session\Session;
+use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\Routing\Annotation\Route;
 
 class ProductController extends Controller
@@ -37,7 +37,7 @@ class ProductController extends Controller
     private $orderedProductService;
 
     /**
-     * @var Session
+     * @var SessionInterface
      */
     private $session;
 
@@ -49,12 +49,12 @@ class ProductController extends Controller
     /**
      * ProductController constructor.
      * @param ProductService $productService
-     * @param Session $session
+     * @param SessionInterface $session
      * @param CommentsService $commentsService
      * @param OrderedProductsService $orderedProductService
      */
     public function __construct(ProductService $productService,
-                                Session $session,
+                                SessionInterface $session,
                                 CommentsService $commentsService,
                                 OrderedProductsService $orderedProductService)
     {

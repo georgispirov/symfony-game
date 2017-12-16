@@ -6,7 +6,7 @@ use AppBundle\Entity\OrderedProducts;
 use AppBundle\Entity\Product;
 use AppBundle\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Component\HttpFoundation\Session\Session;
+use Symfony\Component\HttpFoundation\Session\SessionInterface;
 
 class OrderedProductsService implements IOrderedProductsService
 {
@@ -16,19 +16,19 @@ class OrderedProductsService implements IOrderedProductsService
     private $em;
 
     /**
-     * @var Session
+     * @var SessionInterface
      */
     private $session;
 
     /**
      * OrderedProductsService constructor.
      * @param EntityManagerInterface $em
-     * @param Session $session
+     * @param SessionInterface $session
      */
     public function __construct(EntityManagerInterface $em,
-                                Session $session)
+                                SessionInterface $session)
     {
-        $this->em = $em;
+        $this->em      = $em;
         $this->session = $session;
     }
 

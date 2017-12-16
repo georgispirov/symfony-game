@@ -6,7 +6,7 @@ use AppBundle\Entity\OrderedProducts;
 use AppBundle\Entity\Product;
 use AppBundle\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Component\HttpFoundation\Session\Session;
+use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\Process\Exception\InvalidArgumentException;
 
 class CartService implements ICartService
@@ -17,7 +17,7 @@ class CartService implements ICartService
     private $em;
 
     /**
-     * @var Session
+     * @var SessionInterface
      */
     private $session;
 
@@ -29,11 +29,11 @@ class CartService implements ICartService
     /**
      * CartService constructor.
      * @param EntityManagerInterface $em
-     * @param Session $session
+     * @param SessionInterface $session
      * @param OrderedProductsService $orderedProducts
      */
     public function __construct(EntityManagerInterface $em,
-                                Session $session,
+                                SessionInterface $session,
                                 OrderedProductsService $orderedProducts)
     {
         $this->em              = $em;

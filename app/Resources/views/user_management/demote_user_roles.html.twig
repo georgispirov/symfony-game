@@ -1,0 +1,27 @@
+{% include 'base.html.twig' %}
+
+{% if app.session.flashbag.has('successfully-demoted-user-roles') %}
+    <div class="col-xs-4 alert alert-info successfully-demoted-user-roles">
+        {% for flashMessage in app.session.flashbag.get('successfully-demoted-user-roles') %}
+            {{ flashMessage }}
+        {% endfor %}
+    </div>
+{% endif %}
+
+<div class="col-lg-6 demote-user-roles">
+    <h2 class="add-product-header">Demote User Roles for: <b>{{ user.username }}</b></h2> <br/>
+    <div class="col-lg-10">
+        <div class="current-roles">
+            Current Roles: <b>{{ user.getRoles|join(', ') }}</b>
+        </div> <br/>
+    </div>
+    {{ form_start(form, {
+        'action': path('demoteUserRoles', { 'id' : user.id }),
+    }
+    )
+    }}
+
+    <div class="demote-user-roles-form-type col-lg-12">
+        {{ form_widget(form) }}
+    </div>
+</div>

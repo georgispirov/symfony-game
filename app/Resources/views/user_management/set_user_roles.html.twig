@@ -1,9 +1,28 @@
 {% include 'base.html.twig' %}
 
-{{ user }}
+{% if app.session.flashbag.has('successfully-updated-user-roles') %}
+    <div class="col-xs-4 alert alert-info successfully-updated-user-roles">
+        {% for flashMessage in app.session.flashbag.get('successfully-updated-user-roles') %}
+            {{ flashMessage }}
+        {% endfor %}
+    </div>
+{% endif %}
+
+{% if app.session.flashbag.has('non-successful-updated-user-roles') %}
+    <div class="col-xs-4 alert alert-info non-successful-updated-user-roles">
+        {% for flashMessage in app.session.flashbag.get('non-successful-updated-user-roles') %}
+            {{ flashMessage }}
+        {% endfor %}
+    </div>
+{% endif %}
 
 <div class="col-lg-6 user-roles">
-    <h2 class="add-product-header">User Roles</h2> <br/>
+    <h2 class="add-product-header">User Roles for: <b>{{ user.username }}</b></h2> <br/>
+    <div class="col-lg-10">
+        <div class="current-roles">
+            Current Roles: <b>{{ user.getRoles|join(', ') }}</b>
+        </div> <br/>
+    </div>
     {{ form_start(form, {
         'action': path('setUserRoles', { 'id' : user.id}),
         }

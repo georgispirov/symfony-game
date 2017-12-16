@@ -55,13 +55,13 @@ class Promotion
 
     /**
      * @var ArrayCollection $product
-     * @ORM\ManyToMany(targetEntity="AppBundle\Entity\Product", mappedBy="product")
+     * @ORM\ManyToMany(targetEntity="AppBundle\Entity\Product", inversedBy="promotion")
      */
     private $product;
 
     /**
      * @var ArrayCollection $category
-     * @ORM\ManyToMany(targetEntity="AppBundle\Entity\Categories", mappedBy="categories")
+     * @ORM\ManyToMany(targetEntity="AppBundle\Entity\Categories")
      */
     private $category;
 

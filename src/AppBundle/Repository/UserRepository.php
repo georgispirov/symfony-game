@@ -41,4 +41,45 @@ class UserRepository extends EntityRepository implements IUserRepository
                     ])->getQuery()
                       ->getOneOrNullResult();
     }
+
+    /**
+     * @param User $user
+     * @param array $roles
+     * @return bool
+     */
+    public function updateUserRoles(User $user, array $roles): bool
+    {
+        $em = $this->getEntityManager();
+        $user->setRoles($roles);
+        $em->getUnitOfWork()->scheduleForUpdate($user);
+
+        if (true === $em->getUnitOfWork()->isScheduledForUpdate($user)) {
+            $em->flush();
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * @param User $user
+     * @param array $roles
+     * @return bool
+     */
+    public function demoteUserRoles(User $user, array $roles): bool
+    {
+        $em = $this->getEntityManager();
+        foreach ($roles as $role) {
+            $user->removeRole($role);
+        }
+
+        $em->getUnitOfWork()->scheduleForUpdate($user);
+
+        if (true === $em->getUnitOfWork()->isScheduledForUpdate($user)) {
+            $em->flush();
+            return true;
+        }
+
+        return false;
+    }
 }
