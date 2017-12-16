@@ -25,7 +25,7 @@ class OrderedProductsRepository extends EntityRepository implements IOrderedProd
                       ->getRepository(OrderedProducts::class)
                       ->createQueryBuilder('op')
                       ->select('op.id as orderedProductID, pr.title AS Product, op.orderedDate, pr.id AS viewProductID,
-                                      op.quantity AS Quantity, op.confirmed AS Confirmed, u.username AS User, op.orderedProductPrice AS Price')
+                                      op.quantity AS Quantity, u.username AS User, op.orderedProductPrice AS Price')
                       ->join('op.user','u')
                       ->join('op.product', 'pr')
                       ->where('u = :user')

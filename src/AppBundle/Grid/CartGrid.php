@@ -3,14 +3,13 @@
 namespace AppBundle\Grid;
 
 use AppBundle\Entity\Product;
+use APY\DataGridBundle\Grid\Action\MassAction;
 use APY\DataGridBundle\Grid\Action\RowAction;
 use APY\DataGridBundle\Grid\Column\Column;
 use APY\DataGridBundle\Grid\Exception\InvalidArgumentException;
 use APY\DataGridBundle\Grid\Grid;
 use APY\DataGridBundle\Grid\Exception\InvalidArgumentException as APYInvalidArgumentException;
 use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\ORM\Mapping\JoinColumn;
-use Symfony\Component\Security\Core\Encoder\EncoderFactoryInterface;
 
 class CartGrid implements CartGridInterface
 {
@@ -28,6 +27,8 @@ class CartGrid implements CartGridInterface
         $grid->setHiddenColumns(['orderedProductID', 'viewProductID']);
         $grid->setLimits([5,5,5]);
 
+        $massAction    = new MassAction('Checkout Selected', 'AppBundle:Cart:cartCheckout');
+
         $productColumn = new RowAction('View', 'viewProduct');
         $productColumn->setRouteParametersMapping(['viewProductID' => $grid->getColumn('viewProductID')]);
 
@@ -37,15 +38,8 @@ class CartGrid implements CartGridInterface
         $deleteColumn = new RowAction('Delete', 'removeOrderedProduct');
         $deleteColumn->setRouteParametersMapping(['productID' => $grid->getColumn('orderedProductID')->getId()]);
 
-        $grid->getColumn('orderedDate')
-            ->setTitle('Ordered Date')
-            ->setOperators([Column::OPERATOR_SLIKE]);
-
-        $grid->getColumn('User')
-            ->setOperators([Column::OPERATOR_SLIKE]);
-
-        $grid->getColumn('Confirmed')
-            ->setValues([0 => 'No', 1 => 'Yes']);
+        $grid->getColumn('orderedDate')->setTitle('Ordered Date')->setOperators([Column::OPERATOR_SLIKE]);
+        $grid->getColumn('User')->setTitle('Seller')->setOperators([Column::OPERATOR_SLIKE]);
 
         $grid->getColumn('Product')->manipulateRenderCell(function ($value, $row, $router) use ($em) {
             /* @var $value  string */
@@ -58,13 +52,8 @@ class CartGrid implements CartGridInterface
             }
 
             return $product->getImage();
-        });
-
-        $grid->getColumn('Confirmed')->manipulateRenderCell(
-            function ($value, $row, $router) {
-                return (bool) $value;
-            }
-        );
+        })->setFilterable(false)
+          ->setOperators([]);
 
         $grid->getColumn('Price')
             ->manipulateRenderCell(function ($value, $row, $router) {
@@ -90,6 +79,7 @@ class CartGrid implements CartGridInterface
         $grid->addRowAction($productColumn);
         $grid->addRowAction($updateColumn);
         $grid->addRowAction($deleteColumn);
+        $grid->addMassAction($massAction);
 
         /* @var Column $column */
         foreach ($grid->getColumns() as $column) {

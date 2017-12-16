@@ -129,11 +129,11 @@ class ProductController extends Controller
 
         if ($form->isSubmitted() && $form->isValid()) {
             if (true === $this->commentsService->addCommentOnProduct($comments, $product, $user)) {
-                $this->session->getFlashBag()->add('successfully-added-comment-on-product', self::SUCCESSFULLY_ADDED_COMMENT);
+                $this->addFlash('successfully-added-comment-on-product', self::SUCCESSFULLY_ADDED_COMMENT);
                 return $this->redirect($request->headers->get('referer'));
             }
 
-            $this->session->getFlashBag()->add('not-successfully-added-comment', self::NON_SUCCESSFULLY_ADDED_COMMENT);
+            $this->addFlash('not-successfully-added-comment', self::NON_SUCCESSFULLY_ADDED_COMMENT);
             return $this->redirect($request->headers->get('referer'));
         }
 
@@ -160,11 +160,11 @@ class ProductController extends Controller
         if ($form->isSubmitted() && $form->isValid()) {
 
             if (true === $this->productService->updateProduct($product, $user)) {
-                $this->session->getFlashBag()->add('success-on-updating-product', 'Successfully updated product.');
+                $this->addFlash('success-on-updating-product', 'Successfully updated product.');
                 return $this->redirect($request->headers->get('referer'));
             }
 
-            $this->session->getFlashBag()->add('failure-on-updating-product', 'Unable to update the product');
+            $this->addFlash('failure-on-updating-product', 'Unable to update the product');
             return $this->redirect($request->headers->get('referer'));
         }
 
@@ -197,7 +197,7 @@ class ProductController extends Controller
             return $grid->getGridResponse('products/products_by_category.html.twig', ['promotion' => $promotion]);
         }
 
-        $this->session->getFlashBag()->add('no-products-in-active-promotion', 'There are no products in selected Active Promotion!');
+        $this->addFlash('no-products-in-active-promotion', 'There are no products in selected Active Promotion!');
         return $this->render('products/products_by_category.html.twig', ['promotion' => $promotion]);
     }
 }

@@ -66,7 +66,7 @@ class CartController extends Controller
             $orderedProduct = $this->cartService->getOrderedProductByProduct($product);
 
             if (true === $this->cartService->increaseQuantityOnAlreadyBoughtItem($user, $orderedProduct, $product)) {
-                $this->session->getFlashBag()->add('success', self::SUCCESSFULLY_ITEM_BOUGHT);
+                $this->addFlash('success', self::SUCCESSFULLY_ITEM_BOUGHT);
                 return $this->redirect($request->headers->get('referer'));
             } else {
                 return $this->redirect($request->headers->get('referer'));
@@ -75,11 +75,11 @@ class CartController extends Controller
         }
 
         if (true === $this->cartService->addProduct($user, $product)) {
-            $this->session->getFlashBag()->add('success', self::SUCCESSFULLY_ITEM_BOUGHT);
+            $this->addFlash('success', self::SUCCESSFULLY_ITEM_BOUGHT);
             return $this->redirect($request->headers->get('referer'));
         }
 
-        $this->session->getFlashBag()->add('error', self::NON_SUCCESSFUL_ITEM_BOUGHT);
+        $this->addFlash('error', self::NON_SUCCESSFUL_ITEM_BOUGHT);
         return $this->redirect($request->headers->get('referer'));
     }
 
@@ -98,11 +98,11 @@ class CartController extends Controller
         $isRemoved        = $this->cartService->removeProduct($user, $orderedProduct, $orderedProduct->getProduct());
 
         if (true === $isRemoved) {
-            $this->session->getFlashBag()->add('removedOrder', 'You have successfully removed the requested ordered product.');
+            $this->addFlash('removedOrder', 'You have successfully removed the requested ordered product.');
             return $this->redirect($request->headers->get('referer'));
         }
 
-        $this->session->getFlashBag()->add('nonRemovedOrder', 'Unable to remove the requested ordered product.');
+        $this->addFlash('nonRemovedOrder', 'Unable to remove the requested ordered product.');
         return $this->redirect($request->headers->get('referer'));
     }
 
@@ -128,6 +128,7 @@ class CartController extends Controller
     public function getOrderedProductsByUserAction(Request $request): Response
     {
         $grid    = $this->get('grid');
+        $grid->setId('cartOrderedProducts');
         $user    = $this->get('security.token_storage')->getToken()->getUser();
         $orderedProducts = $this->cartService->getOrderedProductByUser($user);
 
@@ -144,11 +145,26 @@ class CartController extends Controller
     }
 
     /**
+     * @Route("/cart/checkout", name="cartCheckout")
      * @param Request $request
      * @return Response
      */
     public function cartCheckoutAction(Request $request): Response
     {
+        $requestData = $request->request->all();
+        $user = $this->get('security.token_storage')->getToken()->getUser();
+        $this->denyAccessUnlessGranted('ROLE_USER', $user, UserManagementController::NOT_AUTHORIZED);
+        $checkoutOrderedProducts = [];
 
+        if (sizeof($selectedProducts = $requestData['grid_cartOrderedProducts']['__action']) > 0) {
+            foreach (array_keys($selectedProducts) as $productID) {
+                $this->get('logger')->error('hahaha', ['haha' => $productID]);
+                $checkoutOrderedProducts[] = $this->cartService->getOrderedProductByID($productID);
+            }
+        }
+
+        return $this->render('cart/cart_checkout.html.twig', [
+            'checkout_ordered_products' => $checkoutOrderedProducts
+        ]);
     }
 }

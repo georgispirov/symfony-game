@@ -15,7 +15,7 @@
 {% endif %}
 
 <div class="col-lg-7 products-by-promotion-grid-table">
-    <h2>Promotion with discount: %{{ promotion.discount }}</h2>
+    <h2>Promotion with discount: {{ promotion.discount }}% </h2>
     <p>Promotion interval: <b>{{ promotion.startDate|date("m-d-Y h:i:sA") }}</b> -- <b>{{ promotion.endDate|date("m-d-Y h:i:sA") }}</b></p>
     {% if grid is not null %}
         {{ grid(grid) }}

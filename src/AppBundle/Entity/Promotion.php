@@ -55,7 +55,7 @@ class Promotion
 
     /**
      * @var ArrayCollection $product
-     * @ORM\ManyToMany(targetEntity="AppBundle\Entity\Product", inversedBy="promotion")
+     * @ORM\ManyToMany(targetEntity="AppBundle\Entity\Product", mappedBy="promotion")
      */
     private $product;
 
