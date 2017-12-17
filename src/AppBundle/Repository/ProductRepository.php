@@ -206,17 +206,20 @@ class ProductRepository extends EntityRepository implements IProductRepository
      * @param OrderedProducts $orderedProducts
      * @param Product $product
      * @param User $user
+     * @param int $quantity
      * @return bool
      */
     public function decreaseQuantityOnProduct(OrderedProducts $orderedProducts,
                                               Product $product,
-                                              User $user): bool
+                                              User $user,
+                                              int $quantity): bool
     {
         $em = $this->getEntityManager();
 
-        $product->setQuantity($product->getQuantity() - 1);
+        $product->setQuantity($product->getQuantity() - $quantity);
 
-        $orderedProducts->setQuantity($orderedProducts->getQuantity() - 1);
+        $orderedProducts->setQuantity($orderedProducts->getQuantity() - $quantity);
+        $orderedProducts->setOrderedProductPrice($orderedProducts->getOrderedProductPrice() - $product->getPrice());
 
         $user->setMoney($user->getMoney() - $orderedProducts->getOrderedProductPrice());
 

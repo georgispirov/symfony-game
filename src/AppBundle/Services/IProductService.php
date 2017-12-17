@@ -61,18 +61,21 @@ interface IProductService
     /**
      * @param OrderedProducts $orderedProducts
      * @param Product $product
+     * @param int $quantity
      * @return bool
      */
     public function markAsOutOfStock(OrderedProducts $orderedProducts,
-                                     Product $product): bool;
+                                     Product $product, int $quantity): bool;
 
     /**
      * @param OrderedProducts $orderedProducts
      * @param Product $product
      * @param User $user
+     * @param int $quantity
      * @return bool
      */
     public function decreaseQuantityOnProduct(OrderedProducts $orderedProducts,
                                               Product $product,
-                                              User $user): bool;
+                                              User $user,
+                                              int $quantity): bool;
 }

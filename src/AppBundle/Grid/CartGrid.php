@@ -70,7 +70,7 @@ class CartGrid implements CartGridInterface
 
         $grid->getColumn('Quantity')->manipulateRenderCell(
             function ($value, $row, $router) {
-                return intval($value);
+                return 'All Ordered: ' . intval($value);
             }
         );
 

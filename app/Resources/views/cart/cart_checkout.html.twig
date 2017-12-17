@@ -6,14 +6,25 @@
 
 <div class="col-xs-8 preview-ready-for-checkout-products">
     <h2>Selected for checkout products</h2>
-    {% for product in orderedProduct %}
+    {% for orderedProduct in orderedProducts %}
         <div class="col-xs-3">
-            <label for="product-title-ordered"><b>Product Title:</b></label>
-            <div class="product-title-ordered">
-                {{ product.title }}
-            </div>
+
+            <label for="product-title-ordered-{{ orderedProduct.id }}"><b>Product Title:</b></label>
+            <span class="product-title-ordered-{{ orderedProduct.id }}">
+                {{ orderedProduct.product.title }}
+            </span>
+
+            <label for="ordered-product-checkout-quantity">Selected Quantity: </label>
+            <span class="ordered-product-checkout-quantity-{{ orderedProduct.id }}">
+                {{ orderedProduct.quantity }}
+            </span>
+
             <div class="product-image-ordered">
-                <img src="/uploads/images/products/{{ product.image }}" width="100px" height="80px"> <br/>
+                <img src="/uploads/images/products/{{ orderedProduct.product.image }}" width="100px" height="80px"> <br/>
+            </div>
+
+            <div class="range-type-for-order-{{ orderedProduct.id }}">
+                <input type="range" min="1" max="{{ orderedProduct.quantity }}" class="slider" id="range-checkout-item-{{ orderedProduct.id }}">
             </div>
         </div>
     {% endfor %}
@@ -31,17 +42,36 @@
 </div>
 
 <script type="text/javascript">
-    $('.button-checkout-prepare').click(function () {
-        var workArray = [];
-        $('.product-title-ordered').each(function (key, value) {
-            workArray.push($.trim(value.innerHTML));
+    var orderIDs  = [];
+    var workArray = [];
+    $(document).ready(function () {
+        $("span[class*='ordered-product-checkout-quantity']").each(function (i, obj) {
+            var orderID = $(this).attr('class');
+            var splittedIDs = orderID.split("-");
+            orderIDs.push(splittedIDs[splittedIDs.length - 1]);
         });
+
+        $(orderIDs).each(function (i, obj) {
+            $('#range-checkout-item-' + obj).change(function () {
+                $('.ordered-product-checkout-quantity-' + obj).text($(this).val());
+            });
+        });
+    });
+
+    $('.button-checkout-prepare').click(function () {
+        $(orderIDs).each(function (i, obj) {
+            var trimmedProductTitle = $.trim($('.product-title-ordered-' + obj).text());
+            var selectedProductQuantity = $('#range-checkout-item-' + obj).val();
+            workArray.push({"title" : trimmedProductTitle, "quantity" : selectedProductQuantity});
+        });
+
         $.ajax({
-            'url': "/app_dev.php/apply/checkout",
-            'type': "POST",
+            'url'     : "/app_dev.php/apply/checkout",
+            'type'    : "POST",
             'dataType': "json",
-            'data': { 'orderedProducts': workArray },
-            'success': function (data) {
+            'data'    : { 'orderedProducts': workArray },
+            'complete': workArray = [],
+            'success' : function (data) {
                 if (data) {
                     window.location = '/app_dev.php/cart/orderedProducts';
                 }

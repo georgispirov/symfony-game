@@ -79,9 +79,11 @@ interface IProductRepository
      * @param OrderedProducts $orderedProducts
      * @param Product $product
      * @param User $user
+     * @param int $quantity
      * @return bool
      */
     public function decreaseQuantityOnProduct(OrderedProducts $orderedProducts,
                                               Product $product,
-                                              User $user): bool;
+                                              User $user,
+                                              int $quantity): bool;
 }

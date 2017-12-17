@@ -116,13 +116,15 @@ class ProductService implements IProductService
     /**
      * @param OrderedProducts $orderedProducts
      * @param Product $product
+     * @param int $quantity
      * @return bool
      */
     public function markAsOutOfStock(OrderedProducts $orderedProducts,
-                                     Product $product): bool
+                                     Product $product,
+                                     int $quantity): bool
     {
         if ($product->getQuantity() > 1) {
-            return $this->decreaseQuantityOnProduct($orderedProducts, $product, $orderedProducts->getUser());
+            return $this->decreaseQuantityOnProduct($orderedProducts, $product, $orderedProducts->getUser(), $quantity);
         }
 
         return $this->em->getRepository(Product::class)
@@ -133,11 +135,13 @@ class ProductService implements IProductService
      * @param OrderedProducts $orderedProducts
      * @param Product $product
      * @param User $user
+     * @param int $quantity
      * @return bool
      */
     public function decreaseQuantityOnProduct(OrderedProducts $orderedProducts,
                                               Product $product,
-                                              User $user): bool
+                                              User $user,
+                                              int $quantity): bool
     {
         if ($orderedProducts->getQuantity() < 2) {
             $this->em->getRepository(OrderedProducts::class)
@@ -145,6 +149,6 @@ class ProductService implements IProductService
         }
 
         return $this->em->getRepository(Product::class)
-                        ->decreaseQuantityOnProduct($orderedProducts, $product, $orderedProducts->getUser());
+                        ->decreaseQuantityOnProduct($orderedProducts, $product, $orderedProducts->getUser(), $quantity);
     }
 }

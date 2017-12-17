@@ -198,8 +198,8 @@ class CartController extends Controller
         }
 
         return $this->render('cart/cart_checkout.html.twig', [
-            'orderedProduct'      => $referencedProducts,
-            'orderedProductsCost' => $orderedProductsPrice
+            'orderedProducts'      => $checkoutOrderedProducts,
+            'orderedProductsCost'  => $orderedProductsPrice
         ]);
     }
 
@@ -215,11 +215,11 @@ class CartController extends Controller
         $orderedProducts = $request->request->get('orderedProducts');
         $isSuccessfully  = true;
 
-        foreach ($orderedProducts as $orderedProduct) {
-            $product          = $this->productService->getProductByTitle($orderedProduct);
+        foreach ($orderedProducts as $orderRequest) {
+            $product          = $this->productService->getProductByTitle($orderRequest['title']);
             $dbOrderedProduct = $this->orderedProductsService->getOrderedProductByProduct($product);
 
-            if (false === $this->productService->markAsOutOfStock($dbOrderedProduct, $product)) {
+            if (false === $this->productService->markAsOutOfStock($dbOrderedProduct, $product, intval($orderRequest['quantity']))) {
                 $isSuccessfully = false;
             }
         }
