@@ -4,6 +4,7 @@ namespace AppBundle\Form;
 
 use AppBundle\Entity\User;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Component\Form\Extension\Core\Type\PasswordType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
@@ -14,12 +15,17 @@ class OrderedProductsCheckoutType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
+        $orderedProducts = $options['orderedProducts'];
+        dump($orderedProducts);
         $builder->add('email', EmailType::class, [
             'label' => 'Verify Email',
         ])->add('password', PasswordType::class, [
             'label' => 'Verify Password'
         ])->add('Checkout', SubmitType::class, [
             'attr' => ['class' => 'btn btn-success']
+        ])->add('products', ChoiceType::class, [
+            'label' => 'Products',
+            'choices' => $orderedProducts,
         ]);
     }
 
@@ -37,7 +43,8 @@ class OrderedProductsCheckoutType extends AbstractType
     {
         $resolver->setDefaults([
             'data_class'         => User::class,
-            'translation_domain' => false
+            'translation_domain' => false,
+            'orderedProducts'    => []
         ]);
     }
 }

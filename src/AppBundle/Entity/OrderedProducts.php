@@ -82,10 +82,10 @@ class OrderedProducts
     }
 
     /**
-     * @param UserInterface $user
+     * @param null|User $user
      * @return $this
      */
-    public function setUser(UserInterface $user)
+    public function setUser($user)
     {
         $this->user = $user;
         return $this;

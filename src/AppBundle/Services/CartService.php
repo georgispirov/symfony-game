@@ -221,7 +221,7 @@ class CartService implements ICartService
             throw new InvalidArgumentException('Product must be a valid Entity.');
         }
 
-        $sumFromProductAndAllOrderedProducts = $product->getPrice() + $this->orderedProducts->getCheckoutFromAllProducts();
+        $sumFromProductAndAllOrderedProducts = $product->getPrice() + $this->orderedProducts->getCheckoutFromAllProducts($user);
 
         if ($user->getMoney() < $product->getPrice() || $user->getMoney() < $sumFromProductAndAllOrderedProducts) {
             $this->session->getFlashBag()->add('not-enough-money', 'You don\'t have enough money to buy this item.');
@@ -237,7 +237,7 @@ class CartService implements ICartService
      */
     public function getDifferenceMoneyAndOrderedProductsPrice(User $user): float
     {
-        return $user->getMoney() - $this->orderedProducts->getCheckoutFromAllProducts();
+        return $user->getMoney() - $this->orderedProducts->getCheckoutFromAllProducts($user);
     }
 
     /**

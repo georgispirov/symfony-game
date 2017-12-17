@@ -13,6 +13,22 @@
     </div>
 {% endif %}
 
+{% if app.session.flashbag.has('successfully-purchased-item') %}
+    <div class="col-xs-4 alert alert-info successfully-purchased-item">
+        {% for flashMessage in app.session.flashbag.get('successfully-purchased-item') %}
+            {{ flashMessage }}
+        {% endfor %}
+    </div>
+{% endif %}
+
+{% if app.session.flashbag.has('non-successfully-purchased-item') %}
+    <div class="col-xs-4 alert alert-info non-successfully-purchased-item">
+        {% for flashMessage in app.session.flashbag.get('non-successfully-purchased-item') %}
+            {{ flashMessage }}
+        {% endfor %}
+    </div>
+{% endif %}
+
 {% if app.session.flashbag.has('removedOrder') %}
     <div class="col-xs-4 alert alert-info success-message-removed-ordered-item">
         {% for flashMessage in app.session.flashbag.get('removedOrder') %}

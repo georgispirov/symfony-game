@@ -34,12 +34,13 @@ class OrderedProductsService implements IOrderedProductsService
 
 
     /**
+     * @param User $user
      * @return float
      */
-    public function getCheckoutFromAllProducts(): float
+    public function getCheckoutFromAllProducts(User $user): float
     {
         return $this->em->getRepository(OrderedProducts::class)
-                        ->getCheckoutFromAllProducts();
+                        ->getCheckoutFromAllProducts($user);
     }
 
     /**

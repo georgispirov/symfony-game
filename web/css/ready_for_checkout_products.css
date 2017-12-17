@@ -1,3 +1,13 @@
 .preview-ready-for-checkout-products {
     margin-top: 65px;
 }
+
+.button-checkout-prepare {
+    margin-top: 30px;
+    margin-left: -90px;
+}
+
+.total-check-before-checkout {
+   margin-top: 85px;
+   margin-left: 50px;
+}

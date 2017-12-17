@@ -8,11 +8,13 @@ use AppBundle\Form\OrderedProductsCheckoutType;
 use AppBundle\Grid\CartGrid;
 use AppBundle\Grid\CheckoutGrid;
 use AppBundle\Services\CartService;
+use AppBundle\Services\OrderedProductsService;
 use AppBundle\Services\ProductService;
 use AppBundle\Services\UserManagementService;
 use APY\DataGridBundle\Grid\Source\Vector;
-use JMS\Serializer\SerializerBuilder;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
@@ -44,21 +46,29 @@ class CartController extends Controller
     private $userManagementService;
 
     /**
+     * @var OrderedProductsService
+     */
+    private $orderedProductsService;
+
+    /**
      * CartController constructor.
      * @param CartService $cartService
      * @param SessionInterface $session
      * @param UserManagementService $userManagementService
+     * @param OrderedProductsService $orderedProductsService
      * @param ProductService $productService
      */
     public function __construct(CartService $cartService,
                                 SessionInterface $session,
                                 UserManagementService $userManagementService,
+                                OrderedProductsService $orderedProductsService,
                                 ProductService $productService)
     {
-        $this->cartService           = $cartService;
-        $this->session               = $session;
-        $this->productService        = $productService;
-        $this->userManagementService = $userManagementService;
+        $this->cartService            = $cartService;
+        $this->session                = $session;
+        $this->productService         = $productService;
+        $this->userManagementService  = $userManagementService;
+        $this->orderedProductsService = $orderedProductsService;
     }
 
     /**
@@ -166,8 +176,7 @@ class CartController extends Controller
         $user        = $this->get('security.token_storage')->getToken()->getUser();
         $this->denyAccessUnlessGranted('ROLE_USER', $user, UserManagementController::NOT_AUTHORIZED);
         $checkoutOrderedProducts = $referencedProducts = [];
-        $grid        = $this->get('grid');
-        $serializer  = SerializerBuilder::create()->build();
+        $orderedProductsPrice = 0;
 
         if ( !$this->cartService->hasOrderedProductsRequestedItems($requestData) ) {
             return $this->redirect($request->headers->get('referer'));
@@ -184,38 +193,43 @@ class CartController extends Controller
         }
 
         foreach ($checkoutOrderedProducts as $orderedProduct) { /* @var OrderedProducts $orderedProduct */
-            $referencedProducts[] = $serializer->toArray($orderedProduct->getProduct());
+            $orderedProductsPrice += $orderedProduct->getOrderedProductPrice();
+            $referencedProducts[]  = $this->productService->getProductByID($orderedProduct->getProduct()->getId());
         }
 
-        $vectorCheckoutGrid = new Vector($referencedProducts);
-        $grid->setSource($vectorCheckoutGrid);
-        $checkoutGrid = new CheckoutGrid();
-        $checkoutGrid->configureCheckoutGrid($grid);
-        return $grid->getGridResponse('cart/cart_checkout.html.twig');
+        return $this->render('cart/cart_checkout.html.twig', [
+            'orderedProduct'      => $referencedProducts,
+            'orderedProductsCost' => $orderedProductsPrice
+        ]);
     }
 
     /**
      * @Route("/apply/checkout", name="applyCheckout")
      * @param Request $request
-     * @return Response
+     * @return JsonResponse
      */
-    public function applyCheckoutAction(Request $request): Response
+    public function applyCheckoutAction(Request $request): JsonResponse
     {
         $user = $this->get('security.token_storage')->getToken()->getUser();
         $this->denyAccessUnlessGranted('ROLE_USER', $user, UserManagementController::NOT_AUTHORIZED);
+        $orderedProducts = $request->request->get('orderedProducts');
+        $isSuccessfully  = true;
 
-        $form = $this->createForm(OrderedProductsCheckoutType::class, $user, ['method' => 'POST']);
-        $form->handleRequest($request);
+        foreach ($orderedProducts as $orderedProduct) {
+            $product          = $this->productService->getProductByTitle($orderedProduct);
+            $dbOrderedProduct = $this->orderedProductsService->getOrderedProductByProduct($product);
 
-        if ($form->isSubmitted() && $form->isValid()) {
-            if (true === $this->userManagementService->verifyUserWhenCheckout($user)) {
-                $this->get('logger')->error('hahaha', ['haha' => 111]);
+            if (false === $this->productService->markAsOutOfStock($dbOrderedProduct, $product)) {
+                $isSuccessfully = false;
             }
-            $this->get('logger')->error('hahaha', ['haha' => 22]);
         }
 
-        return $this->render(':cart:apply_cart_checkout.html.twig', [
-            'form' => $form->createView()
-        ]);
+        if (true === $isSuccessfully) {
+            $this->addFlash('successfully-purchased-item', 'You have successfully purchased selected items.');
+            return new JsonResponse(true);
+        }
+
+        $this->addFlash('non-successfully-purchased-item', 'Failed purchasing selected items.');
+        return new JsonResponse(false);
     }
 }

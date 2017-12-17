@@ -49,10 +49,7 @@ class ProductService implements IProductService
     public function getProductsByCategory(string $categoryName): array
     {
         return $this->em->getRepository(Product::class)
-                        ->findBy([
-                                    'category' => $this->categoriesService
-                                                       ->getCategoryByName($categoryName)
-                        ]);
+                        ->getProductsByCategory($categoryName);
     }
 
     /**
@@ -94,5 +91,60 @@ class ProductService implements IProductService
     {
         return $this->em->getRepository(Product::class)
                         ->getProductsByPromotion($promotion);
+    }
+
+    /**
+     * @param int $productID
+     * @return array
+     */
+    public function getProductByIDOnArray(int $productID): array
+    {
+        return $this->em->getRepository(Product::class)
+                        ->getProductByIDOnArray($productID);
+    }
+
+    /**
+     * @param string $title
+     * @return null|Product
+     */
+    public function getProductByTitle(string $title)
+    {
+        return $this->em->getRepository(Product::class)
+                        ->getProductByTitle($title);
+    }
+
+    /**
+     * @param OrderedProducts $orderedProducts
+     * @param Product $product
+     * @return bool
+     */
+    public function markAsOutOfStock(OrderedProducts $orderedProducts,
+                                     Product $product): bool
+    {
+        if ($product->getQuantity() > 1) {
+            return $this->decreaseQuantityOnProduct($orderedProducts, $product, $orderedProducts->getUser());
+        }
+
+        return $this->em->getRepository(Product::class)
+                        ->markAsOutOfStock($orderedProducts, $product, $orderedProducts->getUser());
+    }
+
+    /**
+     * @param OrderedProducts $orderedProducts
+     * @param Product $product
+     * @param User $user
+     * @return bool
+     */
+    public function decreaseQuantityOnProduct(OrderedProducts $orderedProducts,
+                                              Product $product,
+                                              User $user): bool
+    {
+        if ($orderedProducts->getQuantity() < 2) {
+            $this->em->getRepository(OrderedProducts::class)
+                     ->removeOrderedProduct($orderedProducts, $orderedProducts->getUser(), $product);
+        }
+
+        return $this->em->getRepository(Product::class)
+                        ->decreaseQuantityOnProduct($orderedProducts, $product, $orderedProducts->getUser());
     }
 }

@@ -6,7 +6,46 @@
 
 <div class="col-xs-8 preview-ready-for-checkout-products">
     <h2>Selected for checkout products</h2>
-    {% if grid is not null %}
-        {{ grid(grid) }}
-    {% endif %}
+    {% for product in orderedProduct %}
+        <div class="col-xs-3">
+            <label for="product-title-ordered"><b>Product Title:</b></label>
+            <div class="product-title-ordered">
+                {{ product.title }}
+            </div>
+            <div class="product-image-ordered">
+                <img src="/uploads/images/products/{{ product.image }}" width="100px" height="80px"> <br/>
+            </div>
+        </div>
+    {% endfor %}
 </div>
+
+<div class="form-group total-check-before-checkout col-xs-1">
+    <div class="col-lg-2 user-total-check">
+        <b>Cash:</b> ${{ app.user.money }} <br/>
+        <b>Orders:</b> ${{ orderedProductsCost }} <br/>
+    </div>
+</div>
+
+<div class="form-group button-checkout-prepare col-xs-4">
+    <button type="button" class="btn btn-primary">Apply Checkout</button>
+</div>
+
+<script type="text/javascript">
+    $('.button-checkout-prepare').click(function () {
+        var workArray = [];
+        $('.product-title-ordered').each(function (key, value) {
+            workArray.push($.trim(value.innerHTML));
+        });
+        $.ajax({
+            'url': "/app_dev.php/apply/checkout",
+            'type': "POST",
+            'dataType': "json",
+            'data': { 'orderedProducts': workArray },
+            'success': function (data) {
+                if (data) {
+                    window.location = '/app_dev.php/cart/orderedProducts';
+                }
+            }
+        });
+    });
+</script>

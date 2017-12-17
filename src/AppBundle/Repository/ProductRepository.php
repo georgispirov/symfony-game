@@ -3,6 +3,7 @@
 namespace AppBundle\Repository;
 
 use AppBundle\Entity\Categories;
+use AppBundle\Entity\OrderedProducts;
 use AppBundle\Entity\Product;
 use AppBundle\Entity\Promotion;
 use AppBundle\Entity\User;
@@ -35,7 +36,17 @@ class ProductRepository extends EntityRepository implements IProductRepository
                          ->getRepository(Categories::class)
                          ->findByCategoryName($name);
 
-        return $this->findBy(['category' => $category->getId()]);
+        $query = $this->getEntityManager()
+                      ->getRepository(Product::class)
+                      ->createQueryBuilder('product')
+                      ->where('product.category = :category')
+                      ->andWhere('product.quantity > 0')
+                      ->andWhere('product.outOfStock < 1')
+                      ->setParameters([
+                          ':category' => $category
+                      ]);
+
+        return $query->getQuery()->getResult();
     }
 
     /**
@@ -60,7 +71,8 @@ class ProductRepository extends EntityRepository implements IProductRepository
                       ->getRepository(Product::class)
                       ->createQueryBuilder('p')
                       ->select('p')
-                      ->where('p.quantity > 0');
+                      ->where('p.quantity > 0')
+                      ->andWhere('p.outOfStock = 0');
 
         return $query->getQuery()->getResult();
     }
@@ -134,5 +146,81 @@ class ProductRepository extends EntityRepository implements IProductRepository
                   ]);
 
         return $query->getQuery()->getArrayResult();
+    }
+
+    /**
+     * @param int $productID
+     * @return array
+     */
+    public function getProductByIDOnArray(int $productID): array
+    {
+        $query = $this->getEntityManager()
+                      ->getRepository(Product::class)
+                      ->createQueryBuilder('product')
+                      ->where('product.id = :productID')
+                      ->setParameters([
+                          ':productID' => $productID
+                      ]);
+
+        return $query->getQuery()->getArrayResult();
+    }
+
+    /**
+     * @param string $title
+     * @return null|Product
+     */
+    public function getProductByTitle(string $title)
+    {
+        return $this->getEntityManager()
+                    ->getRepository(Product::class)
+                    ->createQueryBuilder('product')
+                    ->where('product.title = :title')
+                    ->setParameters([
+                        ':title' => $title
+                    ])->getQuery()
+                      ->getOneOrNullResult();
+    }
+
+    /**
+     * @param OrderedProducts $orderedProducts
+     * @param Product $product
+     * @param User $user
+     * @return bool
+     */
+    public function markAsOutOfStock(OrderedProducts $orderedProducts,
+                                     Product $product,
+                                     User $user): bool
+    {
+        $em = $this->getEntityManager();
+
+        $product->setOutOfStock(true);
+        $em->remove($orderedProducts);
+
+        $user->setMoney($user->getMoney() - $orderedProducts->getOrderedProductPrice());
+
+        $em->flush();
+        return true;
+    }
+
+    /**
+     * @param OrderedProducts $orderedProducts
+     * @param Product $product
+     * @param User $user
+     * @return bool
+     */
+    public function decreaseQuantityOnProduct(OrderedProducts $orderedProducts,
+                                              Product $product,
+                                              User $user): bool
+    {
+        $em = $this->getEntityManager();
+
+        $product->setQuantity($product->getQuantity() - 1);
+
+        $orderedProducts->setQuantity($orderedProducts->getQuantity() - 1);
+
+        $user->setMoney($user->getMoney() - $orderedProducts->getOrderedProductPrice());
+
+        $em->flush();
+        return true;
     }
 }

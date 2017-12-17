@@ -65,7 +65,8 @@ interface IOrderedProductsRepository
                                      User $user): bool;
 
     /**
+     * @param User $user
      * @return float
      */
-    public function getCheckoutFromAllProducts(): float;
+    public function getCheckoutFromAllProducts(User $user): float;
 }

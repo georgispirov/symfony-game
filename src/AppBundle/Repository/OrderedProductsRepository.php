@@ -30,6 +30,7 @@ class OrderedProductsRepository extends EntityRepository implements IOrderedProd
                       ->join('op.product', 'pr')
                       ->where('u = :user')
                       ->andWhere('op.quantity > 0')
+                      ->andWhere('pr.outOfStock = 0')
                       ->setParameter(':user', $user)
                       ->getQuery();
 
@@ -196,14 +197,20 @@ class OrderedProductsRepository extends EntityRepository implements IOrderedProd
     }
 
     /**
+     * @param User $user
      * @return float
      */
-    public function getCheckoutFromAllProducts(): float
+    public function getCheckoutFromAllProducts(User $user): float
     {
         $query = $this->getEntityManager()
                       ->getRepository(OrderedProducts::class)
                       ->createQueryBuilder('op')
-                      ->select('SUM (op.orderedProductPrice)');
+                      ->select('SUM (op.orderedProductPrice)')
+                      ->where('op.user = :user')
+                      ->andWhere('op.quantity > 0')
+                      ->setParameters([
+                          ':user' => $user
+                      ]);
 
         return $query->getQuery()
                      ->getSingleScalarResult();

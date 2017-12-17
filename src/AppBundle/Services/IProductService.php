@@ -2,6 +2,7 @@
 
 namespace AppBundle\Services;
 
+use AppBundle\Entity\OrderedProducts;
 use AppBundle\Entity\Product;
 use AppBundle\Entity\Promotion;
 use AppBundle\Entity\User;
@@ -44,4 +45,34 @@ interface IProductService
      * @return array
      */
     public function getProductsByPromotion(Promotion $promotion): array;
+
+    /**
+     * @param int $productID
+     * @return array
+     */
+    public function getProductByIDOnArray(int $productID): array;
+
+    /**
+     * @param string $title
+     * @return null|Product
+     */
+    public function getProductByTitle(string $title);
+
+    /**
+     * @param OrderedProducts $orderedProducts
+     * @param Product $product
+     * @return bool
+     */
+    public function markAsOutOfStock(OrderedProducts $orderedProducts,
+                                     Product $product): bool;
+
+    /**
+     * @param OrderedProducts $orderedProducts
+     * @param Product $product
+     * @param User $user
+     * @return bool
+     */
+    public function decreaseQuantityOnProduct(OrderedProducts $orderedProducts,
+                                              Product $product,
+                                              User $user): bool;
 }

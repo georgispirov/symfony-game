@@ -124,9 +124,9 @@ class Product
     }
 
     /**
-     * @param User $user
+     * @param null|User $user
      */
-    public function setUser(User $user)
+    public function setUser($user)
     {
         $this->user = $user;
     }

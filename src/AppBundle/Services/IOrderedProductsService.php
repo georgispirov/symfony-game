@@ -36,9 +36,10 @@ interface IOrderedProductsService
     public function getOrdersByUser(User $user): array;
 
     /**
+     * @param User $user
      * @return float
      */
-    public function getCheckoutFromAllProducts(): float;
+    public function getCheckoutFromAllProducts(User $user): float;
 
     /**
      * @param int $id
