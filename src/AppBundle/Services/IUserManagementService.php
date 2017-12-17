@@ -30,4 +30,10 @@ interface IUserManagementService
      * @return bool
      */
     public function demoteUserRoles(User $user, array $roles): bool;
+
+    /**
+     * @param User $user
+     * @return mixed
+     */
+    public function verifyUserWhenCheckout(User $user);
 }

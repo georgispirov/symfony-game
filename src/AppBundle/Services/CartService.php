@@ -239,4 +239,22 @@ class CartService implements ICartService
     {
         return $user->getMoney() - $this->orderedProducts->getCheckoutFromAllProducts();
     }
+
+    /**
+     * @param array $requestItems
+     * @return bool
+     */
+    public function hasOrderedProductsRequestedItems(array $requestItems): bool
+    {
+        return isset($requestItems['grid_cartOrderedProducts']['__action']);
+    }
+
+    /**
+     * @param array $requestItemBag
+     * @return bool
+     */
+    public function hasItemBagInRequest(array $requestItemBag): bool
+    {
+       return (sizeof($requestItemBag['grid_cartOrderedProducts']['__action']) > 0);
+    }
 }

@@ -4,6 +4,9 @@ namespace AppBundle\Services;
 
 use AppBundle\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\DependencyInjection\Container;
+use Symfony\Component\DependencyInjection\ContainerAwareInterface;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\Process\Exception\InvalidArgumentException;
 
@@ -19,11 +22,18 @@ class UserManagementService implements IUserManagementService
      */
     private $em;
 
+    /**
+     * @var ContainerInterface
+     */
+    private $container;
+
     public function __construct(SessionInterface $session,
+                                ContainerInterface $container,
                                 EntityManagerInterface $em)
     {
-        $this->session = $session;
-        $this->em      = $em;
+        $this->session        = $session;
+        $this->em             = $em;
+        $this->container      = $container;
     }
 
     /**
@@ -73,5 +83,23 @@ class UserManagementService implements IUserManagementService
 
         return $this->em->getRepository(User::class)
                         ->demoteUserRoles($user, $roles);
+    }
+
+    /**
+     * @param User $user
+     * @return mixed
+     */
+    public function verifyUserWhenCheckout(User $user)
+    {
+        $passwordFromSessionUser  = $user->getPlainPassword();
+        $userFromDb     = $this->em->getRepository(User::class)->findOneBy(['id' => $user->getId()]);
+        $encoderService = $this->container->get('security.password_encoder');
+
+        if (true === $encoderService->isPasswordValid($userFromDb, $passwordFromSessionUser)
+            && $userFromDb->getEmail() === $user->getEmail()) {
+                return true;
+        }
+
+        return false;
     }
 }

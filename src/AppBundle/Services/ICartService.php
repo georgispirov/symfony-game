@@ -90,4 +90,16 @@ interface ICartService
      * @return float
      */
     public function getDifferenceMoneyAndOrderedProductsPrice(User $user): float;
+
+    /**
+     * @param array $requestItems
+     * @return bool
+     */
+    public function hasOrderedProductsRequestedItems(array $requestItems): bool;
+
+    /**
+     * @param array $requestItemBag
+     * @return bool
+     */
+    public function hasItemBagInRequest(array $requestItemBag): bool;
 }

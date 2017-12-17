@@ -61,7 +61,7 @@ class Promotion
 
     /**
      * @var ArrayCollection $category
-     * @ORM\ManyToMany(targetEntity="AppBundle\Entity\Categories")
+     * @ORM\ManyToMany(targetEntity="AppBundle\Entity\Categories", mappedBy="promotion")
      */
     private $category;
 

@@ -1,5 +1,12 @@
 {% include 'base.html.twig' %}
 
-{% for orderedProduct in checkout_ordered_products %}
-    {{ orderedProduct.quantity }}
-{% endfor %}
+<head>
+    <link rel="stylesheet" href="{{ asset('css/ready_for_checkout_products.css') }}">
+</head>
+
+<div class="col-xs-8 preview-ready-for-checkout-products">
+    <h2>Selected for checkout products</h2>
+    {% if grid is not null %}
+        {{ grid(grid) }}
+    {% endif %}
+</div>

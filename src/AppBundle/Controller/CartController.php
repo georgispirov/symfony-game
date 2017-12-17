@@ -4,10 +4,14 @@ namespace AppBundle\Controller;
 
 use AppBundle\Entity\OrderedProducts;
 use AppBundle\Entity\Product;
+use AppBundle\Form\OrderedProductsCheckoutType;
 use AppBundle\Grid\CartGrid;
+use AppBundle\Grid\CheckoutGrid;
 use AppBundle\Services\CartService;
 use AppBundle\Services\ProductService;
+use AppBundle\Services\UserManagementService;
 use APY\DataGridBundle\Grid\Source\Vector;
+use JMS\Serializer\SerializerBuilder;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -35,19 +39,26 @@ class CartController extends Controller
     private $session;
 
     /**
+     * @var UserManagementService
+     */
+    private $userManagementService;
+
+    /**
      * CartController constructor.
      * @param CartService $cartService
      * @param SessionInterface $session
+     * @param UserManagementService $userManagementService
      * @param ProductService $productService
-     * @internal param $orderedProducts
      */
     public function __construct(CartService $cartService,
                                 SessionInterface $session,
+                                UserManagementService $userManagementService,
                                 ProductService $productService)
     {
-        $this->cartService    = $cartService;
-        $this->session        = $session;
-        $this->productService = $productService;
+        $this->cartService           = $cartService;
+        $this->session               = $session;
+        $this->productService        = $productService;
+        $this->userManagementService = $userManagementService;
     }
 
     /**
@@ -152,19 +163,59 @@ class CartController extends Controller
     public function cartCheckoutAction(Request $request): Response
     {
         $requestData = $request->request->all();
-        $user = $this->get('security.token_storage')->getToken()->getUser();
+        $user        = $this->get('security.token_storage')->getToken()->getUser();
         $this->denyAccessUnlessGranted('ROLE_USER', $user, UserManagementController::NOT_AUTHORIZED);
-        $checkoutOrderedProducts = [];
+        $checkoutOrderedProducts = $referencedProducts = [];
+        $grid        = $this->get('grid');
+        $serializer  = SerializerBuilder::create()->build();
 
-        if (sizeof($selectedProducts = $requestData['grid_cartOrderedProducts']['__action']) > 0) {
-            foreach (array_keys($selectedProducts) as $productID) {
-                $this->get('logger')->error('hahaha', ['haha' => $productID]);
-                $checkoutOrderedProducts[] = $this->cartService->getOrderedProductByID($productID);
-            }
+        if ( !$this->cartService->hasOrderedProductsRequestedItems($requestData) ) {
+            return $this->redirect($request->headers->get('referer'));
         }
 
-        return $this->render('cart/cart_checkout.html.twig', [
-            'checkout_ordered_products' => $checkoutOrderedProducts
+        if ( !$this->cartService->hasItemBagInRequest($requestData) ) {
+            return $this->redirect($request->headers->get('referer'));
+        }
+
+        $selectedProducts = $requestData['grid_cartOrderedProducts']['__action'];
+
+        foreach (array_keys($selectedProducts) as $productID) {
+            $checkoutOrderedProducts[] = $this->cartService->getOrderedProductByID($productID);
+        }
+
+        foreach ($checkoutOrderedProducts as $orderedProduct) { /* @var OrderedProducts $orderedProduct */
+            $referencedProducts[] = $serializer->toArray($orderedProduct->getProduct());
+        }
+
+        $vectorCheckoutGrid = new Vector($referencedProducts);
+        $grid->setSource($vectorCheckoutGrid);
+        $checkoutGrid = new CheckoutGrid();
+        $checkoutGrid->configureCheckoutGrid($grid);
+        return $grid->getGridResponse('cart/cart_checkout.html.twig');
+    }
+
+    /**
+     * @Route("/apply/checkout", name="applyCheckout")
+     * @param Request $request
+     * @return Response
+     */
+    public function applyCheckoutAction(Request $request): Response
+    {
+        $user = $this->get('security.token_storage')->getToken()->getUser();
+        $this->denyAccessUnlessGranted('ROLE_USER', $user, UserManagementController::NOT_AUTHORIZED);
+
+        $form = $this->createForm(OrderedProductsCheckoutType::class, $user, ['method' => 'POST']);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            if (true === $this->userManagementService->verifyUserWhenCheckout($user)) {
+                $this->get('logger')->error('hahaha', ['haha' => 111]);
+            }
+            $this->get('logger')->error('hahaha', ['haha' => 22]);
+        }
+
+        return $this->render(':cart:apply_cart_checkout.html.twig', [
+            'form' => $form->createView()
         ]);
     }
 }

@@ -31,7 +31,7 @@ class Categories
 
     /**
      * @var
-     * @ORM\ManyToMany(targetEntity="AppBundle\Entity\Promotion")
+     * @ORM\ManyToMany(targetEntity="AppBundle\Entity\Promotion", inversedBy="category")
      */
     private $promotion;
 
