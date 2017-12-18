@@ -2,13 +2,21 @@
 
 namespace AppBundle\Grid;
 
+use APY\DataGridBundle\Grid\Action\RowAction;
 use APY\DataGridBundle\Grid\Column\Column;
 use APY\DataGridBundle\Grid\Grid;
+use Symfony\Component\HttpFoundation\Request;
 
 class ViewProductsByCategoryGrid implements ViewProductsByCategoryGridInterface
 {
-    public function viewProductsByCategory(Grid $grid): Grid
+    public function viewProductsByCategory(Grid $grid, Request $request): Grid
     {
+        $queryString = explode('=', $request->getQueryString());
+        $promotionID = end($queryString);
+
+        $removeProductFromPromotionAction = new RowAction('Remove From Promotion', 'removeProductsFromPromotion');
+        $removeProductFromPromotionAction->setRouteParameters(['promotionID' => $promotionID, 'id']);
+
         $grid->setHiddenColumns(['id', 'createdAt', 'updatedAt']);
         $grid->getColumn('title')->setTitle('Product Title')->setOperators([Column::OPERATOR_SLIKE])->setSize(5);
         $grid->getColumn('description')->setTitle('Description')->setOperators([Column::OPERATOR_SLIKE])->setSize(15);
@@ -28,6 +36,8 @@ class ViewProductsByCategoryGrid implements ViewProductsByCategoryGridInterface
         foreach ($grid->getColumns() as $column) {
             $column->setAlign('center');
         }
+
+        $grid->addRowAction($removeProductFromPromotionAction);
 
         return $grid;
     }

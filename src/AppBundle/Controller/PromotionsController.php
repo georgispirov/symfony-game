@@ -2,7 +2,6 @@
 
 namespace AppBundle\Controller;
 
-use AppBundle\Entity\Product;
 use AppBundle\Entity\Promotion;
 use AppBundle\Form\AddPromotionType;
 use AppBundle\Form\ProductsOnExistingPromotionType;
@@ -12,7 +11,6 @@ use AppBundle\Services\PromotionService;
 use APY\DataGridBundle\Grid\Source\Entity;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
@@ -26,6 +24,10 @@ class PromotionsController extends Controller
     const NON_SUCCESSFUL_ADDED_PRODUCT_PROMOTION = 'Failed while adding promotion to Product';
 
     const NON_EXISTING_PROMOTIONS = 'There are no active/non-active Promotions.';
+
+    const NON_SUCCESSFULLY_REMOVED_PRODUCT_FROM_PROMOTION = 'Failed removing product from selected promotion.';
+
+    const SUCCESSFULLY_REMOVED_PRODUCT_FROM_PROMOTION = 'You have successfully removed requested product from promotion.';
 
     /**
      * @var PromotionService
@@ -141,6 +143,28 @@ class PromotionsController extends Controller
     }
 
     /**
+     * @Route("/remove/productFromPromotion", name="removeProductsFromPromotion")
+     * @param Request $request
+     * @return Response
+     */
+    public function removeProductFromPromotionAction(Request $request): Response
+    {
+        $productID   = $request->query->get('id');
+        $promotionID = $request->query->get('promotionID');
+
+        $promotion   = $this->promotionService->getPromotionByID(intval($promotionID));
+        $product     = $this->productService->getProductByID(intval($productID));
+
+        if (true === $this->productService->removeProductFromPromotion($product, $promotion)) {
+            $this->addFlash('successfully-removed-product-from-promotion', self::SUCCESSFULLY_REMOVED_PRODUCT_FROM_PROMOTION);
+            return $this->render(':promotions:list_promotions.html.twig');
+        }
+
+        $this->addFlash('non-successfully-removed-product-from-promotion', self::NON_SUCCESSFULLY_REMOVED_PRODUCT_FROM_PROMOTION);
+        return $this->render(':promotions:list_promotions.html.twig');
+    }
+
+    /**
      * @Route("/addCategoryToPromotion", name="addCategoryToPromotion")
      * @param Request $request
      * @return Response
@@ -157,29 +181,29 @@ class PromotionsController extends Controller
      */
     public function addProductsToExistingPromotionAction(Request $request): Response
     {
-        $products = [];
-        $promotionID = $request->query->get('id');
-        $promotion   = $this->promotionService->getPromotionByID($promotionID);
-        $formConfigureOptions = ['method' => 'POST', 'promotion' => $promotion];
+        $products       = [];
+        $promotionID    = $request->query->get('id');
+        $promotion      = $this->promotionService->getPromotionByID($promotionID);
+        $activeProducts = $this->productService->getAll();
+        $formConfigureOptions = ['method' => 'POST', 'promotion' => $promotion, 'activeProducts' => $activeProducts];
         $form        = $this->createForm(ProductsOnExistingPromotionType::class, $promotion, $formConfigureOptions);
 
         if ($requestData = $request->request->get($form->getName())) {
-            $products[] = $this->promotionService->collectRequestProducts($requestData);
+            $products = $this->promotionService->collectRequestProducts($requestData);
         }
 
         $form->handleRequest($request);
 
-//        if ($form->isSubmitted() && $form->isValid()) {
+        if ($form->isSubmitted() && $form->isValid()) {
 
-//
-//            if (true === $this->promotionService->applyProductsOnExistingPromotion($promotion, $products)) {
-//                $this->addFlash('added-product-to-existing-promotion', self::SUCCESSFULLY_ADDED_PRODUCT_PROMOTION);
-//                return $this->redirect($request->headers->get('referer'));
-//            }
-//
-//            $this->addFlash('failed-adding-product-to-existing-promotion', self::NON_SUCCESSFUL_ADDED_PRODUCT_PROMOTION);
-//            return $this->redirect($request->headers->get('referer'));
-//        }
+            if (true === $this->promotionService->applyProductsOnExistingPromotion($promotion, $products)) {
+                $this->addFlash('added-product-to-existing-promotion', self::SUCCESSFULLY_ADDED_PRODUCT_PROMOTION);
+                return $this->redirect($request->headers->get('referer'));
+            }
+
+            $this->addFlash('failed-adding-product-to-existing-promotion', self::NON_SUCCESSFUL_ADDED_PRODUCT_PROMOTION);
+            return $this->redirect($request->headers->get('referer'));
+        }
 
         return $this->render('promotions/add_products_on_existing_promotion_html.twig',[
             'form'      => $form->createView(),
@@ -196,22 +220,4 @@ class PromotionsController extends Controller
     {
 
     }
-//
-//    /**
-//     * @Route("/nonExistingProducts/byPromotion", name="nonExistingProductsInPromotion")
-//     * @param Request $request
-//     * @return JsonResponse
-//     */
-//    public function getNonExistingProductsByPromotionAction(Request $request): JsonResponse
-//    {
-//        $data = [];
-//
-//        if (true === $request->isXmlHttpRequest()) {
-//            $promotionID = $request->request->get('promotionID');
-//            $promotion   = $this->getDoctrine()->getRepository(Promotion::class)->getPromotionByID($promotionID);
-//            $data[]      = $this->promotionService->getNonExistingProductsInPromotion($promotion);
-//        }
-//
-//        return new JsonResponse($data);
-//    }
 }

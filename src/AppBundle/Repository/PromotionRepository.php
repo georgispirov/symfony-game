@@ -110,7 +110,8 @@ class PromotionRepository extends EntityRepository implements IPromotionReposito
      * @param Product[] $products
      * @return bool
      */
-    public function applyExistingPromotionOnProducts(Promotion $promotion, array $products): bool
+    public function applyExistingPromotionOnProducts(Promotion $promotion,
+                                                     array $products): bool
     {
         $em = $this->getEntityManager();
         $promotion->setCategory(null);

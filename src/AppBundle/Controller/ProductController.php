@@ -193,7 +193,7 @@ class ProductController extends Controller
             $vector    = new Vector($products);
             $grid->setSource($vector);
             $viewProductsByCategoryGrid = new ViewProductsByCategoryGrid();
-            $viewProductsByCategoryGrid->viewProductsByCategory($grid);
+            $viewProductsByCategoryGrid->viewProductsByCategory($grid, $request);
             return $grid->getGridResponse('products/products_by_category.html.twig', ['promotion' => $promotion]);
         }
 

@@ -20,7 +20,6 @@ class MenuBuilder implements ContainerAwareInterface
         'List Active Promotions'                => ['route' => 'listPromotions'],
         'Add Products To Promotion'             => ['route' => 'addPromotion'],
         'Add Categories To Promotion'           => ['route' => 'homepage'],
-        'Add Products To Existing Promotion'    => ['route' => 'productsOnExistingPromotion'],
         'Add Categories To Existing Promotion'  => ['route' => 'homepage']
     ];
 

@@ -161,4 +161,15 @@ class ProductService implements IProductService
         return $this->em->getRepository(Product::class)
                         ->getProductsByPromotionOnObjects($promotion);
     }
+
+    /**
+     * @param Product $product
+     * @param Promotion $promotion
+     * @return bool
+     */
+    public function removeProductFromPromotion(Product $product, Promotion $promotion): bool
+    {
+        return $this->em->getRepository(Product::class)
+                        ->removeProductFromPromotion($product, $promotion);
+    }
 }

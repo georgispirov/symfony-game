@@ -8,7 +8,6 @@ use AppBundle\Entity\Product;
 use AppBundle\Entity\Promotion;
 use AppBundle\Entity\User;
 use Doctrine\ORM\EntityRepository;
-use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\ORM\QueryBuilder;
 
 /**
@@ -228,17 +227,32 @@ class ProductRepository extends EntityRepository implements IProductRepository
 
     /**
      * @param Promotion $promotion
-     * @return QueryBuilder
+     * @return array
      */
-    public function getNonExistingProductsInPromotion(Promotion $promotion): QueryBuilder
+    public function getNonExistingProductsInPromotion(Promotion $promotion): array
     {
-        return $this->getEntityManager()
+        $query = $this->getEntityManager()
                     ->getRepository(Product::class)
                     ->createQueryBuilder('product')
-                    ->innerJoin('product.promotion', 'promotion', Join::WITH)
+                    ->join('product.promotion', 'promotion')
                     ->where('promotion <> :promotion')
                     ->setParameters([
                         ':promotion' => $promotion,
                     ]);
+
+        return $query->getQuery()->getResult();
+    }
+
+    /**
+     * @param Product $product
+     * @param Promotion $promotion
+     * @return bool
+     */
+    public function removeProductFromPromotion(Product $product, Promotion $promotion): bool
+    {
+        $em = $this->getEntityManager();
+        $product->removePromotionFromProduct($promotion);
+        $em->flush();
+        return true;
     }
 }

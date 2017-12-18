@@ -199,5 +199,7 @@ class Promotion
     {
         return (string) $this->discount;
     }
+
+
 }
 

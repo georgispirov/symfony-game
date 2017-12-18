@@ -50,9 +50,9 @@ interface IProductRepository
 
     /**
      * @param Promotion $promotion
-     * @return QueryBuilder
+     * @return array
      */
-    public function getNonExistingProductsInPromotion(Promotion $promotion): QueryBuilder;
+    public function getNonExistingProductsInPromotion(Promotion $promotion): array;
 
     /**
      * @param int $productID
@@ -93,4 +93,11 @@ interface IProductRepository
      * @return array
      */
     public function getProductsByPromotionOnObjects(Promotion $promotion): array;
+
+    /**
+     * @param Product $product
+     * @param Promotion $promotion
+     * @return bool
+     */
+    public function removeProductFromPromotion(Product $product, Promotion $promotion): bool;
 }
