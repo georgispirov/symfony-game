@@ -2,6 +2,7 @@
 
 namespace AppBundle\Controller;
 
+use AppBundle\Entity\Product;
 use AppBundle\Entity\Promotion;
 use AppBundle\Form\AddPromotionType;
 use AppBundle\Form\ProductsOnExistingPromotionType;
@@ -65,14 +66,15 @@ class PromotionsController extends Controller
             throw new UnauthorizedHttpException('You must be logged in as User to preview this section.');
         }
 
-        $promotions = $this->promotionService->getAllPromotions();
-        $grid = $this->get('grid');
+        $promotions = $this->promotionService->getAllActivePromotions();
+        $grid       = $this->get('grid');
         $grid->setSource(new Entity('AppBundle:Promotion'));
         $promotionsGrid = new PromotionsGrid();
         $promotionsGrid->promotionsDataGrid($grid);
 
-        if (sizeof($promotions) < 0) {
-            $this->session->getFlashBag()->add('non-existing-promotions', self::NON_EXISTING_PROMOTIONS);
+        if (sizeof($promotions) < 1) {
+            $this->addFlash('non-existing-promotions', self::NON_EXISTING_PROMOTIONS);
+            return $this->render(':promotions:list_promotions.html.twig');
         }
 
         return $grid->getGridResponse('promotions/list_promotions.html.twig');
@@ -96,10 +98,10 @@ class PromotionsController extends Controller
                 $product->addPromotionToProduct($promotion);
             }
             if (true === $this->promotionService->applyPromotionForProducts($promotion)) {
-                $this->session->getFlashBag()->add('successfully-added-product-promotion', self::SUCCESSFULLY_ADDED_PRODUCT_PROMOTION);
+                $this->addFlash('successfully-added-product-promotion', self::SUCCESSFULLY_ADDED_PRODUCT_PROMOTION);
                 return $this->redirect($request->headers->get('referer'));
             }
-            $this->session->getFlashBag()->add('failed-adding-product-promotion', self::NON_SUCCESSFUL_ADDED_PRODUCT_PROMOTION);
+            $this->addFlash('failed-adding-product-promotion', self::NON_SUCCESSFUL_ADDED_PRODUCT_PROMOTION);
             return $this->redirect($request->headers->get('referer'));
         }
 
@@ -125,7 +127,17 @@ class PromotionsController extends Controller
      */
     public function removePromotionAction(Request $request): Response
     {
-        return $this->render(':promotions:list_promotions.html.twig');
+        $promotionID = $request->query->get('id');
+        $promotion   = $this->promotionService->getPromotionByID($promotionID);
+        $products    = $this->productService->getProductsByPromotionOnObjects($promotion);
+
+        if (true === $this->promotionService->removePromotionForProducts($promotion, $products)) {
+            $this->addFlash('removed-promotion-success', 'Successfully removed promotion');
+            return $this->redirect($request->headers->get('referer'));
+        }
+
+        $this->addFlash('failed-removing-promotion', 'Failed removing promotion');
+        return $this->redirect($request->headers->get('referer'));
     }
 
     /**
@@ -145,11 +157,34 @@ class PromotionsController extends Controller
      */
     public function addProductsToExistingPromotionAction(Request $request): Response
     {
-        $promotion = new Promotion();
-        $form = $this->createForm(ProductsOnExistingPromotionType::class, $promotion, ['method' => 'POST']);
+        $products = [];
+        $promotionID = $request->query->get('id');
+        $promotion   = $this->promotionService->getPromotionByID($promotionID);
+        $selectableProductsForExistingPromotion = $this->promotionService->getNonExistingProductsInPromotion($promotion);
+        $formConfigureOptions = ['method' => 'POST', 'promotion' => $promotion, 'selectedProducts' => $selectableProductsForExistingPromotion];
+        $form        = $this->createForm(ProductsOnExistingPromotionType::class, $promotion, $formConfigureOptions);
+
+        if ($requestData = $request->request->get($form->getName())) {
+            $products[] = $this->promotionService->collectRequestProducts($requestData);
+        }
+
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $this->get('logger')->error('hahaha', ['haha' => 111]);
+//
+//            if (true === $this->promotionService->applyProductsOnExistingPromotion($promotion, $products)) {
+//                $this->addFlash('added-product-to-existing-promotion', self::SUCCESSFULLY_ADDED_PRODUCT_PROMOTION);
+//                return $this->redirect($request->headers->get('referer'));
+//            }
+//
+//            $this->addFlash('failed-adding-product-to-existing-promotion', self::NON_SUCCESSFUL_ADDED_PRODUCT_PROMOTION);
+//            return $this->redirect($request->headers->get('referer'));
+        }
 
         return $this->render('promotions/add_products_on_existing_promotion_html.twig',[
-            'form' => $form->createView()
+            'form'      => $form->createView(),
+            'promotion' => $promotion
         ]);
     }
 
@@ -177,7 +212,7 @@ class PromotionsController extends Controller
             $promotion   = $this->getDoctrine()->getRepository(Promotion::class)->getPromotionByID($promotionID);
             $data[]      = $this->promotionService->getNonExistingProductsInPromotion($promotion);
         }
-        $this->get('logger')->error('hahaha', ['haha' => $data]);
+
         return new JsonResponse($data);
     }
 }

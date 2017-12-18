@@ -32,8 +32,13 @@
 
 <div class="form-group total-check-before-checkout col-xs-1">
     <div class="col-lg-2 user-total-check">
-        <b>Cash:</b> ${{ app.user.money }} <br/>
-        <b>Orders:</b> ${{ orderedProductsCost }} <br/>
+
+        <label for="current-cash">Current Cash: </label>
+        <span class="current-cash">${{ app.user.money }}</span>
+
+        <label for="checkout-from-order">Orders Cost: </label>
+        <span class="checkout-from-order">${{ orderedProductsCost }}</span>
+
     </div>
 </div>
 
@@ -54,6 +59,7 @@
         $(orderIDs).each(function (i, obj) {
             $('#range-checkout-item-' + obj).change(function () {
                 $('.ordered-product-checkout-quantity-' + obj).text($(this).val());
+                $('.checkout-from-order').text();
             });
         });
     });

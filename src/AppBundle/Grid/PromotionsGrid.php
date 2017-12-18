@@ -20,6 +20,12 @@ class PromotionsGrid implements PromotionsGridInterface
         $viewProductsInPromotion = new RowAction('View Products', 'productsByActivePromotion');
         $viewProductsInPromotion->setRouteParametersMapping(['promotionID' => $grid->getColumn('id')->getId()]);
 
+        $removePromotionAction   = new RowAction('Remove Promotion', 'removePromotion');
+        $removePromotionAction->setRouteParametersMapping(['promotionID' => $grid->getColumn('id')->getId()]);
+
+        $addProductsToPromotionAction = new RowAction('Add Products', 'productsOnExistingPromotion');
+        $addProductsToPromotionAction->setRouteParametersMapping(['promotionID' => $grid->getColumn('id')->getId()]);
+
         $grid->getColumn('discount')->setTitle('Discount')->setOperators([Column::OPERATOR_EQ])->setSize(10);
         $grid->getColumn('startDate')->setTitle('Start Date')->setOperators([Column::OPERATOR_EQ])->setSize(10);
         $grid->getColumn('endDate')->setTitle('End Date')->setOperators([Column::OPERATOR_EQ])->setSize(10);
@@ -42,7 +48,9 @@ class PromotionsGrid implements PromotionsGridInterface
             }
         );
 
+        $grid->addRowAction($removePromotionAction);
         $grid->addRowAction($viewProductsInPromotion);
+        $grid->addRowAction($addProductsToPromotionAction);
 
         return $grid;
     }

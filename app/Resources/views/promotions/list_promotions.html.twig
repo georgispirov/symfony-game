@@ -7,7 +7,7 @@
 </head>
 
 {% if app.session.flashbag.has('non-existing-promotions') %}
-    <div class="col-xs-4 alert alert-danger non-existing-promotions">
+    <div class="col-xs-4 alert alert-info non-existing-promotions">
         {% for flashMessage in app.session.flashbag.get('non-existing-promotions') %}
             {{ flashMessage }}
         {% endfor %}

@@ -1,10 +1,31 @@
 {% include 'base.html.twig' %}
 
+
+{% if app.session.flashbag.has('added-product-to-existing-promotiont') %}
+    <div class="col-xs-4 alert alert-info added-product-to-existing-promotion">
+        {% for flashMessage in app.session.flashbag.get('added-product-to-existing-promotion') %}
+            {{ flashMessage }}
+        {% endfor %}
+    </div>
+{% endif %}
+
+{% if app.session.flashbag.has('failed-adding-product-to-existing-promotion') %}
+    <div class="col-xs-4 alert alert-info failed-adding-product-to-existing-promotion">
+        {% for flashMessage in app.session.flashbag.get('failed-adding-product-to-existing-promotion') %}
+            {{ flashMessage }}
+        {% endfor %}
+    </div>
+{% endif %}
+
 <div class="col-lg-6 add-products-to-existing-promotion">
     <h2 class="add-product-header">Add Products To Existing Promotion</h2> <br/>
+    <div class="col-lg-6 alertify-message-adding-product-existing-promotion">
+        <span class="fa fa-exclamation">Here will be listed only products with different promotion than selected and products any without promotion yet.</span>
+    </div>
+
     {{ form_start(form, {
-        'action': path('productsOnExistingPromotion'),
-    }
+        'action': path('productsOnExistingPromotion', { 'id': promotion.id }),
+        }
     )
     }}
 
@@ -14,7 +35,7 @@
 </div>
 
 <script type="text/javascript">
-    $('#app_products_on_existing_promotion_discount').change(function () {
+    $('#app_products_on_existing_promotion_discount').click(function () {
         var promotionID = $(this).val();
         $.ajax({
             'url': "/app_dev.php/nonExistingProducts/byPromotion",

@@ -405,7 +405,7 @@ class Product
             return;
         }
 
-        $this->promotion->remove($promotion);
+        $this->promotion->removeElement($promotion);
     }
 }
 

@@ -5,9 +5,12 @@ namespace AppBundle\Form;
 use AppBundle\Entity\Categories;
 use AppBundle\Entity\Product;
 use AppBundle\Entity\Promotion;
+use AppBundle\Repository\ProductRepository;
+use AppBundle\Repository\PromotionRepository;
 use Doctrine\ORM\EntityRepository;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
@@ -18,26 +21,24 @@ class ProductsOnExistingPromotionType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
+        /* @var Promotion $promotion */
+        $promotion = $options['promotion'];
+
+        /* @var array $selectedProducts */
+        $selectedProducts = $options['selectedProducts'];
+
         $builder->add('discount', EntityType::class, [
             'label'         => 'Discount',
             'class'         =>  Promotion::class,
-            'query_builder' =>  function (EntityRepository $er)  {
-                return $er->createQueryBuilder('prom')
-                          ->orderBy('prom.startDate', 'ASC');
-            }
+            'data'          =>  $promotion->getId(),
         ])->add('product', EntityType::class, [
             'label'         =>  'Products',
-            'multiple'      =>   true,
             'class'         =>   Product::class,
+            'multiple'      =>   true,
             'disabled'      =>   true,
-            'query_builder' =>   function (EntityRepository $er) {
-                return $er->createQueryBuilder('prod')
-                          ->orderBy('prod.title', 'ASC');
-            }
+            'data'          =>   $selectedProducts
         ])->add('Add Products To Promotion', SubmitType::class, [
-            'attr' => [
-                        'class' => 'btn btn-primary'
-                      ]
+            'attr' => ['class' => 'btn btn-primary']
         ]);
     }
 
@@ -54,8 +55,10 @@ class ProductsOnExistingPromotionType extends AbstractType
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
-            'data_class' => Promotion::class,
-            'translation_domain' => false
+            'data_class'         => Promotion::class,
+            'translation_domain' => false,
+            'promotion'          => null,
+            'selectedProducts'   => []
         ]);
     }
 }

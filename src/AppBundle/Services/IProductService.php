@@ -78,4 +78,10 @@ interface IProductService
                                               Product $product,
                                               User $user,
                                               int $quantity): bool;
+
+    /**
+     * @param Promotion $promotion
+     * @return array
+     */
+    public function getProductsByPromotionOnObjects(Promotion $promotion): array;
 }

@@ -32,19 +32,17 @@ interface IPromotionService
 
     /**
      * @param Promotion $promotion
+     * @param array $products
      * @return bool
      */
-    public function removePromotionForProducts(Promotion $promotion) : bool;
+    public function removePromotionForProducts(Promotion $promotion,
+                                               array $products) : bool;
+
 
     /**
      * @return array
      */
-    public function getAllPromotions(): array;
-
-    /**
-     * @return array
-     */
-    public function getAllActivePromotion(): array;
+    public function getAllActivePromotions(): array;
 
     /**
      * @param string $startDate
@@ -70,4 +68,23 @@ interface IPromotionService
      * @return array
      */
     public function getNonExistingProductsInPromotion(Promotion $promotion): array;
+
+    /**
+     * @param int $promotionID
+     * @return null|Promotion
+     */
+    public function getPromotionByID(int $promotionID): Promotion;
+
+    /**
+     * @param Promotion $promotion
+     * @param Product[] $products
+     * @return bool
+     */
+    public function applyProductsOnExistingPromotion(Promotion $promotion, array $products): bool;
+
+    /**
+     * @param array $data
+     * @return Product[]
+     */
+    public function collectRequestProducts(array $data): array;
 }

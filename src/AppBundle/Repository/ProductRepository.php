@@ -7,10 +7,11 @@ use AppBundle\Entity\OrderedProducts;
 use AppBundle\Entity\Product;
 use AppBundle\Entity\Promotion;
 use AppBundle\Entity\User;
+use Doctrine\Common\Collections\Criteria;
 use Doctrine\ORM\EntityRepository;
-use Doctrine\ORM\Query\Expr;
 use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\ORM\QueryBuilder;
+use PDO;
 
 /**
  * ProductRepository
@@ -107,6 +108,8 @@ class ProductRepository extends EntityRepository implements IProductRepository
                       ->getRepository(Product::class)
                       ->createQueryBuilder('p')
                       ->where('p.category = :categoryID')
+                      ->andWhere('p.outOfStock < 1')
+                      ->andWhere('p.quantity > 0')
                       ->setParameter(':categoryID', $categoryID);
 
         return $query->getQuery()->getArrayResult();
@@ -134,7 +137,10 @@ class ProductRepository extends EntityRepository implements IProductRepository
      */
     public function getNonExistingProductsInPromotion(Promotion $promotion): array
     {
-        $qb = $this->createQueryBuilder('product.promotion');
+        $sql = 'select * from product where product.id NOT IN (select product_id from product_promotion)';
+        $stmt = $this->getEntityManager()->getConnection()->prepare($sql);
+        $stmt->execute();
+        $productsWithoutPromotion = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
         $query = $this->getEntityManager()
                       ->getRepository(Product::class)
@@ -145,7 +151,7 @@ class ProductRepository extends EntityRepository implements IProductRepository
                           ':promotion' => $promotion,
                   ]);
 
-        return $query->getQuery()->getArrayResult();
+        return array_merge($query->getQuery()->getArrayResult(), $productsWithoutPromotion);
     }
 
     /**
@@ -225,5 +231,23 @@ class ProductRepository extends EntityRepository implements IProductRepository
 
         $em->flush();
         return true;
+    }
+
+    /**
+     * @param Promotion $promotion
+     * @return array
+     */
+    public function getProductsByPromotionOnObjects(Promotion $promotion): array
+    {
+        $query = $this->getEntityManager()
+                      ->getRepository(Product::class)
+                      ->createQueryBuilder('product')
+                      ->join('product.promotion', 'promotion')
+                      ->where('promotion = :promotion')
+                      ->setParameters([
+                        ':promotion' => $promotion
+                     ]);
+
+        return $query->getQuery()->getResult();
     }
 }

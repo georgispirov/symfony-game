@@ -2,6 +2,7 @@
 
 namespace AppBundle\Repository;
 
+use AppBundle\Entity\Product;
 use AppBundle\Entity\Promotion;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\QueryBuilder;
@@ -77,5 +78,47 @@ class PromotionRepository extends EntityRepository implements IPromotionReposito
 
         return $stmt->getQuery()
                     ->getOneOrNullResult();
+    }
+
+    /**
+     * @param Promotion $promotion
+     * @param Product[] $products
+     * @return bool
+     */
+    public function removePromotionFromProducts(Promotion $promotion,
+                                                array $products): bool
+    {
+        $em = $this->getEntityManager();
+
+        /* @var Product $product */
+        foreach ($products as $product) {
+            $product->removePromotionFromProduct($promotion);
+        }
+
+        $em->remove($promotion);
+
+        if (true === $em->getUnitOfWork()->isScheduledForDelete($promotion)) {
+            $em->flush();
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * @param Promotion $promotion
+     * @param Product[] $products
+     * @return bool
+     */
+    public function applyExistingPromotionOnProducts(Promotion $promotion, array $products): bool
+    {
+        $em = $this->getEntityManager();
+        $promotion->setCategory(null);
+
+        foreach ($products as $product) { /* @var Product $product */
+            $product->addPromotionToProduct($promotion);
+        }
+        $em->flush();
+        return true;
     }
 }

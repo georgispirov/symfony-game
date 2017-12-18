@@ -2,6 +2,7 @@
 
 namespace AppBundle\Repository;
 
+use AppBundle\Entity\Product;
 use AppBundle\Entity\Promotion;
 
 interface IPromotionRepository
@@ -32,4 +33,19 @@ interface IPromotionRepository
      * @return null|Promotion
      */
     public function getPromotionByID(int $promotionID);
+
+    /**
+     * @param Promotion $promotion
+     * @param Product[] $products
+     * @return bool
+     */
+    public function removePromotionFromProducts(Promotion $promotion,
+                                                array $products): bool;
+
+    /**
+     * @param Promotion $promotion
+     * @param Product[] $products
+     * @return bool
+     */
+    public function applyExistingPromotionOnProducts(Promotion $promotion, array $products): bool;
 }

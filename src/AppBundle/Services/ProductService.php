@@ -151,4 +151,14 @@ class ProductService implements IProductService
         return $this->em->getRepository(Product::class)
                         ->decreaseQuantityOnProduct($orderedProducts, $product, $orderedProducts->getUser(), $quantity);
     }
+
+    /**
+     * @param Promotion $promotion
+     * @return array
+     */
+    public function getProductsByPromotionOnObjects(Promotion $promotion): array
+    {
+        return $this->em->getRepository(Product::class)
+                        ->getProductsByPromotionOnObjects($promotion);
+    }
 }

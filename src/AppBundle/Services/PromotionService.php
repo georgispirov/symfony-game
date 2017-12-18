@@ -10,6 +10,7 @@ use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\Process\Exception\InvalidArgumentException;
+use Symfony\Component\Process\Exception\RuntimeException;
 
 class PromotionService implements IPromotionService
 {
@@ -29,18 +30,26 @@ class PromotionService implements IPromotionService
     private $manager;
 
     /**
+     * @var ProductService
+     */
+    private $productService;
+
+    /**
      * PromotionService constructor.
      * @param EntityManagerInterface $em
      * @param SessionInterface $session
+     * @param ProductService $productService
      * @param ManagerRegistry $manager
      */
     public function __construct(EntityManagerInterface $em,
                                 SessionInterface $session,
+                                ProductService $productService,
                                 ManagerRegistry $manager)
     {
         $this->em = $em;
         $this->session = $session;
         $this->manager = $manager;
+        $this->productService = $productService;
     }
 
     /**
@@ -81,28 +90,27 @@ class PromotionService implements IPromotionService
 
     /**
      * @param Promotion $promotion
+     * @param Product[] $products
      * @return bool
      */
-    public function removePromotionForProducts(Promotion $promotion): bool
+    public function removePromotionForProducts(Promotion $promotion,
+                                               array $products): bool
     {
+        if (sizeof($products) < 1) {
+            throw new RuntimeException('Embedded products to Promotion must be a valid entities.');
+        }
 
+        return $this->em->getRepository(Promotion::class)
+                        ->removePromotionFromProducts($promotion, $products);
     }
 
     /**
      * @return array
      */
-    public function getAllPromotions(): array
+    public function getAllActivePromotions(): array
     {
         return $this->em->getRepository(Promotion::class)
                         ->getActivePromotions();
-    }
-
-    /**
-     * @return array
-     */
-    public function getAllActivePromotion(): array
-    {
-        // TODO: Implement getAllActivePromotion() method.
     }
 
     /**
@@ -145,5 +153,41 @@ class PromotionService implements IPromotionService
 
         return $this->em->getRepository(Product::class)
                         ->getNonExistingProductsInPromotion($promotion);
+    }
+
+    /**
+     * @param int $promotionID
+     * @return null|Promotion
+     */
+    public function getPromotionByID(int $promotionID): Promotion
+    {
+        return $this->em->getRepository(Promotion::class)
+                        ->getPromotionByID($promotionID);
+    }
+
+    /**
+     * @param Promotion $promotion
+     * @param Product[] $products
+     * @return bool
+     */
+    public function applyProductsOnExistingPromotion(Promotion $promotion, array $products): bool
+    {
+        return $this->em->getRepository(Promotion::class)
+                        ->applyExistingPromotionOnProducts($promotion, $products);
+    }
+
+    /**
+     * @param array $data
+     * @return Product[]
+     */
+    public function collectRequestProducts(array $data): array
+    {
+        $products = [];
+        if (isset($data['product'])) {
+            foreach ($data['product'] as $productID) {
+                $products[] = $this->productService->getProductByID($productID);
+            }
+        }
+        return $products;
     }
 }
