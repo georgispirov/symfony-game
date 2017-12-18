@@ -7,6 +7,7 @@ use AppBundle\Entity\OrderedProducts;
 use AppBundle\Entity\Product;
 use AppBundle\Entity\Promotion;
 use AppBundle\Entity\User;
+use Doctrine\ORM\QueryBuilder;
 
 interface IProductRepository
 {
@@ -49,9 +50,9 @@ interface IProductRepository
 
     /**
      * @param Promotion $promotion
-     * @return array
+     * @return QueryBuilder
      */
-    public function getNonExistingProductsInPromotion(Promotion $promotion): array;
+    public function getNonExistingProductsInPromotion(Promotion $promotion): QueryBuilder;
 
     /**
      * @param int $productID

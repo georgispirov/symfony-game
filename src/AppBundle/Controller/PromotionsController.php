@@ -160,8 +160,7 @@ class PromotionsController extends Controller
         $products = [];
         $promotionID = $request->query->get('id');
         $promotion   = $this->promotionService->getPromotionByID($promotionID);
-        $selectableProductsForExistingPromotion = $this->promotionService->getNonExistingProductsInPromotion($promotion);
-        $formConfigureOptions = ['method' => 'POST', 'promotion' => $promotion, 'selectedProducts' => $selectableProductsForExistingPromotion];
+        $formConfigureOptions = ['method' => 'POST', 'promotion' => $promotion];
         $form        = $this->createForm(ProductsOnExistingPromotionType::class, $promotion, $formConfigureOptions);
 
         if ($requestData = $request->request->get($form->getName())) {
@@ -170,8 +169,8 @@ class PromotionsController extends Controller
 
         $form->handleRequest($request);
 
-        if ($form->isSubmitted() && $form->isValid()) {
-            $this->get('logger')->error('hahaha', ['haha' => 111]);
+//        if ($form->isSubmitted() && $form->isValid()) {
+
 //
 //            if (true === $this->promotionService->applyProductsOnExistingPromotion($promotion, $products)) {
 //                $this->addFlash('added-product-to-existing-promotion', self::SUCCESSFULLY_ADDED_PRODUCT_PROMOTION);
@@ -180,7 +179,7 @@ class PromotionsController extends Controller
 //
 //            $this->addFlash('failed-adding-product-to-existing-promotion', self::NON_SUCCESSFUL_ADDED_PRODUCT_PROMOTION);
 //            return $this->redirect($request->headers->get('referer'));
-        }
+//        }
 
         return $this->render('promotions/add_products_on_existing_promotion_html.twig',[
             'form'      => $form->createView(),
@@ -197,22 +196,22 @@ class PromotionsController extends Controller
     {
 
     }
-
-    /**
-     * @Route("/nonExistingProducts/byPromotion", name="nonExistingProductsInPromotion")
-     * @param Request $request
-     * @return JsonResponse
-     */
-    public function getNonExistingProductsByPromotionAction(Request $request): JsonResponse
-    {
-        $data = [];
-
-        if (true === $request->isXmlHttpRequest()) {
-            $promotionID = $request->request->get('promotionID');
-            $promotion   = $this->getDoctrine()->getRepository(Promotion::class)->getPromotionByID($promotionID);
-            $data[]      = $this->promotionService->getNonExistingProductsInPromotion($promotion);
-        }
-
-        return new JsonResponse($data);
-    }
+//
+//    /**
+//     * @Route("/nonExistingProducts/byPromotion", name="nonExistingProductsInPromotion")
+//     * @param Request $request
+//     * @return JsonResponse
+//     */
+//    public function getNonExistingProductsByPromotionAction(Request $request): JsonResponse
+//    {
+//        $data = [];
+//
+//        if (true === $request->isXmlHttpRequest()) {
+//            $promotionID = $request->request->get('promotionID');
+//            $promotion   = $this->getDoctrine()->getRepository(Promotion::class)->getPromotionByID($promotionID);
+//            $data[]      = $this->promotionService->getNonExistingProductsInPromotion($promotion);
+//        }
+//
+//        return new JsonResponse($data);
+//    }
 }

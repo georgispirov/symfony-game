@@ -2,19 +2,14 @@
 
 namespace AppBundle\Form;
 
-use AppBundle\Entity\Categories;
 use AppBundle\Entity\Product;
 use AppBundle\Entity\Promotion;
 use AppBundle\Repository\ProductRepository;
 use AppBundle\Repository\PromotionRepository;
-use Doctrine\ORM\EntityRepository;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\Form\FormEvent;
-use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class ProductsOnExistingPromotionType extends AbstractType
@@ -24,19 +19,21 @@ class ProductsOnExistingPromotionType extends AbstractType
         /* @var Promotion $promotion */
         $promotion = $options['promotion'];
 
-        /* @var array $selectedProducts */
-        $selectedProducts = $options['selectedProducts'];
-
         $builder->add('discount', EntityType::class, [
             'label'         => 'Discount',
             'class'         =>  Promotion::class,
-            'data'          =>  $promotion->getId(),
+            'query_builder' =>  function (PromotionRepository $promotionRepository) use ($promotion) {
+                return $promotionRepository->createQueryBuilder('promotion')
+                                           ->where('promotion = :promotion')
+                                           ->setParameters([':promotion' => $promotion]);
+            }
         ])->add('product', EntityType::class, [
-            'label'         =>  'Products',
-            'class'         =>   Product::class,
-            'multiple'      =>   true,
-            'disabled'      =>   true,
-            'data'          =>   $selectedProducts
+            'label'         => 'Products',
+            'class'         =>  Product::class,
+            'multiple'      =>  true,
+            'query_builder' =>  function (ProductRepository $productRepository) use ($promotion)  {
+                return $productRepository->getNonExistingProductsInPromotion($promotion);
+            }
         ])->add('Add Products To Promotion', SubmitType::class, [
             'attr' => ['class' => 'btn btn-primary']
         ]);
@@ -58,7 +55,6 @@ class ProductsOnExistingPromotionType extends AbstractType
             'data_class'         => Promotion::class,
             'translation_domain' => false,
             'promotion'          => null,
-            'selectedProducts'   => []
         ]);
     }
 }

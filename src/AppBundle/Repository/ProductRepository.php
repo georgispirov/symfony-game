@@ -7,11 +7,9 @@ use AppBundle\Entity\OrderedProducts;
 use AppBundle\Entity\Product;
 use AppBundle\Entity\Promotion;
 use AppBundle\Entity\User;
-use Doctrine\Common\Collections\Criteria;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\ORM\QueryBuilder;
-use PDO;
 
 /**
  * ProductRepository
@@ -132,29 +130,6 @@ class ProductRepository extends EntityRepository implements IProductRepository
     }
 
     /**
-     * @param Promotion $promotion
-     * @return array
-     */
-    public function getNonExistingProductsInPromotion(Promotion $promotion): array
-    {
-        $sql = 'select * from product where product.id NOT IN (select product_id from product_promotion)';
-        $stmt = $this->getEntityManager()->getConnection()->prepare($sql);
-        $stmt->execute();
-        $productsWithoutPromotion = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
-        $query = $this->getEntityManager()
-                      ->getRepository(Product::class)
-                      ->createQueryBuilder('product')
-                      ->innerJoin('product.promotion', 'promotion', Join::WITH)
-                      ->where('promotion <> :promotion')
-                      ->setParameters([
-                          ':promotion' => $promotion,
-                  ]);
-
-        return array_merge($query->getQuery()->getArrayResult(), $productsWithoutPromotion);
-    }
-
-    /**
      * @param int $productID
      * @return array
      */
@@ -249,5 +224,21 @@ class ProductRepository extends EntityRepository implements IProductRepository
                      ]);
 
         return $query->getQuery()->getResult();
+    }
+
+    /**
+     * @param Promotion $promotion
+     * @return QueryBuilder
+     */
+    public function getNonExistingProductsInPromotion(Promotion $promotion): QueryBuilder
+    {
+        return $this->getEntityManager()
+                    ->getRepository(Product::class)
+                    ->createQueryBuilder('product')
+                    ->innerJoin('product.promotion', 'promotion', Join::WITH)
+                    ->where('promotion <> :promotion')
+                    ->setParameters([
+                        ':promotion' => $promotion,
+                    ]);
     }
 }
