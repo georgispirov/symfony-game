@@ -232,13 +232,13 @@ class ProductRepository extends EntityRepository implements IProductRepository
     public function getNonExistingProductsInPromotion(Promotion $promotion): array
     {
         $query = $this->getEntityManager()
-                    ->getRepository(Product::class)
-                    ->createQueryBuilder('product')
-                    ->join('product.promotion', 'promotion')
-                    ->where('promotion <> :promotion')
-                    ->setParameters([
+                      ->getRepository(Product::class)
+                      ->createQueryBuilder('product')
+                      ->join('product.promotion', 'promotion')
+                      ->where('promotion <> :promotion')
+                      ->setParameters([
                         ':promotion' => $promotion,
-                    ]);
+                      ]);
 
         return $query->getQuery()->getResult();
     }

@@ -2,6 +2,7 @@
 
 namespace AppBundle\Controller;
 
+use AppBundle\Entity\Product;
 use AppBundle\Entity\Promotion;
 use AppBundle\Form\AddPromotionType;
 use AppBundle\Form\ProductsOnExistingPromotionType;
@@ -157,11 +158,11 @@ class PromotionsController extends Controller
 
         if (true === $this->productService->removeProductFromPromotion($product, $promotion)) {
             $this->addFlash('successfully-removed-product-from-promotion', self::SUCCESSFULLY_REMOVED_PRODUCT_FROM_PROMOTION);
-            return $this->render(':promotions:list_promotions.html.twig');
+            return $this->redirect($request->headers->get('referer'));
         }
 
         $this->addFlash('non-successfully-removed-product-from-promotion', self::NON_SUCCESSFULLY_REMOVED_PRODUCT_FROM_PROMOTION);
-        return $this->render(':promotions:list_promotions.html.twig');
+        return $this->redirect($request->headers->get('referer'));
     }
 
     /**

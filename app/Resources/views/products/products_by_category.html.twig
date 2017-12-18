@@ -14,6 +14,22 @@
     </div>
 {% endif %}
 
+{% if app.session.flashbag.has('successfully-removed-product-from-promotion') %}
+    <div class="col-xs-4 alert alert-info successfully-removed-product-from-promotion">
+        {% for flashMessage in app.session.flashbag.get('successfully-removed-product-from-promotion') %}
+            {{ flashMessage }}
+        {% endfor %}
+    </div>
+{% endif %}
+
+{% if app.session.flashbag.has('non-successfully-removed-product-from-promotion') %}
+    <div class="col-xs-4 alert alert-info non-successfully-removed-product-from-promotion">
+        {% for flashMessage in app.session.flashbag.get('non-successfully-removed-product-from-promotion') %}
+            {{ flashMessage }}
+        {% endfor %}
+    </div>
+{% endif %}
+
 <div class="col-lg-7 products-by-promotion-grid-table">
     <h2>Promotion with discount: {{ promotion.discount }}% </h2>
     <p>Promotion interval: <b>{{ promotion.startDate|date("m-d-Y h:i:sA") }}</b> -- <b>{{ promotion.endDate|date("m-d-Y h:i:sA") }}</b></p>
