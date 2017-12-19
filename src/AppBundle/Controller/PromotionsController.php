@@ -95,15 +95,6 @@ class PromotionsController extends Controller
     }
 
     /**
-     * @param Request $request
-     * @return Response
-     */
-    public function listAllCategoryPromotions(Request $request): Response
-    {
-
-    }
-
-    /**
      * @Route("/add/promotion", name="addPromotion")
      * @param Request $request
      * @return Response
@@ -201,9 +192,10 @@ class PromotionsController extends Controller
         if ($form->isSubmitted() && $form->isValid()) {
             $categoryID  = $requestData['category'];
             $category    = $this->categoriesService->getCategoryByID($categoryID);
-            $isActivePromotion = $requestData['isActive'];
+            $productsInPromotion = $this->productService->getProductsByCategory($category);
+            $isActivePromotion   = $requestData['isActive'];
 
-            if (true === $this->promotionService->applyPromotionForCategory($promotion, $category, $isActivePromotion)) {
+            if (true === $this->promotionService->applyPromotionForCategory($promotion, $category, $productsInPromotion, $isActivePromotion)) {
                 $this->addFlash('successfully-attached-category-to-promotion',self::SUCCESSFULLY_ADDED_PROMOTION_TO_CATEGORY);
                 return $this->redirect($request->headers->get('referer'));
             }
@@ -250,15 +242,5 @@ class PromotionsController extends Controller
             'form'      => $form->createView(),
             'promotion' => $promotion
         ]);
-    }
-
-    /**
-     * @Route("/categories/toExistingPromotion", name="categoriesOnExistingPromotion")
-     * @param Request $request
-     * @return Response
-     */
-    public function addCategoriesToExistingPromotion(Request $request): Response
-    {
-
     }
 }

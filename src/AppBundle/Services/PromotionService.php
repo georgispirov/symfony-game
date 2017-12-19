@@ -55,11 +55,13 @@ class PromotionService implements IPromotionService
     /**
      * @param Promotion $promotion
      * @param Categories $category
+     * @param Product[] $products
      * @param bool $isActive
      * @return bool
      */
     public function applyPromotionForCategory(Promotion $promotion,
                                               Categories $category,
+                                              array $products,
                                               bool $isActive): bool
     {
         if ( !$promotion instanceof Promotion ) {
@@ -74,7 +76,7 @@ class PromotionService implements IPromotionService
         $promotion->setCategory(null);
 
         return $this->em->getRepository(Promotion::class)
-                        ->applyPromotionOnCategory($promotion, $category);
+                        ->applyPromotionOnCategory($promotion, $category, $products);
     }
 
     /**
@@ -111,7 +113,8 @@ class PromotionService implements IPromotionService
                                                array $products): bool
     {
         if (sizeof($products) < 1) {
-            throw new RuntimeException('Embedded products to Promotion must be a valid entities.');
+            return $this->em->getRepository(Promotion::class)
+                            ->removePromotionWithoutProducts($promotion);
         }
 
         return $this->em->getRepository(Promotion::class)

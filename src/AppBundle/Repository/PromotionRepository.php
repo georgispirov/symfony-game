@@ -6,7 +6,6 @@ use AppBundle\Entity\Categories;
 use AppBundle\Entity\Product;
 use AppBundle\Entity\Promotion;
 use Doctrine\ORM\EntityRepository;
-use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\ORM\QueryBuilder;
 
 /**
@@ -47,10 +46,7 @@ class PromotionRepository extends EntityRepository implements IPromotionReposito
     {
         return $this->getEntityManager()
                     ->getRepository(Promotion::class)
-                    ->createQueryBuilder('promotion')
-                    ->leftJoin('promotion.product', 'product', Join::LEFT_JOIN)
-                    ->getQuery()
-                    ->getResult();
+                    ->findAll();
     }
 
     /**
@@ -131,15 +127,37 @@ class PromotionRepository extends EntityRepository implements IPromotionReposito
     /**
      * @param Promotion $promotion
      * @param Categories $categories
+     * @param array $products
      * @return bool
      */
-    public function applyPromotionOnCategory(Promotion $promotion, Categories $categories): bool
+    public function applyPromotionOnCategory(Promotion $promotion,
+                                             Categories $categories,
+                                             array $products): bool
     {
         $em = $this->getEntityManager();
+
         $categories->addPromotionsToCategory($promotion);
+
+        foreach ($products as $product) { /* @var Product $product */
+            $product->addPromotionToProduct($promotion);
+        }
         $em->persist($promotion);
 
         if (true === $em->getUnitOfWork()->isEntityScheduled($promotion)) {
+            $em->flush();
+            return true;
+        }
+
+        return false;
+    }
+
+    public function removePromotionWithoutProducts(Promotion $promotion): bool
+    {
+        $em = $this->getEntityManager();
+        $em->remove($promotion);
+        $em->getUnitOfWork()->scheduleForDelete($promotion);
+
+        if (true === $em->getUnitOfWork()->isScheduledForDelete($promotion)) {
             $em->flush();
             return true;
         }

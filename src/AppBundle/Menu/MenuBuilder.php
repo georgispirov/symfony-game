@@ -17,10 +17,9 @@ class MenuBuilder implements ContainerAwareInterface
     const ITEM_CLASS = 'list-group-item';
 
     private $promotionsSubMenu  = [
-        'List Active Product Promotions'                => ['route' => 'listPromotions'],
-        'List Active Category Promotions'               => ['route' => 'homepage'],
-        'Add Products To Promotion'                     => ['route' => 'addPromotion'],
-        'Add Categories To Promotion'                   => ['route' => 'addCategoryToPromotion'],
+        'List Active Promotions'                => ['route' => 'listPromotions'],
+        'Add Products To Promotion'             => ['route' => 'addPromotion'],
+        'Add Categories To Promotion'           => ['route' => 'addCategoryToPromotion'],
     ];
 
     public function mainMenu(FactoryInterface $factory, array $options)

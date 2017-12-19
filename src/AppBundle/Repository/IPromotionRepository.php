@@ -48,13 +48,17 @@ interface IPromotionRepository
      * @param Product[] $products
      * @return bool
      */
-    public function applyExistingPromotionOnProducts(Promotion $promotion, array $products): bool;
+    public function applyExistingPromotionOnProducts(Promotion $promotion,
+                                                     array $products): bool;
 
     /**
      * @param Promotion $promotion
      * @param Categories $categories
+     * @param Product[] $products
      * @return bool
      */
     public function applyPromotionOnCategory(Promotion $promotion,
-                                             Categories $categories): bool;
+                                             Categories $categories, array $products): bool;
+
+    public function removePromotionWithoutProducts(Promotion $promotion): bool;
 }

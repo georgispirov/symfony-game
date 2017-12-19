@@ -233,12 +233,12 @@ class ProductRepository extends EntityRepository implements IProductRepository
     {
         $query = $this->getEntityManager()
                       ->getRepository(Product::class)
-                      ->createQueryBuilder('product')
-                      ->join('product.promotion', 'promotion')
-                      ->where('promotion <> :promotion')
-                      ->setParameters([
+                    ->createQueryBuilder('product')
+                    ->join('product.promotion', 'promotion')
+                    ->where('promotion <> :promotion')
+                    ->setParameters([
                         ':promotion' => $promotion,
-                      ]);
+                    ]);
 
         return $query->getQuery()->getResult();
     }
