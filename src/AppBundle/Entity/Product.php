@@ -407,5 +407,10 @@ class Product
 
         $this->promotion->removeElement($promotion);
     }
+
+    public function getPromotion()
+    {
+        return $this->promotion;
+    }
 }
 

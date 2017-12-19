@@ -61,4 +61,10 @@ interface IPromotionRepository
                                              Categories $categories, array $products): bool;
 
     public function removePromotionWithoutProducts(Promotion $promotion): bool;
+
+    /**
+     * @param Promotion $promotion
+     * @return bool
+     */
+    public function updatePromotion(Promotion $promotion): bool;
 }

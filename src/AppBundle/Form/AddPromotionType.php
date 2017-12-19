@@ -66,7 +66,7 @@ class AddPromotionType extends AbstractType
               ]);
 
         $builder->addEventListener(FormEvents::POST_SET_DATA, function (FormEvent $event) {
-            $form    = $event->getForm();
+            $form    =  $event->getForm();
             $product =  $form->get('product')->getConfig()->getData();
 
             if (null === $product) {

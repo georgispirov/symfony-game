@@ -13,6 +13,7 @@ use AppBundle\Services\PromotionService;
 use APY\DataGridBundle\Grid\Source\Entity;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
@@ -23,15 +24,19 @@ class PromotionsController extends Controller
 {
     const SUCCESSFULLY_ADDED_PRODUCT_PROMOTION   = 'Promotion has been successfully applied to selected Product.';
 
+    const SUCCESSFULLY_REMOVED_PRODUCT_FROM_PROMOTION = 'You have successfully removed requested product from promotion.';
+
+    const SUCCESSFULLY_ADDED_PROMOTION_TO_CATEGORY = 'You have successfully added promotion to selected Category.';
+
+    const SUCCESSFULLY_UPDATED_PROMOTION = 'You have successfully updated requested promotion.';
+
     const NON_SUCCESSFUL_ADDED_PRODUCT_PROMOTION = 'Failed while adding promotion to Product';
 
     const NON_EXISTING_PROMOTIONS = 'There are no active/non-active Promotions.';
 
     const NON_SUCCESSFULLY_REMOVED_PRODUCT_FROM_PROMOTION = 'Failed removing product from selected promotion.';
 
-    const SUCCESSFULLY_REMOVED_PRODUCT_FROM_PROMOTION = 'You have successfully removed requested product from promotion.';
-
-    const SUCCESSFULLY_ADDED_PROMOTION_TO_CATEGORY = 'You have successfully added promotion to selected Category.';
+    const NON_SUCCESSFULLY_UPDATED_PROMOTION = 'Failed updating requested promotion';
 
     /**
      * @var PromotionService
@@ -131,7 +136,27 @@ class PromotionsController extends Controller
      */
     public function editPromotionAction(Request $request): Response
     {
-        return $this->render(':promotions:edit_promotion.html.twig');
+        $promotionID = $request->query->get('id');
+        $promotion   = $this->promotionService->getPromotionByID($promotionID);
+        $form        = $this->createForm(AddPromotionType::class, $promotion, ['method' => 'POST']);
+        $this->promotionService->configurePromotionUpdateForm($form);
+
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            if (true === $this->promotionService->updatePromotion($promotion)) {
+                $this->addFlash('successfully-updated-promotion', self::SUCCESSFULLY_UPDATED_PROMOTION);
+                return $this->redirect($request->headers->get('referer'));
+            }
+
+            $this->addFlash('failed-updating-promotion', self::NON_SUCCESSFULLY_UPDATED_PROMOTION);
+            return $this->redirect($request->headers->get('referer'));
+        }
+
+        return $this->render(':promotions:edit_promotion.html.twig', [
+            'form'      => $form->createView(),
+            'promotion' => $promotion
+        ]);
     }
 
     /**

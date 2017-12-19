@@ -50,6 +50,10 @@
         <div class="col-lg-6 ordered-product-items">
             {{ grid(grid) }}
             {% set difference = app.user.money - app.user.totalCheck %}
+            <div class="col-lg-1 total-check-from-orders">
+                <label for="total-check">Total Check: </label>
+                <span class="total-check">${{ totalCheckFromOrders }}</span>
+            </div>
         </div>
     {% endif %}
 </body>

@@ -173,6 +173,7 @@ class ProductRepository extends EntityRepository implements IProductRepository
     {
         $em = $this->getEntityManager();
 
+        $product->setQuantity(0);
         $product->setOutOfStock(true);
         $em->remove($orderedProducts);
 
@@ -195,16 +196,34 @@ class ProductRepository extends EntityRepository implements IProductRepository
                                               int $quantity): bool
     {
         $em = $this->getEntityManager();
+        $em->getUnitOfWork()->scheduleForUpdate($user);
+        $em->getUnitOfWork()->scheduleForUpdate($product);
+        $em->getUnitOfWork()->scheduleForUpdate($orderedProducts);
 
-        $product->setQuantity($product->getQuantity() - $quantity);
+        if ($orderedProducts->getQuantity() - $quantity === 0) {
+            $em->remove($orderedProducts);
+        } else {
+            $orderedProducts->setQuantity($orderedProducts->getQuantity() - $quantity);
+            $orderedProducts->setOrderedProductPrice($orderedProducts->getOrderedProductPrice() - $product->getPrice());
+        }
 
-        $orderedProducts->setQuantity($orderedProducts->getQuantity() - $quantity);
-        $orderedProducts->setOrderedProductPrice($orderedProducts->getOrderedProductPrice() - $product->getPrice());
+        if ($product->getQuantity() - $quantity === 0) {
+            $em->remove($product);
+        } else {
+            $product->setQuantity($product->getQuantity() - $quantity);
+        }
 
         $user->setMoney($user->getMoney() - $orderedProducts->getOrderedProductPrice());
+        $user->setTotalCheck($user->getTotalCheck() - $orderedProducts->getOrderedProductPrice());
 
-        $em->flush();
-        return true;
+        if (true === $em->getUnitOfWork()->isEntityScheduled($product)
+            && true === $em->getUnitOfWork()->isScheduledForUpdate($user)
+            && true === $em->getUnitOfWork()->isEntityScheduled($user)) {
+                $em->flush();
+                return true;
+        }
+
+        return false;
     }
 
     /**

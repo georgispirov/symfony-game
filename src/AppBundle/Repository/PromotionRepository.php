@@ -164,4 +164,21 @@ class PromotionRepository extends EntityRepository implements IPromotionReposito
 
         return false;
     }
+
+    /**
+     * @param Promotion $promotion
+     * @return bool
+     */
+    public function updatePromotion(Promotion $promotion): bool
+    {
+        $em = $this->getEntityManager();
+        $em->getUnitOfWork()->scheduleForUpdate($promotion);
+
+        if (true === $em->getUnitOfWork()->isScheduledForUpdate($promotion)) {
+            $em->flush();
+            return true;
+        }
+
+        return false;
+    }
 }

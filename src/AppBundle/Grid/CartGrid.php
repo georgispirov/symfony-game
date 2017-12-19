@@ -2,7 +2,9 @@
 
 namespace AppBundle\Grid;
 
+use AppBundle\Entity\OrderedProducts;
 use AppBundle\Entity\Product;
+use AppBundle\Entity\User;
 use APY\DataGridBundle\Grid\Action\MassAction;
 use APY\DataGridBundle\Grid\Action\RowAction;
 use APY\DataGridBundle\Grid\Column\Column;
@@ -16,9 +18,10 @@ class CartGrid implements CartGridInterface
     /**
      * @param Grid $grid
      * @param EntityManagerInterface $em
+     * @param User $user
      * @return Grid
      */
-    public function orderedProductsDataGrid(Grid $grid, EntityManagerInterface $em): Grid
+    public function orderedProductsDataGrid(Grid $grid, EntityManagerInterface $em, User $user): Grid
     {
         if ( !$grid instanceof Grid ) {
             throw new APYInvalidArgumentException('Applied argument must be instance of Grid!');
@@ -29,13 +32,12 @@ class CartGrid implements CartGridInterface
 
         $massAction    = new MassAction('Checkout Selected', 'AppBundle:Cart:cartCheckout');
 
-        $productColumn = new RowAction('View', 'viewProduct');
-        $productColumn->setRouteParametersMapping(['viewProductID' => $grid->getColumn('viewProductID')]);
+        $productID = $grid->getColumn('viewProductID');
 
-        $updateColumn = new RowAction('Update', 'updateOrderedProduct');
-        $updateColumn->setRouteParametersMapping(['productID' => $grid->getColumn('orderedProductID')->getId()]);
+        $productColumn = new RowAction('View Product', 'viewProduct');
+        $productColumn->setRouteParameters($productID->getId());
 
-        $deleteColumn = new RowAction('Delete', 'removeOrderedProduct');
+        $deleteColumn = new RowAction('Delete Any', 'removeOrderedProduct');
         $deleteColumn->setRouteParametersMapping(['productID' => $grid->getColumn('orderedProductID')->getId()]);
 
         $grid->getColumn('orderedDate')->setTitle('Ordered Date')->setOperators([Column::OPERATOR_SLIKE]);
@@ -56,12 +58,12 @@ class CartGrid implements CartGridInterface
           ->setOperators([]);
 
         $grid->getColumn('Price')
-            ->manipulateRenderCell(function ($value, $row, $router) {
+             ->manipulateRenderCell(function ($value, $row, $router) use ($em, $user) {
                 /* @var $value  integer */
                 /* @var $row    \APY\DataGridBundle\Grid\Row */
                 /* @var $router \Symfony\Bundle\FrameworkBundle\Routing\Router */
-                return '$' . $value;
-            });
+                 return "$" . $em->getRepository(OrderedProducts::class)->getCheckoutFromAllProducts($user);
+             });
 
         $grid->getColumn('Quantity')
             ->setFilterable(true)
@@ -77,7 +79,6 @@ class CartGrid implements CartGridInterface
         $grid->getColumn('Price')->setOperators([Column::OPERATOR_EQ]);
 
         $grid->addRowAction($productColumn);
-        $grid->addRowAction($updateColumn);
         $grid->addRowAction($deleteColumn);
         $grid->addMassAction($massAction);
 

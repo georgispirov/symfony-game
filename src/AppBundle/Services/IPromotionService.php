@@ -5,6 +5,7 @@ namespace AppBundle\Services;
 use AppBundle\Entity\Categories;
 use AppBundle\Entity\Product;
 use AppBundle\Entity\Promotion;
+use Symfony\Component\Form\FormInterface;
 
 interface IPromotionService
 {
@@ -91,4 +92,16 @@ interface IPromotionService
      * @return Product[]
      */
     public function collectRequestProducts(array $data): array;
+
+    /**
+     * @param Promotion $promotion
+     * @return bool
+     */
+    public function updatePromotion(Promotion $promotion): bool;
+
+    /**
+     * @param FormInterface $form
+     * @return FormInterface
+     */
+    public function configurePromotionUpdateForm(FormInterface $form): FormInterface;
 }

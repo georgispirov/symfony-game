@@ -5,12 +5,12 @@ namespace AppBundle\Services;
 use AppBundle\Entity\Categories;
 use AppBundle\Entity\Product;
 use AppBundle\Entity\Promotion;
-use AppBundle\Repository\PromotionRepository;
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\Process\Exception\InvalidArgumentException;
-use Symfony\Component\Process\Exception\RuntimeException;
 
 class PromotionService implements IPromotionService
 {
@@ -206,5 +206,31 @@ class PromotionService implements IPromotionService
             }
         }
         return $products;
+    }
+
+    /**
+     * @param Promotion $promotion
+     * @return bool
+     */
+    public function updatePromotion(Promotion $promotion): bool
+    {
+        return $this->em->getRepository(Promotion::class)
+                        ->updatePromotion($promotion);
+    }
+
+    /**
+     * @param FormInterface $form
+     * @return FormInterface
+     */
+    public function configurePromotionUpdateForm(FormInterface $form): FormInterface
+    {
+        $form->remove('product');
+        $form->remove('category');
+        $form->remove('Add Promotion');
+        $form->add('Update Promotion', SubmitType::class, [
+            'attr' => ['class' => 'btn btn-primary']
+        ]);
+
+        return $form;
     }
 }

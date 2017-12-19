@@ -1,0 +1,14 @@
+{% include 'base.html.twig' %}
+
+<div class="col-lg-6 update-promotion">
+    <h2 class="update-promotion-header">Update Promotion</h2> <br/>
+    {{ form_start(form, {
+            'action': path('editPromotion', { 'id': promotion.id }),
+        }
+    )
+    }}
+
+    <div class="update-promotion-form-widget col-lg-12">
+        {{ form_widget(form) }}
+    </div>
+</div>

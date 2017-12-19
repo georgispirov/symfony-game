@@ -128,20 +128,6 @@ class CartController extends Controller
     }
 
     /**
-     * @Route("products/update", name="updateOrderedProduct")
-     * @param Request $request
-     * @return bool
-     */
-    public function updateProductAction(Request $request): bool
-    {
-        $user    = $this->get('security.token_storage')->getToken()->getUser();
-        $id      = $request->attributes->get('productID');
-        $product = $this->cartService->getOrderedProductByID($id);
-
-        return $this->cartService->updateProduct($user, $product);
-    }
-
-    /**
      * @Route("cart/orderedProducts", name="showOrderedProductsByUser")
      * @param Request $request
      * @return Response
@@ -151,14 +137,15 @@ class CartController extends Controller
         $grid    = $this->get('grid');
         $grid->setId('cartOrderedProducts');
         $user    = $this->get('security.token_storage')->getToken()->getUser();
-        $orderedProducts = $this->cartService->getOrderedProductByUser($user);
+        $orderedProducts      = $this->cartService->getOrderedProductByUser($user);
 
         if (sizeof($orderedProducts) > 0) {
-            $vector = new Vector($orderedProducts);
+            $totalCheckFromOrders = $this->orderedProductsService->getCheckoutFromAllProducts($user);
+            $vector   = new Vector($orderedProducts);
             $grid->setSource($vector);
             $cartGrid = new CartGrid();
-            $cartGrid->orderedProductsDataGrid($grid, $this->get('doctrine.orm.entity_manager'));
-            return $grid->getGridResponse('cart/index.html.twig');
+            $cartGrid->orderedProductsDataGrid($grid, $this->get('doctrine.orm.entity_manager'), $user);
+            return $grid->getGridResponse('cart/index.html.twig', ['totalCheckFromOrders' => $totalCheckFromOrders]);
         }
         $this->addFlash('info', 'No bought items added to your cart. Go and buy something.');
 

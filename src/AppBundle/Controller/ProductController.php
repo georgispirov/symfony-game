@@ -151,7 +151,7 @@ class ProductController extends Controller
      */
     public function updateProductAction(Request $request): Response
     {
-        $productID = $request->query->getInt('productID');
+        $productID = $request->query->getInt('viewProductID');
         $product   = $this->productService->getProductByID($productID);
         $user      = $this->get('security.token_storage')->getToken()->getUser(); /* @var User $user */
         $form      = $this->createForm(UpdateProductType::class, $product, ['method' => 'POST']);
