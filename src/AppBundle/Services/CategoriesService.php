@@ -3,7 +3,12 @@
 namespace AppBundle\Services;
 
 use AppBundle\Entity\Categories;
+use APY\DataGridBundle\Grid\Exception\ColumnAlreadyExistsException;
+use APY\DataGridBundle\Grid\Exception\TypeAlreadyExistsException;
+use Doctrine\DBAL\Exception\DatabaseObjectExistsException;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\Process\Exception\InvalidArgumentException;
+use Symfony\Component\Process\Exception\LogicException;
 
 class CategoriesService implements ICategoriesService
 {
@@ -48,5 +53,27 @@ class CategoriesService implements ICategoriesService
     {
         return $this->em->getRepository(Categories::class)
                         ->findByCategoryName($categoryName);
+    }
+
+    /**
+     * @param Categories $categories
+     * @return bool
+     */
+    public function addCategory(Categories $categories): bool
+    {
+        if ( !$categories instanceof Categories ) {
+            throw new InvalidArgumentException('Applied Category must be a valid entity.');
+        }
+        $isCategoryExists = $this->em->getRepository(Categories::class)
+                                     ->findOneBy([
+                                        'name' => $categories->getName()
+                                     ]);
+
+        if ( $isCategoryExists instanceof Categories ) {
+            throw new LogicException('Category with this name already exists.');
+        }
+
+        return $this->em->getRepository(Categories::class)
+                        ->addCategory($categories);
     }
 }

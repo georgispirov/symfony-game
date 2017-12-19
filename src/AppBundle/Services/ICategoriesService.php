@@ -22,4 +22,10 @@ interface ICategoriesService
      * @return null|Categories
      */
     public function getCategoryByName(string $categoryName);
+
+    /**
+     * @param Categories $categories
+     * @return bool
+     */
+    public function addCategory(Categories $categories): bool;
 }

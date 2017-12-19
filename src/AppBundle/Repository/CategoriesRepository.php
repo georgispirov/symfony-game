@@ -2,6 +2,7 @@
 
 namespace AppBundle\Repository;
 
+use AppBundle\Entity\Categories;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\QueryBuilder;
 
@@ -25,5 +26,22 @@ class CategoriesRepository extends EntityRepository implements ICategoriesReposi
     public function findByCategoryName(string $name)
     {
         return $this->findOneBy(['name' => $name]);
+    }
+
+    /**
+     * @param Categories $categories
+     * @return bool
+     */
+    public function addCategory(Categories $categories): bool
+    {
+        $em = $this->getEntityManager();
+        $em->persist($categories);
+
+        if (true === $em->getUnitOfWork()->isScheduledForInsert($categories)) {
+            $em->flush();
+            return true;
+        }
+
+        return false;
     }
 }

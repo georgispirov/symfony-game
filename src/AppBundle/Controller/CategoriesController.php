@@ -3,6 +3,7 @@
 namespace AppBundle\Controller;
 
 use AppBundle\Entity\Categories;
+use AppBundle\Form\AddCategoryType;
 use AppBundle\Repository\ICategoriesRepository;
 use AppBundle\Services\CategoriesService;
 use AppBundle\Services\ICategoriesService;
@@ -17,6 +18,10 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class CategoriesController extends Controller
 {
+    const SUCCESSFULLY_ADDED_CATEGORY   = 'You have successfully added requested category.';
+
+    const UNSUCCESSFULLY_ADDED_CATEGORY = 'Failed adding requested category.';
+
     /**
      * @var ICategoriesRepository
      */
@@ -85,5 +90,33 @@ class CategoriesController extends Controller
         }
 
         return new JsonResponse($data);
+    }
+
+    /**
+     * @Route("/add/category", name="addCategory")
+     * @param Request $request
+     * @return Response
+     */
+    public function addCategoryAction(Request $request): Response
+    {
+        $category = new Categories();
+        $form     = $this->createForm(AddCategoryType::class, $category, ['method' => 'POST']);
+
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            if (true === $this->categoryService->addCategory($category)) {
+                $this->addFlash('successfully-added-category', self::SUCCESSFULLY_ADDED_CATEGORY);
+                return $this->redirect($request->headers->get('referer'));
+            }
+
+            $this->addFlash('failed-adding-category', self::UNSUCCESSFULLY_ADDED_CATEGORY);
+            return $this->redirect($request->headers->get('referer'));
+        }
+
+        return $this->render(':categories:add_category.html.twig', [
+            'category' => $category,
+            'form'     => $form->createView()
+        ]);
     }
 }
