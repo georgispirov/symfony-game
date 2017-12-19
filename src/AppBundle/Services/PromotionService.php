@@ -55,12 +55,26 @@ class PromotionService implements IPromotionService
     /**
      * @param Promotion $promotion
      * @param Categories $category
+     * @param bool $isActive
      * @return bool
      */
     public function applyPromotionForCategory(Promotion $promotion,
-                                              Categories $category): bool
+                                              Categories $category,
+                                              bool $isActive): bool
     {
+        if ( !$promotion instanceof Promotion ) {
+            throw new InvalidArgumentException('The applied Promotion must be a valid Entity.');
+        }
 
+        if ( !$category instanceof Categories ) {
+            throw new InvalidArgumentException('The applied Category must be a valid Entity.');
+        }
+
+        $promotion->setIsActive($isActive);
+        $promotion->setCategory(null);
+
+        return $this->em->getRepository(Promotion::class)
+                        ->applyPromotionOnCategory($promotion, $category);
     }
 
     /**

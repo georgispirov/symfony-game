@@ -11,10 +11,12 @@ interface IPromotionService
     /**
      * @param Promotion $promotion
      * @param Categories $category
+     * @param bool $isActive
      * @return bool
      */
     public function applyPromotionForCategory(Promotion $promotion,
-                                              Categories $category) : bool;
+                                              Categories $category,
+                                              bool $isActive) : bool;
 
     /**
      * @param Promotion $promotion

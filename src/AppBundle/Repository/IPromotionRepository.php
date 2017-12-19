@@ -2,6 +2,7 @@
 
 namespace AppBundle\Repository;
 
+use AppBundle\Entity\Categories;
 use AppBundle\Entity\Product;
 use AppBundle\Entity\Promotion;
 
@@ -48,4 +49,12 @@ interface IPromotionRepository
      * @return bool
      */
     public function applyExistingPromotionOnProducts(Promotion $promotion, array $products): bool;
+
+    /**
+     * @param Promotion $promotion
+     * @param Categories $categories
+     * @return bool
+     */
+    public function applyPromotionOnCategory(Promotion $promotion,
+                                             Categories $categories): bool;
 }

@@ -1,0 +1,22 @@
+{% include 'base.html.twig' %}
+
+{% if app.session.flashbag.has('successfully-attached-category-to-promotion') %}
+    <div class="col-xs-4 alert alert-info successfully-attached-category-to-promotion">
+        {% for flashMessage in app.session.flashbag.get('successfully-attached-category-to-promotion') %}
+            {{ flashMessage }}
+        {% endfor %}
+    </div>
+{% endif %}
+
+<div class="col-lg-6 add-category-to-promotion">
+    <h2 class="add-category-to-promotion-header">Add Category To Promotion</h2> <br/>
+    {{ form_start(form, {
+        'action': path('addCategoryToPromotion'),
+    }
+    )
+    }}
+
+    <div class="add-category-to-promotion-form-widget col-lg-12">
+        {{ form_widget(form) }}
+    </div>
+</div>

@@ -51,7 +51,7 @@ class Promotion
      * @var boolean
      * @ORM\Column(name="is_active", type="boolean")
      */
-    private $isActive = true;
+    private $isActive;
 
     /**
      * @var ArrayCollection $product
@@ -199,7 +199,5 @@ class Promotion
     {
         return (string) $this->discount;
     }
-
-
 }
 

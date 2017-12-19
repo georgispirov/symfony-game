@@ -2,11 +2,12 @@
 
 namespace AppBundle\Controller;
 
-use AppBundle\Entity\Product;
 use AppBundle\Entity\Promotion;
+use AppBundle\Form\AddCategoryToPromotionType;
 use AppBundle\Form\AddPromotionType;
 use AppBundle\Form\ProductsOnExistingPromotionType;
 use AppBundle\Grid\PromotionsGrid;
+use AppBundle\Services\CategoriesService;
 use AppBundle\Services\ProductService;
 use AppBundle\Services\PromotionService;
 use APY\DataGridBundle\Grid\Source\Entity;
@@ -30,6 +31,8 @@ class PromotionsController extends Controller
 
     const SUCCESSFULLY_REMOVED_PRODUCT_FROM_PROMOTION = 'You have successfully removed requested product from promotion.';
 
+    const SUCCESSFULLY_ADDED_PROMOTION_TO_CATEGORY = 'You have successfully added promotion to selected Category.';
+
     /**
      * @var PromotionService
      */
@@ -45,14 +48,21 @@ class PromotionsController extends Controller
      */
     private $productService;
 
+    /**
+     * @var CategoriesService
+     */
+    private $categoriesService;
+
     public function __construct(PromotionService $promotionService,
                                 ProductService $productService,
+                                CategoriesService $categoriesService,
                                 SessionInterface $session)
     {
 
-        $this->promotionService = $promotionService;
-        $this->session          = $session;
-        $this->productService   = $productService;
+        $this->promotionService  = $promotionService;
+        $this->session           = $session;
+        $this->productService    = $productService;
+        $this->categoriesService = $categoriesService;
     }
 
     /**
@@ -70,6 +80,7 @@ class PromotionsController extends Controller
         }
 
         $promotions = $this->promotionService->getAllActivePromotions();
+
         $grid       = $this->get('grid');
         $grid->setSource(new Entity('AppBundle:Promotion'));
         $promotionsGrid = new PromotionsGrid();
@@ -81,6 +92,15 @@ class PromotionsController extends Controller
         }
 
         return $grid->getGridResponse('promotions/list_promotions.html.twig');
+    }
+
+    /**
+     * @param Request $request
+     * @return Response
+     */
+    public function listAllCategoryPromotions(Request $request): Response
+    {
+
     }
 
     /**
@@ -172,7 +192,27 @@ class PromotionsController extends Controller
      */
     public function addCategoryToPromotion(Request $request): Response
     {
-        
+        $promotion   = new Promotion();
+        $form        = $this->createForm(AddCategoryToPromotionType::class, $promotion);
+        $requestData = $request->request->get($form->getName());
+
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $categoryID  = $requestData['category'];
+            $category    = $this->categoriesService->getCategoryByID($categoryID);
+            $isActivePromotion = $requestData['isActive'];
+
+            if (true === $this->promotionService->applyPromotionForCategory($promotion, $category, $isActivePromotion)) {
+                $this->addFlash('successfully-attached-category-to-promotion',self::SUCCESSFULLY_ADDED_PROMOTION_TO_CATEGORY);
+                return $this->redirect($request->headers->get('referer'));
+            }
+        }
+
+        return $this->render(':promotions:add_category_to_promotion.html.twig', [
+            'promotion' => $promotion,
+            'form'      => $form->createView()
+        ]);
     }
 
     /**

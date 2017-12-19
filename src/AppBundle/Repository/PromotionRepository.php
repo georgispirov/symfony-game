@@ -2,9 +2,11 @@
 
 namespace AppBundle\Repository;
 
+use AppBundle\Entity\Categories;
 use AppBundle\Entity\Product;
 use AppBundle\Entity\Promotion;
 use Doctrine\ORM\EntityRepository;
+use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\ORM\QueryBuilder;
 
 /**
@@ -45,7 +47,10 @@ class PromotionRepository extends EntityRepository implements IPromotionReposito
     {
         return $this->getEntityManager()
                     ->getRepository(Promotion::class)
-                    ->findAll();
+                    ->createQueryBuilder('promotion')
+                    ->leftJoin('promotion.product', 'product', Join::LEFT_JOIN)
+                    ->getQuery()
+                    ->getResult();
     }
 
     /**
@@ -121,5 +126,24 @@ class PromotionRepository extends EntityRepository implements IPromotionReposito
         }
         $em->flush();
         return true;
+    }
+
+    /**
+     * @param Promotion $promotion
+     * @param Categories $categories
+     * @return bool
+     */
+    public function applyPromotionOnCategory(Promotion $promotion, Categories $categories): bool
+    {
+        $em = $this->getEntityManager();
+        $categories->addPromotionsToCategory($promotion);
+        $em->persist($promotion);
+
+        if (true === $em->getUnitOfWork()->isEntityScheduled($promotion)) {
+            $em->flush();
+            return true;
+        }
+
+        return false;
     }
 }
