@@ -23,10 +23,15 @@
     </div>
 {% endif %}
 
-<div class="col-lg-6 add-product">
+<div class="col-lg-12 add-product">
     <h2 class="add-product-header">Product: {{ product.title }}</h2> <br/>
 
-    <div class="add-product-preview-product col-lg-6">
+    <div class="add-product-preview-product col-lg-4">
+        <div class="img-responsive">
+            <img class="img-responsive"
+                                       src="{{ asset('uploads/images/products/' ~ product.image) }}"
+                                       alt="">
+        </div> <br/> <br/>
         <div class="form-group">
             <b>Product Title:</b> {{ product.title }}
         </div>
@@ -45,15 +50,10 @@
         <div class="form-group">
             <b>Product Category:</b> {{ product.category }}
         </div>
-        <div class="img-responsive">
-            <b>Product Image:</b> <img class="img-responsive"
-                                src="{{ asset('uploads/images/products/' ~ product.image) }}"
-                                alt="">
-        </div>
     </div>
 </div>
 
-<div class="col-lg-6 add-comment-to-product">
+<div class="col-lg-12 add-comment-to-product">
     <h2 class="add-comment-on-product-header">Add Comment</h2> <br/>
     {{ form_start(form, {
             'action': path('viewProduct', { 'viewProductID' : product.id }),
@@ -65,7 +65,7 @@
     </div>
 </div>
 
-<div class="col-lg-6 product-comments">
+<div class="col-lg-12 product-comments">
     <h2>Product Comments</h2>
     {% if existingComments|length > 0 %}
         {% for key, comment in existingComments %}
