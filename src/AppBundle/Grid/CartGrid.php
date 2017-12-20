@@ -58,11 +58,17 @@ class CartGrid implements CartGridInterface
           ->setOperators([]);
 
         $grid->getColumn('Price')
-             ->manipulateRenderCell(function ($value, $row, $router) use ($em, $user) {
+             ->manipulateRenderCell(function ($value, $row, $router) {
                 /* @var $value  integer */
                 /* @var $row    \APY\DataGridBundle\Grid\Row */
                 /* @var $router \Symfony\Bundle\FrameworkBundle\Routing\Router */
-                 return "$" . $em->getRepository(OrderedProducts::class)->getCheckoutFromAllProducts($user);
+//                 return "$" . $em->getRepository(OrderedProducts::class)->getCheckoutFromSpecificProduct($user);
+                 /*
+                  * Note that there will be some possible issues with this concatenating
+                  * in case of that the rendering cell should contains price with [[$]] prefix.
+                  * In some cases there will be datetime value. This is APYDataGrid Bundle bug.
+                  */
+                 return "$" . $value;
              });
 
         $grid->getColumn('Quantity')

@@ -69,4 +69,11 @@ interface IOrderedProductsRepository
      * @return float
      */
     public function getCheckoutFromAllProducts(User $user): float;
+
+    /**
+     * @param Product $product
+     * @param User $user
+     * @return float
+     */
+    public function getCheckoutFromSpecificProduct(Product $product, User $user): float;
 }

@@ -22,7 +22,7 @@ class UpdateProductType extends AddProductType
         $builder->remove('Add Product');
         $imageOptions['required'] = false;
         $builder->add('imageFile', VichFileType::class, $imageOptions);
-        $builder->add('Update Product', SubmitType::class);
+        $builder->add('Update Product', SubmitType::class, ['attr' => ['class' => 'btn btn-success']]);
     }
 
     public function getName()

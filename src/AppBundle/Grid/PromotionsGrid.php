@@ -30,8 +30,8 @@ class PromotionsGrid implements PromotionsGridInterface
         $updatePromotionAction->setRouteParametersMapping(['promotionID' => $grid->getColumn('id')->getId()]);
 
         $grid->getColumn('discount')->setTitle('Discount')->setOperators([Column::OPERATOR_EQ])->setSize(10);
-        $grid->getColumn('startDate')->setTitle('Start Date')->setOperators([Column::OPERATOR_EQ])->setSize(10);
-        $grid->getColumn('endDate')->setTitle('End Date')->setOperators([Column::OPERATOR_EQ])->setSize(10);
+        $grid->getColumn('startDate')->setTitle('Start Date')->setOperators([])->setFilterable(false)->setSize(10);
+        $grid->getColumn('endDate')->setTitle('End Date')->setOperators([])->setFilterable(false)->setSize(10);
         $grid->getColumn('isActive')->setTitle('Active')->setValues(['0' => 'No', '1' => 'Yes'])->setSize(5)->setSeparator(10);
 
         /* @var Column $column */

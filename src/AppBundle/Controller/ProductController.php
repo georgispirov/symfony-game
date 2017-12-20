@@ -105,7 +105,8 @@ class ProductController extends Controller
                                               );
 
         return $this->render(':products:all_products.html.twig', [
-            'products' => $data
+            'products'         => $data,
+            'categoryName'     => 'All Products'
         ]);
     }
 

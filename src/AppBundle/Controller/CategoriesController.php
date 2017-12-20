@@ -70,7 +70,8 @@ class CategoriesController extends Controller
                                                     $request->query->getInt('page', 1));
 
         return $this->render(':products:all_products.html.twig', [
-            'products' => $productsByCategory
+            'products'          => $productsByCategory,
+            'categoryName'      => $name
         ]);
     }
 

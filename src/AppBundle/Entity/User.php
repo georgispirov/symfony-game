@@ -41,7 +41,7 @@ class User extends BaseUser implements UserInterface
      * @var
      * @ORM\Column(name="total_check", type="integer")
      */
-    protected $totalCheck;
+    protected $totalCheck = 0;
 
     /**
      * User constructor.

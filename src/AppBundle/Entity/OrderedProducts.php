@@ -39,7 +39,7 @@ class OrderedProducts
     /**
      * @var bool
      *
-     * @ORM\Column(name="confirmed", type="boolean")
+     * @ORM\Column(name="confirmed", type="integer")
      */
     private $confirmed;
 
@@ -118,7 +118,7 @@ class OrderedProducts
     /**
      * Set confirmed
      *
-     * @param boolean $confirmed
+     * @param integer $confirmed
      *
      * @return OrderedProducts
      */
@@ -132,7 +132,7 @@ class OrderedProducts
     /**
      * Get confirmed
      *
-     * @return bool
+     * @return integer
      */
     public function getConfirmed()
     {

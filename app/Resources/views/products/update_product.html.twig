@@ -1,9 +1,26 @@
 {% include 'base.html.twig' %}
 
+{% if app.session.flashbag.has('success-on-updating-product') %}
+    <div class="col-xs-4 alert alert-info success-on-updating-product">
+        {% for flashMessage in app.session.flashbag.get('success-on-updating-product') %}
+            {{ flashMessage }}
+        {% endfor %}
+    </div>
+{% endif %}
+
+{% if app.session.flashbag.has('failure-on-updating-product') %}
+    <div class="col-xs-4 alert alert-info failure-on-updating-product">
+        {% for flashMessage in app.session.flashbag.get('failure-on-updating-product') %}
+            {{ flashMessage }}
+        {% endfor %}
+    </div>
+{% endif %}
+
+
 <div class="col-lg-6 update-product">
     <h2 class="add-product-header">Update Product</h2> <br/>
     {{ form_start(form, {
-        'action': path('updateProduct', { 'productID': product.id }),
+        'action': path('updateProduct', { 'viewProductID': product.id }),
         }
     )
     }}

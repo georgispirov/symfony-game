@@ -28,6 +28,18 @@
     </div>
 {% endif %}
 
+{% if app.session.flashbag.has('not-enough-quantity-to-order') %}
+    <div class="col-xs-4 alert alert-danger not-enough-quantity-to-order">
+        {% for flashMessage in app.session.flashbag.get('not-enough-quantity-to-order') %}
+            {{ flashMessage }}
+        {% endfor %}
+    </div>
+{% endif %}
+
+<div class="header-products-by-category">
+    <h2>{{ categoryName }}</h2>
+</div>
+
 {% for key, product in products %}
 <div class="col-lg-8 test-style">
     <div class="shop-items col-lg-12">

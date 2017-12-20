@@ -165,22 +165,38 @@ class ProductRepository extends EntityRepository implements IProductRepository
      * @param OrderedProducts $orderedProducts
      * @param Product $product
      * @param User $user
+     * @param int $quantity
      * @return bool
      */
     public function markAsOutOfStock(OrderedProducts $orderedProducts,
                                      Product $product,
-                                     User $user): bool
+                                     User $user,
+                                     int $quantity): bool
     {
         $em = $this->getEntityManager();
 
-        $product->setQuantity(0);
-        $product->setOutOfStock(true);
-        $em->remove($orderedProducts);
+        $em->getUnitOfWork()->scheduleForUpdate($orderedProducts);
+        $em->getUnitOfWork()->scheduleForUpdate($user);
 
-        $user->setMoney($user->getMoney() - $orderedProducts->getOrderedProductPrice());
+        if (($product->getQuantity() + 1) - $quantity < 1) {
+            $product->setOutOfStock(true);
+        }
 
-        $em->flush();
-        return true;
+        $orderedProducts->setConfirmed($orderedProducts->getConfirmed() + $quantity);
+        $orderedProducts->setQuantity($orderedProducts->getQuantity() - $quantity);
+        $orderedProducts->setOrderedProductPrice($orderedProducts->getOrderedProductPrice() - ($product->getPrice() * $quantity));
+
+        $user->setMoney($user->getMoney() - ($product->getPrice() * $quantity));
+        $user->setTotalCheck($user->getTotalCheck() - ($product->getPrice() * $quantity));
+
+        if (true === $em->getUnitOfWork()->isScheduledForUpdate($orderedProducts)
+            && true === $em->getUnitOfWork()->isScheduledForUpdate($user))
+        {
+                $em->flush();
+                return true;
+        }
+
+        return false;
     }
 
     /**
@@ -200,25 +216,23 @@ class ProductRepository extends EntityRepository implements IProductRepository
         $em->getUnitOfWork()->scheduleForUpdate($product);
         $em->getUnitOfWork()->scheduleForUpdate($orderedProducts);
 
-        if ($orderedProducts->getQuantity() - $quantity === 0) {
-            $em->remove($orderedProducts);
-        } else {
-            $orderedProducts->setQuantity($orderedProducts->getQuantity() - $quantity);
-            $orderedProducts->setOrderedProductPrice($orderedProducts->getOrderedProductPrice() - $product->getPrice());
-        }
+        $user->setMoney($user->getMoney() - $orderedProducts->getOrderedProductPrice());
+        $user->setTotalCheck($user->getTotalCheck() - ($product->getPrice() * $quantity));
+
+        $orderedProducts->setQuantity($orderedProducts->getQuantity() - $quantity);
+        $orderedProducts->setOrderedProductPrice($orderedProducts->getOrderedProductPrice() - ($product->getPrice() * $quantity));
+        $orderedProducts->setConfirmed($orderedProducts->getConfirmed() + $quantity);
 
         if ($product->getQuantity() - $quantity === 0) {
-            $em->remove($product);
+            $product->setQuantity(0);
+            $product->setOutOfStock(true);
         } else {
             $product->setQuantity($product->getQuantity() - $quantity);
         }
 
-        $user->setMoney($user->getMoney() - $orderedProducts->getOrderedProductPrice());
-        $user->setTotalCheck($user->getTotalCheck() - $orderedProducts->getOrderedProductPrice());
-
-        if (true === $em->getUnitOfWork()->isEntityScheduled($product)
+        if (true === $em->getUnitOfWork()->isScheduledForUpdate($product)
             && true === $em->getUnitOfWork()->isScheduledForUpdate($user)
-            && true === $em->getUnitOfWork()->isEntityScheduled($user)) {
+            && true === $em->getUnitOfWork()->isScheduledForUpdate($orderedProducts)) {
                 $em->flush();
                 return true;
         }

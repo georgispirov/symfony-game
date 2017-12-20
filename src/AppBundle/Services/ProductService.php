@@ -128,7 +128,7 @@ class ProductService implements IProductService
         }
 
         return $this->em->getRepository(Product::class)
-                        ->markAsOutOfStock($orderedProducts, $product, $orderedProducts->getUser());
+                        ->markAsOutOfStock($orderedProducts, $product, $orderedProducts->getUser(), $quantity);
     }
 
     /**
