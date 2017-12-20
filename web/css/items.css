@@ -5,7 +5,7 @@
 }
 
 .test-style {
-    margin-top: 110px;
+    /*margin-top: 110px;*/
 }
 
 .shop-items:after {
@@ -14,27 +14,26 @@
 }
 
 .not-enough-money-message-ordering-item {
-    margin-top: 75px;
+    margin-bottom: 20px;
     margin-left: 40px;
 }
 
 
 .error-message-item-add-to-cart {
-    margin-top: 75px;
+    margin-bottom: 20px;
     margin-left: 40px;
 }
 
 .success-message-item-add-to-cart {
-    margin-top: 75px;
     margin-left: 40px;
 }
 
 .info-message-no-items-in-grid {
-    margin-top: 75px;
+    margin-bottom: 20px;
     margin-left: 40px;
 }
 
 .success-message-removed-ordered-item {
-    margin-top: 75px;
+    margin-bottom: 20px;
     margin-left: 40px;
 }

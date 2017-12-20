@@ -67,9 +67,9 @@ class ProductController extends Controller
     /**
      * @Route("/products/add", name="addProduct")
      * @param Request $request
-     * @return \Symfony\Component\HttpFoundation\Response
+     * @return Response
      */
-    public function addProductsAction(Request $request)
+    public function addProductsAction(Request $request): Response
     {
         $product = new Product();
         $form    = $this->createForm(AddProductType::class, $product);
@@ -82,9 +82,11 @@ class ProductController extends Controller
             $em->persist($product);
             $em->flush();
 
-            return $this->redirectToRoute('homepage');
+            $this->addFlash('successfully-added-product', 'You have successfully added requested product.');
+            return $this->redirectToRoute('allProducts');
         }
 
+        $this->addFlash('non-successful-added-product', 'Failed adding product.');
         return $this->render(':products:add_product.html.twig', [
             'form' => $form->createView()
         ]);

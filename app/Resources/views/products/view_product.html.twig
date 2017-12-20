@@ -69,9 +69,8 @@
     <h2>Product Comments</h2>
     {% if existingComments|length > 0 %}
         {% for key, comment in existingComments %}
-            <div class="container">
                 <div class="row">
-                    <div class="col-sm-8">
+                    <div class="col-sm-12">
                         <div class="panel panel-white post panel-shadow">
                             <div class="post-heading">
                                 <div class="pull-left image">
@@ -94,7 +93,6 @@
                         </div>
                     </div>
                 </div>
-            </div>
         {% endfor %}
     {% else %}
         <h2>There are no comments for this Product.</h2>

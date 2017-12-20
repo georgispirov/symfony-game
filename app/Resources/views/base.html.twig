@@ -30,7 +30,10 @@
             <p class="money-content">${{ app.user.money }}</p>
         </span>
     </div>
-{% endif %}
-{% block content %}{% endblock %}
-{% block javascripts %}{% endblock %}
 
+    <div class="col-lg-8">
+        {% block content %}{% endblock %}
+        {% block javascripts %}{% endblock %}
+
+
+{% endif %}

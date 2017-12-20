@@ -6,7 +6,7 @@
 </head>
 
 {% if app.session.flashbag.has('info') %}
-    <div class="col-xs-4 alert alert-info info-message-no-items-in-grid">
+    <div class="col-xs-8 alert alert-info info-message-no-items-in-grid">
         {% for flashMessage in app.session.flashbag.get('info') %}
             {{ flashMessage }}
         {% endfor %}
@@ -14,7 +14,7 @@
 {% endif %}
 
 {% if app.session.flashbag.has('successfully-purchased-item') %}
-    <div class="col-xs-4 alert alert-info successfully-purchased-item">
+    <div class="col-xs-8 alert alert-info successfully-purchased-item">
         {% for flashMessage in app.session.flashbag.get('successfully-purchased-item') %}
             {{ flashMessage }}
         {% endfor %}
@@ -22,7 +22,7 @@
 {% endif %}
 
 {% if app.session.flashbag.has('non-successfully-purchased-item') %}
-    <div class="col-xs-4 alert alert-info non-successfully-purchased-item">
+    <div class="col-xs-8 alert alert-info non-successfully-purchased-item">
         {% for flashMessage in app.session.flashbag.get('non-successfully-purchased-item') %}
             {{ flashMessage }}
         {% endfor %}
@@ -30,7 +30,7 @@
 {% endif %}
 
 {% if app.session.flashbag.has('removedOrder') %}
-    <div class="col-xs-4 alert alert-info success-message-removed-ordered-item">
+    <div class="col-xs-8 alert alert-info success-message-removed-ordered-item">
         {% for flashMessage in app.session.flashbag.get('removedOrder') %}
             {{ flashMessage }}
         {% endfor %}
@@ -38,7 +38,7 @@
 {% endif %}
 
 {% if app.session.flashbag.has('nonRemovedOrder') %}
-    <div class="col-xs-4 alert alert-info error-message-non-removed-ordered-item">
+    <div class="col-xs-8 alert alert-info error-message-non-removed-ordered-item">
         {% for flashMessage in app.session.flashbag.get('nonRemovedOrder') %}
             {{ flashMessage }}
         {% endfor %}

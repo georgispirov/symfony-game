@@ -80,7 +80,8 @@ nav.navbar .container {
 }
 
 .test-style {
-    margin-top: 70px;
+    /*margin-top: 70px;*/
+    margin-top: 5px;
     border: 1px solid #eee;
     padding: 20px 0 50px 0;
     margin-bottom: 50px;
@@ -103,4 +104,8 @@ nav.navbar .container {
 .menu_level_1 li a:hover {
     background: #aaa;
     color: #fff;
+}
+
+.success-on-updating-product {
+    margin-top: 70px;
 }
