@@ -1,0 +1,14 @@
+{% include 'base.html.twig' %}
+
+<div class="col-lg-12 add-product">
+    <h2 class="add-product-header">Add Product</h2> <br/>
+    {{ form_start(form, {
+        'action': path('sellBoughtProduct'),
+        }
+    )
+    }}
+
+    <div class="add-product-form-widget col-lg-12">
+        {{ form_widget(form) }}
+    </div>
+</div>
