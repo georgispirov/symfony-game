@@ -13,6 +13,7 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
 </head>
 <body>
+
 {% include '::topnav.html.twig' %}
 
 {% if app.user %}
@@ -30,10 +31,8 @@
             <p class="money-content">${{ app.user.money }}</p>
         </span>
     </div>
-
-    <div class="col-lg-8">
-        {% block content %}{% endblock %}
-        {% block javascripts %}{% endblock %}
-
-
 {% endif %}
+
+<div class="col-lg-8">
+    {% block content %}{% endblock %}
+    {% block javascripts %}{% endblock %}
