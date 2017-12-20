@@ -4,7 +4,7 @@
     <link rel="stylesheet" href="{{ asset('css/ready_for_checkout_products.css') }}">
 </head>
 
-<div class="col-xs-8 preview-ready-for-checkout-products">
+<div class="col-xs-12 preview-ready-for-checkout-products">
     <h2>Selected for checkout products</h2>
     {% for orderedProduct in orderedProducts %}
         <div class="col-xs-3">
@@ -15,16 +15,14 @@
             </span>
 
             <label for="ordered-product-checkout-quantity">Selected Quantity: </label>
-            <span class="ordered-product-checkout-quantity-{{ orderedProduct.id }}">
-                {{ orderedProduct.quantity }}
-            </span>
+            <span class="ordered-product-checkout-quantity-{{ orderedProduct.id }}">1</span>
 
             <div class="product-image-ordered">
                 <img src="/uploads/images/products/{{ orderedProduct.product.image }}" width="100px" height="80px"> <br/>
             </div>
 
             <div class="range-type-for-order-{{ orderedProduct.id }}">
-                <input type="range" min="1" max="{{ orderedProduct.quantity }}" class="slider" id="range-checkout-item-{{ orderedProduct.id }}">
+                <input type="range" min="1" max="{{ orderedProduct.quantity }}" class="slider" value="1" id="range-checkout-item-{{ orderedProduct.id }}">
             </div>
         </div>
     {% endfor %}
@@ -57,9 +55,41 @@
         });
 
         $(orderIDs).each(function (i, obj) {
+            var previousRangeSelected;
+
+            $('#range-checkout-item-' + obj).focus(function () {
+                previousRangeSelected = this.value;
+            });
+
             $('#range-checkout-item-' + obj).change(function () {
+                var currentQuantity = previousRangeSelected;
+                var changedQuantity = this.value;
                 $('.ordered-product-checkout-quantity-' + obj).text($(this).val());
-                $('.checkout-from-order').text();
+                $.ajax({
+                    'url': '/app_dev.php/calculate/order',
+                    'type': "POST",
+                    'dataType': "json",
+                    'data': { 'orderID': obj },
+                    'success': function (data) {
+                        if (changedQuantity < currentQuantity) {
+                            // substract
+                            var substract = data * (currentQuantity - changedQuantity);
+                            var currentCheckoutForSub = $.trim($('.checkout-from-order').text());
+                            currentCheckoutForSub     = parseInt(currentCheckoutForSub.replace("$", ""));
+                            var resultSub = currentCheckoutForSub - substract;
+                            $('.checkout-from-order').text("$" + resultSub);
+                        } else {
+                            // addition
+                            alert(currentQuantity);
+                            alert(changedQuantity);
+                            var addition = data * (changedQuantity - currentQuantity);
+                            var currentCheckoutForAdd = $.trim($('.checkout-from-order').text());
+                            currentCheckoutForAdd     = parseInt(currentCheckoutForAdd.replace("$", ""));
+                            var resultAdd = currentCheckoutForAdd + addition;
+                            $('.checkout-from-order').text("$" + resultAdd);
+                        }
+                    }
+                })
             });
         });
     });
@@ -84,4 +114,6 @@
             }
         });
     });
+
+
 </script>

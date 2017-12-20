@@ -180,7 +180,7 @@ class CartController extends Controller
         }
 
         foreach ($checkoutOrderedProducts as $orderedProduct) { /* @var OrderedProducts $orderedProduct */
-            $orderedProductsPrice += $orderedProduct->getOrderedProductPrice();
+            $orderedProductsPrice += $orderedProduct->getOrderedProductPrice() / $orderedProduct->getQuantity();
             $referencedProducts[]  = $this->productService->getProductByID($orderedProduct->getProduct()->getId());
         }
 
