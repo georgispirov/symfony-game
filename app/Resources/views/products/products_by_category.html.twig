@@ -6,8 +6,16 @@
     <link rel="stylesheet" href="{{ asset('css/items.css') }}">
 </head>
 
+<div class="col-lg-12 products-by-promotion-grid-table">
+    <h2>Promotion with discount: {{ promotion.discount }}% </h2>
+    <p>Promotion interval: <b>{{ promotion.startDate|date("m-d-Y h:i:sA") }}</b> -- <b>{{ promotion.endDate|date("m-d-Y h:i:sA") }}</b></p>
+    {% if grid is not null %}
+        {{ grid(grid) }}
+    {% endif %}
+</div>
+
 {% if app.session.flashbag.has('no-products-in-active-promotion') %}
-    <div class="col-xs-4 alert alert-info no-products-in-active-promotion">
+    <div class="col-xs-8 alert alert-info no-products-in-active-promotion">
         {% for flashMessage in app.session.flashbag.get('no-products-in-active-promotion') %}
             {{ flashMessage }}
         {% endfor %}
@@ -15,7 +23,7 @@
 {% endif %}
 
 {% if app.session.flashbag.has('successfully-removed-product-from-promotion') %}
-    <div class="col-xs-4 alert alert-info successfully-removed-product-from-promotion">
+    <div class="col-xs-8 alert alert-info successfully-removed-product-from-promotion">
         {% for flashMessage in app.session.flashbag.get('successfully-removed-product-from-promotion') %}
             {{ flashMessage }}
         {% endfor %}
@@ -23,20 +31,12 @@
 {% endif %}
 
 {% if app.session.flashbag.has('non-successfully-removed-product-from-promotion') %}
-    <div class="col-xs-4 alert alert-info non-successfully-removed-product-from-promotion">
+    <div class="col-xs-8 alert alert-info non-successfully-removed-product-from-promotion">
         {% for flashMessage in app.session.flashbag.get('non-successfully-removed-product-from-promotion') %}
             {{ flashMessage }}
         {% endfor %}
     </div>
 {% endif %}
-
-<div class="col-lg-7 products-by-promotion-grid-table">
-    <h2>Promotion with discount: {{ promotion.discount }}% </h2>
-    <p>Promotion interval: <b>{{ promotion.startDate|date("m-d-Y h:i:sA") }}</b> -- <b>{{ promotion.endDate|date("m-d-Y h:i:sA") }}</b></p>
-    {% if grid is not null %}
-        {{ grid(grid) }}
-    {% endif %}
-</div>
 
 <script>
     $(document).ready(function() {
@@ -52,7 +52,7 @@
             success: function (data) {
                 $('.grid-column-image').each(function (key, value) {
                     $(this).text("");
-                    $(this).append('<img src="' + data[key] + '" width="150px" height="100px" />');
+                    $(this).append('<img src="' + data[key] + '" class="image-cart-orders"/>');
                 });
             }
         });

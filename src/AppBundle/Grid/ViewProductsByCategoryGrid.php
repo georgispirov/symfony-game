@@ -18,12 +18,12 @@ class ViewProductsByCategoryGrid implements ViewProductsByCategoryGridInterface
         $removeProductFromPromotionAction->setRouteParameters(['promotionID' => $promotionID, 'id']);
 
         $grid->setHiddenColumns(['id', 'createdAt', 'updatedAt']);
-        $grid->getColumn('title')->setTitle('Product Title')->setOperators([Column::OPERATOR_SLIKE])->setSize(5);
-        $grid->getColumn('description')->setTitle('Description')->setOperators([Column::OPERATOR_SLIKE])->setSize(15);
+        $grid->getColumn('title')->setTitle('Product Title')->setOperators([Column::OPERATOR_SLIKE]);
+        $grid->getColumn('description')->setTitle('Description')->setOperators([])->setFilterable(false);
         $grid->getColumn('price')->setTitle('Price')->setOperators([Column::OPERATOR_EQ])->setSize(5);
         $grid->getColumn('image')->setTitle('Product Image')->setOperators([])->setFilterable(false);
-        $grid->getColumn('quantity')->setTitle('Quantity')->setOperators([Column::OPERATOR_EQ])->setSize(5);
-        $grid->getColumn('outOfStock')->setTitle('Out Of Stock')->setValues([0 => 'No', 1 => 'Yes'])->setSize(5);
+        $grid->getColumn('quantity')->setTitle('Quantity')->setOperators([])->setFilterable(false);
+        $grid->getColumn('outOfStock')->setTitle('Out Of Stock')->setValues([0 => 'No', 1 => 'Yes']);
 
         $grid->getColumn('price')->manipulateRenderCell(function ($value, $row, $router) {
             /* @var $value  string */

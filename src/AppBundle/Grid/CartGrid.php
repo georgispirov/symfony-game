@@ -40,7 +40,7 @@ class CartGrid implements CartGridInterface
         $deleteColumn = new RowAction('Delete Any', 'removeOrderedProduct');
         $deleteColumn->setRouteParametersMapping(['productID' => $grid->getColumn('orderedProductID')->getId()]);
 
-        $grid->getColumn('orderedDate')->setTitle('Ordered Date')->setOperators([Column::OPERATOR_SLIKE]);
+        $grid->getColumn('orderedDate')->setTitle('Ordered Date')->setOperators([])->setFilterable(false);
         $grid->getColumn('User')->setTitle('Seller')->setOperators([Column::OPERATOR_SLIKE]);
 
         $grid->getColumn('Product')->manipulateRenderCell(function ($value, $row, $router) use ($em) {
@@ -74,7 +74,8 @@ class CartGrid implements CartGridInterface
         $grid->getColumn('Quantity')
             ->setFilterable(true)
             ->setFilterType('input')
-            ->setOperators(['eq']);
+            ->setOperators([])
+            ->setFilterable(false);
 
         $grid->getColumn('Quantity')->manipulateRenderCell(
             function ($value, $row, $router) {
@@ -82,7 +83,9 @@ class CartGrid implements CartGridInterface
             }
         );
 
-        $grid->getColumn('Price')->setOperators([Column::OPERATOR_EQ]);
+        $grid->getColumn('Price')
+             ->setOperators([])
+             ->setFilterable(false);
 
         $grid->addRowAction($productColumn);
         $grid->addRowAction($deleteColumn);

@@ -6,16 +6,17 @@
     margin-left: 40px;
 }
 
-.total-check-from-orders {
-    margin-top: 15px;
-    margin-right: -140px;
-    float: right;
-    border-bottom: 2px solid;
+.image-cart-orders {
+    width: 60px;
 }
 
-.grid input, .grid select {
-    width: 100px !important;
+.total-check-from-orders {
+    margin-top: 15px;
 }
+
+/*.grid input, .grid select {*/
+    /*width: 100px !important;*/
+/*}*/
 
 .grid table
 {

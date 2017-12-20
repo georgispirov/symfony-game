@@ -47,13 +47,13 @@
 
 <body>
     {% if grid is not null %}
-        <div class="col-lg-6 ordered-product-items">
+        <div class="col-lg-12 ordered-product-items">
             {{ grid(grid) }}
-            {% set difference = app.user.money - app.user.totalCheck %}
-            <div class="col-lg-1 total-check-from-orders">
-                <label for="total-check">Total Check: </label>
-                <span class="total-check">${{ totalCheckFromOrders }}</span>
-            </div>
+        </div>
+        {% set difference = app.user.money - app.user.totalCheck %}
+        <div class="col-lg-12 total-check-from-orders text-right">
+            <label for="total-check">Total Check: </label>
+            <span class="total-check">${{ totalCheckFromOrders }}</span>
         </div>
     {% endif %}
 </body>
@@ -72,7 +72,7 @@
             success: function (data) {
                 $('.grid-column-Product').each(function (key, value) {
                     $(this).text("");
-                    $(this).append('<img src="' + data[key] + '" width="150px" height="100px" />');
+                    $(this).append('<img src="' + data[key] + '" class="image-cart-orders"/>');
                 });
             }
         });
