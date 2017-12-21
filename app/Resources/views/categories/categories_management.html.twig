@@ -2,28 +2,36 @@
 
 <head>
     <link rel="stylesheet" href="{{ asset('css/grid-ordered-products.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/items.css') }}">
 </head>
 
-<h2>All Categories</h2>
-
-{% if app.session.flashbag.has('successfully-removed-category') %}
-    <div class="col-xs-8 alert alert-success successfully-removed-category">
-        {% for flashMessage in app.session.flashbag.get('successfully-removed-category') %}
-            {{ flashMessage }}
-        {% endfor %}
-    </div>
-{% endif %}
-
-{% if app.session.flashbag.has('non-successful-removed-category') %}
-    <div class="col-xs-8 alert alert-danger non-successful-removed-category">
-        {% for flashMessage in app.session.flashbag.get('non-successful-removed-category') %}
+{% if app.session.flashbag.has('non-active-categories') %}
+    <div class="col-xs-2 alert alert-info non-active-categories">
+        {% for flashMessage in app.session.flashbag.get('non-active-categories') %}
             {{ flashMessage }}
         {% endfor %}
     </div>
 {% endif %}
 
 {% if grid is not null %}
+    <h2>All Categories</h2>
     <div class="col-lg-4 categories-grid-table">
         {{ grid(grid) }}
+    </div>
+{% endif %}
+
+{% if app.session.flashbag.has('non-successful-removed-category') %}
+    <div class="col-xs-4 alert alert-danger non-successful-removed-category">
+        {% for flashMessage in app.session.flashbag.get('non-successful-removed-category') %}
+            {{ flashMessage }}
+        {% endfor %}
+    </div>
+{% endif %}
+
+{% if app.session.flashbag.has('successfully-removed-category') %}
+    <div class="col-xs-4 alert alert-success successfully-removed-category">
+        {% for flashMessage in app.session.flashbag.get('successfully-removed-category') %}
+            {{ flashMessage }}
+        {% endfor %}
     </div>
 {% endif %}

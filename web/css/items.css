@@ -9,6 +9,16 @@
     border-top: 4px solid grey;
 }
 
+.non-active-categories {
+    margin-top: 65px;
+    margin-left: 20px;
+}
+
+.successfully-removed-category {
+    margin-top: 65px;
+    margin-left: 20px;
+}
+
 .not-enough-money-message-ordering-item {
     margin-bottom: 20px;
     margin-left: 40px;

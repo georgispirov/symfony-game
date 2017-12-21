@@ -135,12 +135,17 @@ class CategoriesController extends Controller
         $grid = $this->get('grid');
         $allCategories = $this->categoryService->getAllCategoriesOnArray();
 
-        $vectorCategories = new Vector($allCategories);
-        $grid->setSource($vectorCategories);
-        $categoriesGrid   = new CategoriesGrid();
-        $categoriesGrid->configureCategoriesGrid($grid);
+        if ($allCategories) {
+            $vectorCategories = new Vector($allCategories);
+            $grid->setSource($vectorCategories);
+            $categoriesGrid   = new CategoriesGrid();
+            $categoriesGrid->configureCategoriesGrid($grid);
 
-        return $grid->getGridResponse(':categories:categories_management.html.twig');
+            return $grid->getGridResponse(':categories:categories_management.html.twig');
+        }
+
+        $this->addFlash('non-active-categories', 'There are no Categories.');
+        return $this->render('categories/categories_management.html.twig');
     }
 
     /**
@@ -156,16 +161,16 @@ class CategoriesController extends Controller
 
         if (sizeof($productsInCategory) > 0) {
             if (true === $this->categoryService->removeCategoryWithProducts($category, $productsInCategory)) {
-                $this->categoryService->addSuccessFlashMessageOnRemoveCategory();
+                $this->addFlash('successfully-removed-category', 'You have successfully removed requested Category.');
                 return $this->redirect($request->headers->get('referer'));
             }
 
-            $this->categoryService->addFailMessageOnRemoveCategory();
+            $this->addFlash('non-successful-removed-category', 'You have successfully removed requested Category.');
             return $this->redirect($request->headers->get('referer'));
         }
 
         if (true === $this->categoryService->removeCategoryWithoutProducts($category)) {
-            $this->categoryService->addSuccessFlashMessageOnRemoveCategory();
+            $this->addFlash('successfully-removed-category', 'You have successfully removed requested Category.');
             return $this->redirect($request->headers->get('referer'));
         }
 

@@ -128,14 +128,4 @@ class CategoriesService implements ICategoriesService
         return $this->em->getRepository(Categories::class)
                         ->removeCategoryWithProducts($categories, $product);
     }
-
-    public function addSuccessFlashMessageOnRemoveCategory()
-    {
-        $this->session->set('successfully-removed-category', 'You have successfully removed requested Category.');
-    }
-
-    public function addFailMessageOnRemoveCategory()
-    {
-        $this->session->set('non-successful-removed-category', 'You have successfully removed requested Category.');
-    }
 }
