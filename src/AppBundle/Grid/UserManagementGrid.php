@@ -16,6 +16,9 @@ class UserManagementGrid implements UserManagementGridInterface
         $demoteAction  = new RowAction('Demote Roles', 'demoteUserRoles');
         $demoteAction->setRouteParametersMapping(['id' => $grid->getColumn('id')->getId()]);
 
+        $ownedProductsAction = new RowAction('Bought Products', 'boughtProductsByUser');
+        $ownedProductsAction->setRouteParametersMapping(['id']);
+
         $grid->setHiddenColumns(['id', 'password', 'salt', 'confirmationToken', 'passwordRequestedAt', 'usernameCanonical', 'totalCheck', 'emailCanonical']);
         $grid->getColumn('username')->setOperators([Column::OPERATOR_SLIKE])->setTitle('Username');
         $grid->getColumn('roles')->setOperators([Column::OPERATOR_SLIKE])->setTitle('Roles');
@@ -39,6 +42,7 @@ class UserManagementGrid implements UserManagementGridInterface
             $column->setAlign('center');
         }
 
+        $grid->addRowAction($ownedProductsAction);
         $grid->addRowAction($promoteAction);
         $grid->addRowAction($demoteAction);
 

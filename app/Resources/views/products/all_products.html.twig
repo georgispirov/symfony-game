@@ -89,6 +89,10 @@
                 <label for="product-category">Category: </label>
                 <span class="product-category">{{ product.category }}</span>
             </div>
+            <div class="form-group">
+                <label for="product-category">Seller: </label>
+                <span class="product-category">{{ product.user.username }}</span>
+            </div>
             {% if product.promotion|length > 0 %}
                 <div class="form-group">
                     <label for="product-promotion">On Active Promotion: </label>
@@ -114,14 +118,16 @@
             <a href="{{ path('viewProduct', { 'viewProductID': product.id }) }}"
                class="btn btn-success">View Product</a>
         </div>
-        <div class="form-group">
-            <a href="{{ path('updateProduct', { 'viewProductID': product.id }) }}"
-               class="btn btn-warning">Update Product</a>
-        </div>
-        <div class="form-group">
-            <a href="{{ path('removeProduct', { 'productID': product.id }) }}"
-               class="btn btn-danger">Delete Product</a>
-        </div>
+        {% if is_granted('ROLE_EDITOR') %}
+            <div class="form-group">
+                <a href="{{ path('updateProduct', { 'viewProductID': product.id }) }}"
+                   class="btn btn-warning">Update Product</a>
+            </div>
+            <div class="form-group">
+                <a href="{{ path('removeProduct', { 'productID': product.id }) }}"
+                   class="btn btn-danger">Delete Product</a>
+            </div>
+        {% endif %}
     </div>
 </div>
 {% endfor %}

@@ -94,4 +94,12 @@ interface IOrderedProductsService
     public function sellBoughtProduct(Product $product,
                                       OrderedProducts $orderedProducts,
                                       int $currentProductQuantity): bool;
+
+    /**
+     * @param Product $product
+     * @param User $user
+     * @return null|OrderedProducts
+     */
+    public function getOrderedProductByProductAndUser(Product $product,
+                                                      User $user);
 }

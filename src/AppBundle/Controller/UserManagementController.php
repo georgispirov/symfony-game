@@ -5,9 +5,12 @@ namespace AppBundle\Controller;
 use AppBundle\Entity\User;
 use AppBundle\Form\DemoteUserRolesType;
 use AppBundle\Form\UserManagementType;
+use AppBundle\Grid\BoughtProductsBySpecificUserGrid;
 use AppBundle\Grid\UserManagementGrid;
+use AppBundle\Services\OrderedProductsService;
 use AppBundle\Services\UserManagementService;
 use APY\DataGridBundle\Grid\Source\Entity;
+use APY\DataGridBundle\Grid\Source\Vector;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -36,12 +39,19 @@ class UserManagementController extends Controller
      */
     private $userManagementService;
 
+    /**
+     * @var OrderedProductsService
+     */
+    private $orderedProductsService;
+
     public function __construct(SessionInterface $session,
-                                UserManagementService $userManagementService)
+                                UserManagementService $userManagementService,
+                                OrderedProductsService $orderedProductsService)
     {
 
-        $this->session               = $session;
-        $this->userManagementService = $userManagementService;
+        $this->session                = $session;
+        $this->userManagementService  = $userManagementService;
+        $this->orderedProductsService = $orderedProductsService;
     }
 
     /**
@@ -132,5 +142,46 @@ class UserManagementController extends Controller
             'user' => $user,
             'form' => $form->createView()
         ]);
+    }
+
+    /**
+     * @Route("/bought/productsByUser", name="boughtProductsByUser")
+     * @param Request $request
+     * @return Response
+     */
+    public function boughtProductsBySpecificUser(Request $request): Response
+    {
+        $currentUser = $this->get('security.token_storage')->getToken()->getUser();
+        $this->denyAccessUnlessGranted('ROLE_ADMIN', $currentUser, 'You are not authorized to access this page. Only Admins has access.');
+
+        $userID = $request->query->get('id');
+        $user   = $this->userManagementService->getUserByID($userID);
+        $boughtProductsByUser = $this->orderedProductsService->getAllBoughtProductsByUser($user);
+
+        if (sizeof($boughtProductsByUser) > 0) {
+            $grid   = $this->get('grid');
+            $vectorSource = new Vector($boughtProductsByUser);
+            $grid->setSource($vectorSource);
+            $boughtProductsByUserGrid = new BoughtProductsBySpecificUserGrid();
+            $boughtProductsByUserGrid->configureBoughtProductsBySpecificUser($grid);
+
+            return $grid->getGridResponse(':bought_products:list_bought_products_by_user.html.twig');
+        }
+
+        $this->addFlash('non-existing-bought-products', 'There are no bought products by this User.');
+        return $this->render(':bought_products:list_bought_products_by_user.html.twig');
+    }
+
+    /**
+     * @Route("/updateBoughtProduct/BySpecificUser", name="updateBoughtProductOnUser")
+     * @param Request $request
+     */
+    public function updateBoughtProductOnSpecificUserAction(Request $request)
+    {
+        $loggedUser = $this->get('security.token_storage')->getToken()->getUser();
+        $this->denyAccessUnlessGranted('ROLE_ADMIN', $loggedUser, 'Only Admins are granted to perform this action.');
+
+        $specificUserID = $request->query->get('id');
+        $specificUser = $this->userManagementService->getUserByID($specificUserID);
     }
 }

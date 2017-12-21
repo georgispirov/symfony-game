@@ -212,11 +212,12 @@ class ProductController extends Controller
      */
     public function deleteProductAction(Request $request): Response
     {
+        $user      = $this->get('security.token_storage')->getToken()->getUser();
+        $this->denyAccessUnlessGranted('ROLE_EDITOR', $user, 'Only Editors or higher level role has access to perform this action.');
         $productID = $request->query->get('productID');
         $product   = $this->productService->getProductByID($productID);
 
         if (true === $this->productService->deleteProduct($product)) {
-            $this->get('logger')->error('hahaha', ['haha' => 111]);
             return $this->redirect($request->headers->get('referer'));
         }
 

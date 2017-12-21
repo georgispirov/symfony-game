@@ -84,7 +84,7 @@ class CartController extends Controller
         $product = $this->productService->getProductByID($params['routeParams']);
 
         if (true === $this->cartService->isOrderedProductAlreadyBought($user, $product)) {
-            $orderedProduct = $this->cartService->getOrderedProductByProduct($product);
+            $orderedProduct = $this->orderedProductsService->getOrderedProductByProductAndUser($product, $user);
 
             if (true === $this->cartService->increaseQuantityOnAlreadyBoughtItem($user, $orderedProduct, $product)) {
                 $this->addFlash('success', self::SUCCESSFULLY_ITEM_BOUGHT);
@@ -204,7 +204,7 @@ class CartController extends Controller
 
         foreach ($orderedProducts as $orderRequest) {
             $product          = $this->productService->getProductByTitle($orderRequest['title']);
-            $dbOrderedProduct = $this->orderedProductsService->getOrderedProductByProduct($product);
+            $dbOrderedProduct = $this->orderedProductsService->getOrderedProductByProductAndUser($product, $user);
 
             if (false === $this->productService->markAsOutOfStock($dbOrderedProduct, $product, intval($orderRequest['quantity']))) {
                 $isSuccessfully = false;

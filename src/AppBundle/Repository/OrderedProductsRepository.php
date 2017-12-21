@@ -26,7 +26,7 @@ class OrderedProductsRepository extends EntityRepository implements IOrderedProd
                       ->getRepository(OrderedProducts::class)
                       ->createQueryBuilder('op')
                       ->select('op.id as orderedProductID, pr.title AS Product, op.orderedDate, pr.id AS viewProductID,
-                                      op.quantity AS Quantity, u.username AS User, op.orderedProductPrice AS Price')
+                                      op.quantity AS Quantity, op.orderedProductPrice AS Price')
                       ->join('op.user','u')
                       ->join('op.product', 'pr')
                       ->where('u = :user')
@@ -100,9 +100,9 @@ class OrderedProductsRepository extends EntityRepository implements IOrderedProd
         $em->getUnitOfWork()->scheduleForUpdate($user);
         $em->getUnitOfWork()->scheduleForUpdate($product);
 
-        if ($orderedProducts->getConfirmed() < 1) {
-            $em->remove($orderedProducts);
-        }
+//        if ($orderedProducts->getConfirmed() < 1) {
+//            $em->remove($orderedProducts);
+//        }
 
         $orderedProducts->setQuantity($orderedProducts->getQuantity() - 1);
         $orderedProducts->setOrderedProductPrice(0);
@@ -314,5 +314,21 @@ class OrderedProductsRepository extends EntityRepository implements IOrderedProd
         }
 
         return false;
+    }
+
+    /**
+     * @param Product $product
+     * @param User $user
+     * @return null|OrderedProducts
+     */
+    public function getOrderedProductByProductAndUser(Product $product,
+                                                      User $user)
+    {
+        return $this->getEntityManager()
+                    ->getRepository(OrderedProducts::class)
+                    ->findOneBy([
+                        'product' => $product,
+                        'user'    => $user
+                    ]);
     }
 }

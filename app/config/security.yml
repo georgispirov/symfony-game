@@ -19,7 +19,7 @@ security:
                 csrf_token_generator: security.csrf.token_manager
                 post_only: true
                 always_use_default_target_path: true
-                default_target_path: homepage
+                default_target_path: allProducts
             logout:
                 path: fos_user_security_logout
             anonymous:    true

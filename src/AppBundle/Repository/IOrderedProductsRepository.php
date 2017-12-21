@@ -94,4 +94,12 @@ interface IOrderedProductsRepository
                                       int $currentProductQuantity): bool;
 
     public function deleteOrderedProduct(OrderedProducts $orderedProducts): bool;
+
+    /**
+     * @param Product $product
+     * @param User $user
+     * @return null|OrderedProducts
+     */
+    public function getOrderedProductByProductAndUser(Product $product,
+                                                      User $user);
 }

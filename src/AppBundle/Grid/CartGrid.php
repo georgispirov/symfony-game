@@ -40,7 +40,6 @@ class CartGrid implements CartGridInterface
         $deleteColumn->setRouteParametersMapping(['productID' => $grid->getColumn('orderedProductID')->getId()]);
 
         $grid->getColumn('orderedDate')->setTitle('Ordered Date')->setOperators([])->setFilterable(false);
-        $grid->getColumn('User')->setTitle('Seller')->setOperators([Column::OPERATOR_SLIKE]);
 
         $grid->getColumn('Product')->manipulateRenderCell(function ($value, $row, $router) use ($em) {
             /* @var $value  string */

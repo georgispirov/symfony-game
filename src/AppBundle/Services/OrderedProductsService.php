@@ -166,4 +166,16 @@ class OrderedProductsService implements IOrderedProductsService
         return $this->em->getRepository(OrderedProducts::class)
                         ->sellBoughtProduct($product, $orderedProducts, $currentProductQuantity);
     }
+
+    /**
+     * @param Product $product
+     * @param User $user
+     * @return null|OrderedProducts
+     */
+    public function getOrderedProductByProductAndUser(Product $product,
+                                                      User $user)
+    {
+        return $this->em->getRepository(OrderedProducts::class)
+                        ->getOrderedProductByProductAndUser($product, $user);
+    }
 }

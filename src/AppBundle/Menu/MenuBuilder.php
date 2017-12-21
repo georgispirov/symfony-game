@@ -74,9 +74,11 @@ class MenuBuilder implements ContainerAwareInterface
                 ->setExtra('translation_domain', false);
         }
 
-        $menu->addChild('Add Product', ['route' => 'addProduct'])
-             ->setAttribute('class', self::ITEM_CLASS)
-             ->setExtra('translation_domain', false);
+        if ($user->hasRole('ROLE_EDITOR')) {
+            $menu->addChild('Add Product', ['route' => 'addProduct'])
+                ->setAttribute('class', self::ITEM_CLASS)
+                ->setExtra('translation_domain', false);
+        }
 
         $menu->addChild('Show Bought Products', ['route' => 'showBoughtProducts'])
             ->setAttribute('class', self::ITEM_CLASS)
