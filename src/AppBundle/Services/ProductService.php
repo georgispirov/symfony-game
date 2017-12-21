@@ -9,6 +9,8 @@ use AppBundle\Entity\Product;
 use AppBundle\Entity\Promotion;
 use AppBundle\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
+use Monolog\Logger;
+use Psr\Log\LoggerInterface;
 
 class ProductService implements IProductService
 {
@@ -17,10 +19,6 @@ class ProductService implements IProductService
      */
     private $em;
 
-    /**
-     * ProductService constructor.
-     * @param EntityManagerInterface $em
-     */
     public function __construct(EntityManagerInterface $em)
     {
         $this->em = $em;
@@ -136,11 +134,6 @@ class ProductService implements IProductService
                                               User $user,
                                               int $quantity): bool
     {
-        if ($orderedProducts->getQuantity() < 2) {
-            $this->em->getRepository(OrderedProducts::class)
-                     ->removeOrderedProduct($orderedProducts, $orderedProducts->getUser(), $product);
-        }
-
         return $this->em->getRepository(Product::class)
                         ->decreaseQuantityOnProduct($orderedProducts, $product, $orderedProducts->getUser(), $quantity);
     }

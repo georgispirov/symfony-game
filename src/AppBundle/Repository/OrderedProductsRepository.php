@@ -100,12 +100,12 @@ class OrderedProductsRepository extends EntityRepository implements IOrderedProd
         $em->getUnitOfWork()->scheduleForUpdate($user);
         $em->getUnitOfWork()->scheduleForUpdate($product);
 
-//        if ($orderedProducts->getConfirmed() < 1) {
-//            $em->remove($orderedProducts);
-//        }
-
         $orderedProducts->setQuantity($orderedProducts->getQuantity() - 1);
         $orderedProducts->setOrderedProductPrice(0);
+
+        if ($orderedProducts->getConfirmed() < 1) {
+            $em->remove($orderedProducts);
+        }
 
         $user->setTotalCheck($user->getTotalCheck() - $product->getPrice());
 

@@ -69,7 +69,7 @@
             <div class="form-group">
                 <label for="card-title">Title: </label>
                 <span class="card-title">
-                    <a href="#">{{ product.title }}</a>
+                    <a href="{{ path('viewProduct', {'viewProductID': product.id}) }}">{{ product.title }}</a>
                 </span>
             </div>
             <div class="form-group">

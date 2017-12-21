@@ -213,7 +213,6 @@ class ProductRepository extends EntityRepository implements IProductRepository
     {
         $em = $this->getEntityManager();
         $em->getUnitOfWork()->scheduleForUpdate($user);
-        $em->getUnitOfWork()->scheduleForUpdate($product);
         $em->getUnitOfWork()->scheduleForUpdate($orderedProducts);
 
         $user->setMoney($user->getMoney() - $orderedProducts->getOrderedProductPrice());
@@ -226,12 +225,9 @@ class ProductRepository extends EntityRepository implements IProductRepository
         if ($product->getQuantity() - $quantity === 0) {
             $product->setQuantity(0);
             $product->setOutOfStock(true);
-        } else {
-            $product->setQuantity($product->getQuantity() - $quantity);
         }
 
-        if (true === $em->getUnitOfWork()->isScheduledForUpdate($product)
-            && true === $em->getUnitOfWork()->isScheduledForUpdate($user)
+        if (true === $em->getUnitOfWork()->isScheduledForUpdate($user)
             && true === $em->getUnitOfWork()->isScheduledForUpdate($orderedProducts)) {
                 $em->flush();
                 return true;
