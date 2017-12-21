@@ -23,10 +23,17 @@ class PromotionRepository extends EntityRepository implements IPromotionReposito
 
     /**
      * @param Promotion $promotion
+     * @param Product[] $products
      * @return bool
      */
-    public function addPromotionForProducts(Promotion $promotion): bool
+    public function addPromotionForProducts(Promotion $promotion,
+                                            array $products): bool
     {
+        /* @var Product $product */
+        foreach ($products as $product) {
+            $product->setPrice($product->getPrice() - ($product->getPrice() * ($promotion->getDiscount() / 100)));
+        }
+
         $em = $this->getEntityManager();
         $promotion->setCategory(null);
         $em->persist($promotion);

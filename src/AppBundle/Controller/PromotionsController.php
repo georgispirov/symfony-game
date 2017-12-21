@@ -110,13 +110,15 @@ class PromotionsController extends Controller
         $form      = $this->createForm(AddPromotionType::class, $promotion, ['method' => 'POST']);
         $post      = $request->request->all();
         $form->handleRequest($request);
+        $products  = [];
 
         if ($form->isSubmitted() && $form->isValid()) {
             foreach ($post['app_add_promotion']['product'] as $productID) {
                 $product = $this->productService->getProductByID($productID);
+                $products[] = $product;
                 $product->addPromotionToProduct($promotion);
             }
-            if (true === $this->promotionService->applyPromotionForProducts($promotion)) {
+            if (true === $this->promotionService->applyPromotionForProducts($promotion, $products)) {
                 $this->addFlash('successfully-added-product-promotion', self::SUCCESSFULLY_ADDED_PRODUCT_PROMOTION);
                 return $this->redirect($request->headers->get('referer'));
             }

@@ -92,16 +92,17 @@ class PromotionService implements IPromotionService
 
     /**
      * @param Promotion $promotion
+     * @param Product[] $products
      * @return bool
      */
-    public function applyPromotionForProducts(Promotion $promotion): bool
+    public function applyPromotionForProducts(Promotion $promotion, array $products): bool
     {
         if ( !$promotion instanceof Promotion ) {
             throw new InvalidArgumentException('Applied argument must be valid Promotion Entity!');
         }
 
         return $this->em->getRepository(Promotion::class)
-                        ->addPromotionForProducts($promotion);
+                        ->addPromotionForProducts($promotion, $products);
     }
 
     /**

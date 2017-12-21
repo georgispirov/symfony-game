@@ -31,9 +31,11 @@ interface IPromotionService
 
     /**
      * @param Promotion $promotion
+     * @param Product[] $products
      * @return bool
      */
-    public function applyPromotionForProducts(Promotion $promotion) : bool;
+    public function applyPromotionForProducts(Promotion $promotion,
+                                              array $products) : bool;
 
     /**
      * @param Promotion $promotion

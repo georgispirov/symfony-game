@@ -25,9 +25,11 @@ interface IPromotionRepository
 
     /**
      * @param Promotion $promotion
+     * @param Product[] $products
      * @return bool
      */
-    public function addPromotionForProducts(Promotion $promotion): bool;
+    public function addPromotionForProducts(Promotion $promotion,
+                                            array $products): bool;
 
     /**
      * @param int $promotionID
