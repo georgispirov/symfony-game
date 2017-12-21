@@ -142,4 +142,14 @@ class OrderedProductsService implements IOrderedProductsService
         return $this->em->getRepository(OrderedProducts::class)
                         ->decreaseQuantity($orderedProducts, $product, $user);
     }
+
+    /**
+     * @param User $user
+     * @return array
+     */
+    public function getAllBoughtProductsByUser(User $user): array
+    {
+        return $this->em->getRepository(OrderedProducts::class)
+                        ->getAllBoughtProductsByUser($user);
+    }
 }

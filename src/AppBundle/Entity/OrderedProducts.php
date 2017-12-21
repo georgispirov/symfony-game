@@ -118,7 +118,7 @@ class OrderedProducts
     /**
      * Set confirmed
      *
-     * @param integer $confirmed
+     * @param boolean $confirmed
      *
      * @return OrderedProducts
      */
@@ -132,7 +132,7 @@ class OrderedProducts
     /**
      * Get confirmed
      *
-     * @return integer
+     * @return bool
      */
     public function getConfirmed()
     {

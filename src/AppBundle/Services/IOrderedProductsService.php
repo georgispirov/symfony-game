@@ -78,4 +78,10 @@ interface IOrderedProductsService
      * @internal param int $id
      */
     public function getOrderByUserAndProduct(User $user, Product $product);
+
+    /**
+     * @param User $user
+     * @return array
+     */
+    public function getAllBoughtProductsByUser(User $user): array;
 }

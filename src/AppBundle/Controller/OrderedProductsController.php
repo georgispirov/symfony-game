@@ -4,7 +4,9 @@ namespace AppBundle\Controller;
 
 use AppBundle\Entity\OrderedProducts;
 use AppBundle\Form\SellBoughtProductType;
+use AppBundle\Grid\SellBoughtProductsGrid;
 use AppBundle\Services\OrderedProductsService;
+use APY\DataGridBundle\Grid\Source\Vector;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -58,6 +60,22 @@ class OrderedProductsController extends Controller
      */
     public function showBoughtProductsAction(Request $request): Response
     {
-        
+        $grid = $this->get('grid');
+        $user = $this->get('security.token_storage')->getToken()->getUser();
+        $this->denyAccessUnlessGranted('ROLE_USER', $user, 'You do not have access to see this section.');
+
+        $boughtProductsByUser = $this->orderedProductsService->getAllBoughtProductsByUser($user);
+
+        if (sizeof($boughtProductsByUser) > 0) {
+            $boughtProductsVector   = new Vector($boughtProductsByUser);
+            $grid->setSource($boughtProductsVector);
+            $boughtProductsGrid     = new SellBoughtProductsGrid();
+            $boughtProductsGrid->configureSellBoughtGrid($grid);
+
+            return $grid->getGridResponse(':bought_products:list_bought_products_by_user.html.twig');
+        }
+
+        $this->addFlash('non-existing-bought-products', 'There are no bought products.');
+        return $this->render(':bought_products:list_bought_products_by_user.html.twig');
     }
 }

@@ -6,6 +6,7 @@ use AppBundle\Entity\OrderedProducts;
 use AppBundle\Entity\Product;
 use AppBundle\Entity\User;
 use Doctrine\ORM\EntityRepository;
+use Doctrine\ORM\Query\Expr\Join;
 
 /**
  * OrderedProductsRepository
@@ -250,5 +251,27 @@ class OrderedProductsRepository extends EntityRepository implements IOrderedProd
                       ]);
 
         return $query->getQuery()->getSingleScalarResult();
+    }
+
+    /**
+     * @param User $user
+     * @return array
+     */
+    public function getAllBoughtProductsByUser(User $user): array
+    {
+        $query = $this->getEntityManager()
+                      ->getRepository(OrderedProducts::class)
+                      ->createQueryBuilder('op')
+                      ->select('product.title AS Product, op.orderedDate, op.confirmed, user.username AS Seller, product.id AS productID,
+                                      op.quantity AS Quantity')
+                      ->innerJoin('op.product', 'product', Join::WITH)
+                      ->innerJoin('op.user', 'user', Join::WITH)
+                      ->where('op.confirmed <> 0')
+                      ->andWhere('op.user = :user')
+                      ->setParameters([
+                          ':user' => $user
+                      ]);
+
+        return $query->getQuery()->getResult();
     }
 }

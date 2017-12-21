@@ -18,18 +18,21 @@ class UserManagementGrid implements UserManagementGridInterface
 
         $grid->setHiddenColumns(['id', 'password', 'salt', 'confirmationToken', 'passwordRequestedAt', 'usernameCanonical', 'totalCheck', 'emailCanonical']);
         $grid->getColumn('username')->setOperators([Column::OPERATOR_SLIKE])->setTitle('Username');
-        $grid->getColumn('roles')->setOperators([Column::OPERATOR_SLIKE])->setTitle('Roles')->setFilterable(false);
+        $grid->getColumn('roles')->setOperators([Column::OPERATOR_SLIKE])->setTitle('Roles');
         $grid->getColumn('enabled')->setOperators([Column::OPERATOR_EQ])->setTitle('Enabled');
         $grid->getColumn('lastLogin')->setTitle('Last Login')->setOperators([])->setFilterable(false);
         $grid->getColumn('email')->setTitle('Email')->setOperators([Column::OPERATOR_SLIKE]);
 
         $grid->getColumn('enabled')->manipulateRenderCell(function ($value, $row, $router) {
             return (bool) $value;
-        })->setFilterable(false)->setSize(5);
+        })->setFilterable(false)
+          ->setSize(5);
 
         $grid->getColumn('money')->manipulateRenderCell(function ($value, $row, $router) {
             return "$" . $value;
-        })->setTitle('Money')->setOperators([])->setFilterable(false);
+        })->setTitle('Money')
+          ->setOperators([])
+          ->setFilterable(false);
 
         /* @var Column $column */
         foreach ($grid->getColumns() as $column) {

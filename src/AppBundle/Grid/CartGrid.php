@@ -2,7 +2,6 @@
 
 namespace AppBundle\Grid;
 
-use AppBundle\Entity\OrderedProducts;
 use AppBundle\Entity\Product;
 use AppBundle\Entity\User;
 use APY\DataGridBundle\Grid\Action\MassAction;

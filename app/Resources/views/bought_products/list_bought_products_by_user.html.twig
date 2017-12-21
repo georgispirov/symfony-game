@@ -1,0 +1,20 @@
+{% include 'base.html.twig' %}
+
+<head>
+    <link rel="stylesheet" href="{{ asset('css/grid-ordered-products.css') }}">
+</head>
+
+{% if app.session.flashbag.has('non-existing-bought-products') %}
+    <div class="col-xs-4 alert alert-info non-existing-bought-products">
+        {% for flashMessage in app.session.flashbag.get('non-existing-bought-products') %}
+            {{ flashMessage }}
+        {% endfor %}
+    </div>
+{% endif %}
+
+{% if grid is not null %}
+    <div class="col-lg-12 ordered-product-items">
+        <h2>Bought items by: {{ app.user.username }}</h2>
+        {{ grid(grid) }}
+    </div>
+{% endif %}
