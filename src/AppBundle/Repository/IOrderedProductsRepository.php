@@ -82,4 +82,14 @@ interface IOrderedProductsRepository
      * @return array
      */
     public function getAllBoughtProductsByUser(User $user): array;
+
+    /**
+     * @param Product $product
+     * @param OrderedProducts $orderedProducts
+     * @param int $currentProductQuantity
+     * @return bool
+     */
+    public function sellBoughtProduct(Product $product,
+                                      OrderedProducts $orderedProducts,
+                                      int $currentProductQuantity): bool;
 }

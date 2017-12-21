@@ -262,8 +262,8 @@ class OrderedProductsRepository extends EntityRepository implements IOrderedProd
         $query = $this->getEntityManager()
                       ->getRepository(OrderedProducts::class)
                       ->createQueryBuilder('op')
-                      ->select('product.title AS Product, op.orderedDate, op.confirmed, user.username AS Seller, product.id AS productID,
-                                      op.quantity AS Quantity')
+                      ->select('op.id as orderedProductID, product.title AS Product, op.orderedDate, op.confirmed, user.username AS Seller,
+                                      product.id AS productID, op.quantity AS Quantity')
                       ->innerJoin('op.product', 'product', Join::WITH)
                       ->innerJoin('op.user', 'user', Join::WITH)
                       ->where('op.confirmed <> 0')
@@ -273,5 +273,33 @@ class OrderedProductsRepository extends EntityRepository implements IOrderedProd
                       ]);
 
         return $query->getQuery()->getResult();
+    }
+
+    /**
+     * @param Product $product
+     * @param OrderedProducts $orderedProducts
+     * @param int $currentProductQuantity
+     * @return bool
+     */
+    public function sellBoughtProduct(Product $product,
+                                      OrderedProducts $orderedProducts,
+                                      int $currentProductQuantity): bool
+    {
+        $em = $this->getEntityManager();
+        $em->getUnitOfWork()->scheduleForUpdate($product);
+        $em->getUnitOfWork()->scheduleForUpdate($orderedProducts);
+
+        $orderedProducts->setConfirmed($orderedProducts->getConfirmed() - $product->getQuantity());
+
+        $product->setOutOfStock(false);
+        $product->setQuantity($product->getQuantity() + $currentProductQuantity);
+
+        if (true === $em->getUnitOfWork()->isScheduledForUpdate($orderedProducts)
+            && true === $em->getUnitOfWork()->isScheduledForUpdate($product)) {
+                $em->flush();
+                return true;
+        }
+
+        return false;
     }
 }

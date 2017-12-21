@@ -6,23 +6,38 @@ use AppBundle\Entity\OrderedProducts;
 use AppBundle\Form\SellBoughtProductType;
 use AppBundle\Grid\SellBoughtProductsGrid;
 use AppBundle\Services\OrderedProductsService;
+use AppBundle\Services\ProductService;
 use APY\DataGridBundle\Grid\Source\Vector;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\Config\Definition\Exception\Exception;
+use Symfony\Component\Form\Exception\LogicException;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 
 class OrderedProductsController extends Controller
 {
+    const SUCCESSFULLY_SELL_BOUGHT_PRODUCT = 'You have successfully sell requested product.';
+
+    const NON_SUCCESSFUL_SELL_BOUGHT_PRODUCT = 'Failed selling requested product.';
+
     /**
      * @var OrderedProductsService
      */
     private $orderedProductsService;
 
-    public function __construct(OrderedProductsService $orderedProductsService)
+    /**
+     * @var ProductService
+     */
+    private $productService;
+
+    public function __construct(OrderedProductsService $orderedProductsService,
+                                ProductService $productService)
     {
         $this->orderedProductsService = $orderedProductsService;
+        $this->productService         = $productService;
     }
 
     public function indexAction($name)
@@ -50,7 +65,35 @@ class OrderedProductsController extends Controller
      */
     public function sellBoughtProductAction(Request $request): Response
     {
-        $form = $this->createForm(SellBoughtProductType::class);
+        $orderedProductID = $request->query->get('orderedProductID');
+        /* @var OrderedProducts $orderedProduct */
+        $orderedProduct  = $this->orderedProductsService->getOrderedProductByID($orderedProductID);
+
+        if ($orderedProduct->getConfirmed() < 1) {
+            throw new LogicException('There are no left quantity of this bought product.');
+        }
+
+        $formOptions     = ['method' => 'POST', 'orderedProduct' => $orderedProduct];
+        $product         = $this->productService->getProductByID($orderedProduct->getProduct()->getId());
+        $currentQuantity = $orderedProduct->getProduct()->getQuantity();
+        $form            = $this->createForm(SellBoughtProductType::class, $product, $formOptions);
+
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            if (true === $this->orderedProductsService->sellBoughtProduct($product, $orderedProduct, $currentQuantity)) {
+                $this->addFlash('successfully-sell-product', self::SUCCESSFULLY_SELL_BOUGHT_PRODUCT);
+                return $this->redirect($request->headers->get('referer'));
+            }
+
+            $this->addFlash('non-successfully-sell-product', self::NON_SUCCESSFUL_SELL_BOUGHT_PRODUCT);
+            return $this->redirect($request->headers->get('referer'));
+        }
+
+        return $this->render(':products:sell_bought_product.html.twig', [
+            'form'           => $form->createView(),
+            'orderedProduct' => $orderedProduct
+        ]);
     }
 
     /**

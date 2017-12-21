@@ -17,6 +17,9 @@
             <label for="ordered-product-checkout-quantity">Selected Quantity: </label>
             <span class="ordered-product-checkout-quantity-{{ orderedProduct.id }}">1</span>
 
+            <label for="ordered-product-price-">Orders Price: </label>
+            <span class="ordered-product-price-{{ orderedProduct.id }}">${{ orderedProduct.product.price }}</span>
+
             <div class="product-image-ordered">
                 <img src="/uploads/images/products/{{ orderedProduct.product.image }}" width="100px" height="80px"> <br/>
             </div>
@@ -28,19 +31,7 @@
     {% endfor %}
 </div>
 
-<div class="form-group total-check-before-checkout col-xs-1">
-    <div class="col-lg-2 user-total-check">
-
-        <label for="current-cash">Current Cash: </label>
-        <span class="current-cash">${{ app.user.money }}</span>
-
-        <label for="checkout-from-order">Orders Cost: </label>
-        <span class="checkout-from-order">${{ orderedProductsCost }}</span>
-
-    </div>
-</div>
-
-<div class="form-group button-checkout-prepare col-xs-4">
+<div class="form-group button-checkout-prepare pull-right">
     <button type="button" class="btn btn-primary">Apply Checkout</button>
 </div>
 
@@ -62,8 +53,8 @@
             });
 
             $('#range-checkout-item-' + obj).change(function () {
-                var currentQuantity = previousRangeSelected;
-                var changedQuantity = this.value;
+                var currentQuantity = parseInt(previousRangeSelected);
+                var changedQuantity = parseInt(this.value);
                 $('.ordered-product-checkout-quantity-' + obj).text($(this).val());
                 $.ajax({
                     'url': '/app_dev.php/calculate/order',
@@ -71,22 +62,19 @@
                     'dataType': "json",
                     'data': { 'orderID': obj },
                     'success': function (data) {
-                        if (changedQuantity < currentQuantity) {
-                            // substract
-                            var substract = data * (currentQuantity - changedQuantity);
-                            var currentCheckoutForSub = $.trim($('.checkout-from-order').text());
-                            currentCheckoutForSub     = parseInt(currentCheckoutForSub.replace("$", ""));
-                            var resultSub = currentCheckoutForSub - substract;
-                            $('.checkout-from-order').text("$" + resultSub);
-                        } else {
+                        // This is has so strange behavior.....
+                        var currentPrice = $.trim($('.ordered-product-price-' + obj).text());
+                        currentPrice = parseInt(currentPrice.replace("$", ""));
+                        if (changedQuantity > currentQuantity) {
                             // addition
-                            alert(currentQuantity);
-                            alert(changedQuantity);
                             var addition = data * (changedQuantity - currentQuantity);
-                            var currentCheckoutForAdd = $.trim($('.checkout-from-order').text());
-                            currentCheckoutForAdd     = parseInt(currentCheckoutForAdd.replace("$", ""));
-                            var resultAdd = currentCheckoutForAdd + addition;
-                            $('.checkout-from-order').text("$" + resultAdd);
+                            var additionSum = currentPrice + addition;
+                            $('.ordered-product-price-' + obj).text("$" + additionSum);
+                        } else {
+                            //  substract
+                            var substract = data * (currentQuantity - changedQuantity);
+                            var substractDiff = currentPrice - substract;
+                            $('.ordered-product-price-' + obj).text("$" + substractDiff);
                         }
                     }
                 })
