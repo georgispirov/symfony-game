@@ -68,4 +68,21 @@ class CommentsRepository extends EntityRepository implements ICommentsRepository
 
         return false;
     }
+
+    /**
+     * @param Comments $comments
+     * @return bool
+     */
+    public function deleteComment(Comments $comments): bool
+    {
+        $em = $this->getEntityManager();
+        $em->remove($comments);
+
+        if (true === $em->getUnitOfWork()->isScheduledForDelete($comments)) {
+            $em->flush();
+            return true;
+        }
+
+        return false;
+    }
 }

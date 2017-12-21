@@ -2,6 +2,7 @@
 
 namespace AppBundle\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -43,12 +44,12 @@ class Comments
     private $votedDate;
 
     /**
-     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\User", inversedBy="comments")
+     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\User")
      */
     private $user;
 
     /**
-     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Product", inversedBy="comments")
+     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Product")
      */
     private $product;
 

@@ -3,6 +3,7 @@
 namespace AppBundle\Services;
 
 use AppBundle\Entity\Categories;
+use AppBundle\Entity\Comments;
 use AppBundle\Entity\OrderedProducts;
 use AppBundle\Entity\Product;
 use AppBundle\Entity\Promotion;
@@ -17,20 +18,12 @@ class ProductService implements IProductService
     private $em;
 
     /**
-     * @var CategoriesService
-     */
-    private $categoriesService;
-
-    /**
      * ProductService constructor.
      * @param EntityManagerInterface $em
-     * @param CategoriesService $categoriesService
      */
-    public function __construct(EntityManagerInterface $em,
-                                CategoriesService $categoriesService)
+    public function __construct(EntityManagerInterface $em)
     {
-        $this->em                = $em;
-        $this->categoriesService = $categoriesService;
+        $this->em = $em;
     }
 
     /**
@@ -171,5 +164,40 @@ class ProductService implements IProductService
     {
         return $this->em->getRepository(Product::class)
                         ->removeProductFromPromotion($product, $promotion);
+    }
+
+    /**
+     * @param Categories $categories
+     * @return array
+     */
+    public function getAllNonActiveAndOutOfStockProductsByCategory(Categories $categories): array
+    {
+        return $this->em->getRepository(Product::class)
+                        ->getAllNonActiveAndOutOfStockProductsByCategory($categories);
+    }
+
+    /**
+     * @param Product $product
+     * @return bool
+     */
+    public function deleteProduct(Product $product): bool
+    {
+        $comments        = $this->em->getRepository(Comments::class)->findBy(['product' => $product]);
+        $orderedProducts = $this->em->getRepository(OrderedProducts::class)->findBy(['product' => $product]);
+
+        if (sizeof($comments) > 0) {
+            foreach ($comments as $comment) {
+                $this->em->getRepository(Comments::class)->deleteComment($comment);
+            }
+        }
+
+        if (sizeof($orderedProducts) > 0){
+            foreach ($orderedProducts as $orderedProduct) {
+                $this->em->getRepository(OrderedProducts::class)->deleteOrderedProduct($orderedProduct);
+            }
+        }
+
+        return $this->em->getRepository(Product::class)
+                        ->deleteProduct($product);
     }
 }

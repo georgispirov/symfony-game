@@ -92,4 +92,6 @@ interface IOrderedProductsRepository
     public function sellBoughtProduct(Product $product,
                                       OrderedProducts $orderedProducts,
                                       int $currentProductQuantity): bool;
+
+    public function deleteOrderedProduct(OrderedProducts $orderedProducts): bool;
 }

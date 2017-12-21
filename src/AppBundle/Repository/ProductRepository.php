@@ -288,4 +288,31 @@ class ProductRepository extends EntityRepository implements IProductRepository
         $em->flush();
         return true;
     }
+
+    /**
+     * @param Categories $categories
+     * @return array
+     */
+    public function getAllNonActiveAndOutOfStockProductsByCategory(Categories $categories): array
+    {
+        return $this->getEntityManager()
+                    ->getRepository(Product::class)
+                    ->createQueryBuilder('p')
+                    ->orderBy('p.title', 'ASC')
+                    ->getQuery()
+                    ->getResult();
+    }
+
+    public function deleteProduct(Product $product): bool
+    {
+        $em = $this->getEntityManager();
+        $em->remove($product);
+
+        if (true === $em->getUnitOfWork()->isScheduledForDelete($product)) {
+            $em->flush();
+            return true;
+        }
+
+        return false;
+    }
 }

@@ -17,7 +17,7 @@ class SellBoughtProductsGrid implements SellBoughtProductsGridInterface
         $sellBoughtProductAction = new RowAction('Sell Product', 'sellBoughtProduct');
         $sellBoughtProductAction->setRouteParametersMapping(['orderedProductID']);
 
-        $grid->setHiddenColumns(['productID']);
+        $grid->setHiddenColumns(['productID', 'orderedProductID', 'Quantity']);
 
         $grid->getColumn('orderedDate')->setTitle('Ordered Date')->setOperators([])->setFilterable(false);
         $grid->getColumn('confirmed')->setTitle('Confirmed Orders')->setSize(1);

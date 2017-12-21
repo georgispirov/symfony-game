@@ -302,4 +302,17 @@ class OrderedProductsRepository extends EntityRepository implements IOrderedProd
 
         return false;
     }
+
+    public function deleteOrderedProduct(OrderedProducts $orderedProducts): bool
+    {
+        $em = $this->getEntityManager();
+        $em->remove($orderedProducts);
+
+        if (true === $em->getUnitOfWork()->isScheduledForDelete($orderedProducts)) {
+            $em->flush();
+            return true;
+        }
+
+        return false;
+    }
 }

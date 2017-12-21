@@ -2,6 +2,7 @@
 
 namespace AppBundle\Services;
 
+use AppBundle\Entity\Categories;
 use AppBundle\Entity\OrderedProducts;
 use AppBundle\Entity\Product;
 use AppBundle\Entity\Promotion;
@@ -91,4 +92,16 @@ interface IProductService
      * @return bool
      */
     public function removeProductFromPromotion(Product $product, Promotion $promotion): bool;
+
+    /**
+     * @param Categories $categories
+     * @return array
+     */
+    public function getAllNonActiveAndOutOfStockProductsByCategory(Categories $categories): array;
+
+    /**
+     * @param Product $product
+     * @return bool
+     */
+    public function deleteProduct(Product $product): bool;
 }

@@ -102,4 +102,12 @@ interface IProductRepository
      * @return bool
      */
     public function removeProductFromPromotion(Product $product, Promotion $promotion): bool;
+
+    /**
+     * @param Categories $categories
+     * @return array
+     */
+    public function getAllNonActiveAndOutOfStockProductsByCategory(Categories $categories): array;
+
+    public function deleteProduct(Product $product): bool;
 }

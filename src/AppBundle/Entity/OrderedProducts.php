@@ -37,7 +37,7 @@ class OrderedProducts
     private $product;
 
     /**
-     * @var bool
+     * @var integer
      *
      * @ORM\Column(name="confirmed", type="integer")
      */

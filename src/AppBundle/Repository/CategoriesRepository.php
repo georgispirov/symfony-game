@@ -3,6 +3,9 @@
 namespace AppBundle\Repository;
 
 use AppBundle\Entity\Categories;
+use AppBundle\Entity\Comments;
+use AppBundle\Entity\OrderedProducts;
+use AppBundle\Entity\Product;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\QueryBuilder;
 
@@ -38,6 +41,58 @@ class CategoriesRepository extends EntityRepository implements ICategoriesReposi
         $em->persist($categories);
 
         if (true === $em->getUnitOfWork()->isScheduledForInsert($categories)) {
+            $em->flush();
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * @return array
+     */
+    public function getAllCategoriesOnArray(): array
+    {
+        $query = $this->getEntityManager()
+                      ->getRepository(Categories::class)
+                      ->createQueryBuilder('c');
+
+        return $query->getQuery()
+                     ->getArrayResult();
+    }
+
+    /**
+     * @param Categories $categories
+     * @return bool
+     */
+    public function removeCategoryWithoutProducts(Categories $categories): bool
+    {
+        $em = $this->getEntityManager();
+        $em->remove($categories);
+
+        if (true === $em->getUnitOfWork()->isScheduledForDelete($categories)) {
+            $em->flush();
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * @param Categories $categories
+     * @param Product[] $product
+     * @return bool
+     */
+    public function removeCategoryWithProducts(Categories $categories, array $product): bool
+    {
+        $em = $this->getEntityManager();
+
+        foreach ($product as $p) {
+            $em->remove($p);
+        }
+        $em->remove($categories);
+
+        if (true === $em->getUnitOfWork()->isScheduledForDelete($categories)) {
             $em->flush();
             return true;
         }

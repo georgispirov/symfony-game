@@ -4,11 +4,13 @@ namespace AppBundle\Controller;
 
 use AppBundle\Entity\Categories;
 use AppBundle\Form\AddCategoryType;
+use AppBundle\Grid\CategoriesGrid;
 use AppBundle\Repository\ICategoriesRepository;
 use AppBundle\Services\CategoriesService;
 use AppBundle\Services\ICategoriesService;
 use AppBundle\Services\IProductService;
 use AppBundle\Services\ProductService;
+use APY\DataGridBundle\Grid\Source\Vector;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -119,5 +121,54 @@ class CategoriesController extends Controller
             'category' => $category,
             'form'     => $form->createView()
         ]);
+    }
+
+    /**
+     * @Route("/list/categories", name="listCategories")
+     * @param Request $request
+     * @return Response
+     */
+    public function allCategoriesGridAction(Request $request): Response
+    {
+        $user = $this->get('security.token_storage')->getToken()->getUser();
+        $this->denyAccessUnlessGranted('ROLE_EDITOR', $user, 'Only Editors can manage Categories');
+        $grid = $this->get('grid');
+        $allCategories = $this->categoryService->getAllCategoriesOnArray();
+
+        $vectorCategories = new Vector($allCategories);
+        $grid->setSource($vectorCategories);
+        $categoriesGrid   = new CategoriesGrid();
+        $categoriesGrid->configureCategoriesGrid($grid);
+
+        return $grid->getGridResponse(':categories:categories_management.html.twig');
+    }
+
+    /**
+     * @Route("/category/delete", name="deleteCategory")
+     * @param Request $request
+     * @return Response
+     */
+    public function deleteCategoryAction(Request $request): Response
+    {
+        $categoryID = $request->query->get('id');
+        $category   = $this->categoryService->getCategoryByID($categoryID);
+        $productsInCategory = $this->productService->getAllNonActiveAndOutOfStockProductsByCategory($category);
+
+        if (sizeof($productsInCategory) > 0) {
+            if (true === $this->categoryService->removeCategoryWithProducts($category, $productsInCategory)) {
+                $this->categoryService->addSuccessFlashMessageOnRemoveCategory();
+                return $this->redirect($request->headers->get('referer'));
+            }
+
+            $this->categoryService->addFailMessageOnRemoveCategory();
+            return $this->redirect($request->headers->get('referer'));
+        }
+
+        if (true === $this->categoryService->removeCategoryWithoutProducts($category)) {
+            $this->categoryService->addSuccessFlashMessageOnRemoveCategory();
+            return $this->redirect($request->headers->get('referer'));
+        }
+
+        return $this->redirect($request->headers->get('referer'));
     }
 }

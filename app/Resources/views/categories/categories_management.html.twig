@@ -1,0 +1,29 @@
+{% include 'base.html.twig' %}
+
+<head>
+    <link rel="stylesheet" href="{{ asset('css/grid-ordered-products.css') }}">
+</head>
+
+<h2>All Categories</h2>
+
+{% if app.session.flashbag.has('successfully-removed-category') %}
+    <div class="col-xs-8 alert alert-success successfully-removed-category">
+        {% for flashMessage in app.session.flashbag.get('successfully-removed-category') %}
+            {{ flashMessage }}
+        {% endfor %}
+    </div>
+{% endif %}
+
+{% if app.session.flashbag.has('non-successful-removed-category') %}
+    <div class="col-xs-8 alert alert-danger non-successful-removed-category">
+        {% for flashMessage in app.session.flashbag.get('non-successful-removed-category') %}
+            {{ flashMessage }}
+        {% endfor %}
+    </div>
+{% endif %}
+
+{% if grid is not null %}
+    <div class="col-lg-4 categories-grid-table">
+        {{ grid(grid) }}
+    </div>
+{% endif %}

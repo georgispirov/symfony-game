@@ -14,6 +14,7 @@ use AppBundle\Services\CommentsService;
 use AppBundle\Services\OrderedProductsService;
 use AppBundle\Services\ProductService;
 use APY\DataGridBundle\Grid\Source\Vector;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -86,7 +87,6 @@ class ProductController extends Controller
             return $this->redirectToRoute('allProducts');
         }
 
-        $this->addFlash('non-successful-added-product', 'Failed adding product.');
         return $this->render(':products:add_product.html.twig', [
             'form' => $form->createView()
         ]);
@@ -157,7 +157,8 @@ class ProductController extends Controller
         $productID = $request->query->getInt('viewProductID');
         $product   = $this->productService->getProductByID($productID);
         $user      = $this->get('security.token_storage')->getToken()->getUser(); /* @var User $user */
-        $form      = $this->createForm(UpdateProductType::class, $product, ['method' => 'POST']);
+        $this->denyAccessUnlessGranted('ROLE_EDITOR', $user, 'Only Editors can update Products.');
+        $form      = $this->createForm(UpdateProductType::class, $product, ['method' => 'POST', 'user' => $user]);
 
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
@@ -202,5 +203,23 @@ class ProductController extends Controller
 
         $this->addFlash('no-products-in-active-promotion', 'There are no products in selected Active Promotion!');
         return $this->render('products/products_by_category.html.twig', ['promotion' => $promotion]);
+    }
+
+    /**
+     * @Route("/remove/product", name="removeProduct")
+     * @param Request $request
+     * @return Response
+     */
+    public function deleteProductAction(Request $request): Response
+    {
+        $productID = $request->query->get('productID');
+        $product   = $this->productService->getProductByID($productID);
+
+        if (true === $this->productService->deleteProduct($product)) {
+            $this->get('logger')->error('hahaha', ['haha' => 111]);
+            return $this->redirect($request->headers->get('referer'));
+        }
+
+        return $this->redirect($request->headers->get('referer'));
     }
 }

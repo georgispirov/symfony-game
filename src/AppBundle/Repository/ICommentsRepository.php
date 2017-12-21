@@ -29,4 +29,10 @@ interface ICommentsRepository
     public function addCommentOnProduct(Comments $comments,
                                         Product $product,
                                         User $user): bool;
+
+    /**
+     * @param Comments $comments
+     * @return bool
+     */
+    public function deleteComment(Comments $comments): bool;
 }
