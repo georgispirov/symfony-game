@@ -2,6 +2,7 @@
 
 namespace AppBundle\Repository;
 
+use AppBundle\Entity\OrderedProducts;
 use AppBundle\Entity\User;
 use Doctrine\ORM\EntityRepository;
 
@@ -76,6 +77,19 @@ class UserRepository extends EntityRepository implements IUserRepository
         $em->getUnitOfWork()->scheduleForUpdate($user);
 
         if (true === $em->getUnitOfWork()->isScheduledForUpdate($user)) {
+            $em->flush();
+            return true;
+        }
+
+        return false;
+    }
+
+    public function removeOrderedBoughtProduct(OrderedProducts $orderedProducts)
+    {
+        $em = $this->getEntityManager();
+        $em->remove($orderedProducts);
+
+        if (true === $em->getUnitOfWork()->isScheduledForDelete($orderedProducts)) {
             $em->flush();
             return true;
         }

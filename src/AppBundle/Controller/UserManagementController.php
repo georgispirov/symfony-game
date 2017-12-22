@@ -210,4 +210,23 @@ class UserManagementController extends Controller
             'orderedProduct' => $orderedProduct
         ]);
     }
+
+    /**
+     * @Route("/boughtItems/delete", name="deleteBoughtProductOnUser")
+     * @param Request $request
+     * @return Response
+     */
+    public function deleteBoughtProductOnUserAction(Request $request): Response
+    {
+        $orderedProductID = $request->query->get('orderedProductID');
+        $orderedProduct   = $this->orderedProductsService->getOrderedProductByID($orderedProductID);
+
+        if (true === $this->userManagementService->removeOrderedBoughtOrderedProduct($orderedProduct)) {
+            $this->addFlash('successfully-removed-ordered-bought-product', 'You have successfully removed bought product.');
+            return $this->redirect($request->headers->get('referer'));
+        }
+
+        $this->addFlash('failed-removed-ordered-bought-product', 'You have successfully removed bought product.');
+        return $this->redirect($request->headers->get('referer'));
+    }
 }

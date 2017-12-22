@@ -128,4 +128,10 @@ class UserManagementService implements IUserManagementService
 
 //        return false;
     }
+
+    public function removeOrderedBoughtOrderedProduct(OrderedProducts $orderedProducts)
+    {
+        return $this->em->getRepository(User::class)
+                        ->removeOrderedBoughtProduct($orderedProducts);
+    }
 }

@@ -12,6 +12,22 @@
     </div>
 {% endif %}
 
+{% if app.session.flashbag.has('successfully-removed-ordered-bought-product') %}
+    <div class="col-xs-4 alert alert-success successfully-removed-ordered-bought-product">
+        {% for flashMessage in app.session.flashbag.get('successfully-removed-ordered-bought-product') %}
+            {{ flashMessage }}
+        {% endfor %}
+    </div>
+{% endif %}
+
+{% if app.session.flashbag.has('failed-removed-ordered-bought-product') %}
+    <div class="col-xs-4 alert alert-info failed-removed-ordered-bought-product">
+        {% for flashMessage in app.session.flashbag.get('failed-removed-ordered-bought-product') %}
+            {{ flashMessage }}
+        {% endfor %}
+    </div>
+{% endif %}
+
 {% if grid is not null %}
     <div class="col-lg-12 ordered-product-items">
         <h2>Bought items by: {{ app.user.username }}</h2>

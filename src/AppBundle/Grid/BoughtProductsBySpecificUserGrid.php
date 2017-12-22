@@ -13,7 +13,10 @@ class BoughtProductsBySpecificUserGrid implements BoughtProductsBySpecificUserGr
         $sellBoughtProductAction = new RowAction('Update Bought Product', 'updateBoughtProductOnUser');
         $sellBoughtProductAction->setRouteParametersMapping(['orderedProductID']);
 
-        $grid->setHiddenColumns(['productID', 'orderedProductID', 'Quantity']);
+        $deleteBoughtProducts    = new RowAction('Delete Bought Product', 'deleteBoughtProductOnUser');
+        $deleteBoughtProducts->setRouteParametersMapping(['orderedProductID']);
+
+        $grid->setHiddenColumns(['productID', 'orderedProductID', 'Quantity', 'Seller']);
 
         $grid->getColumn('orderedDate')->setTitle('Ordered Date')->setOperators([])->setFilterable(false);
         $grid->getColumn('confirmed')->setTitle('Confirmed Orders')->setSize(1);
@@ -35,6 +38,7 @@ class BoughtProductsBySpecificUserGrid implements BoughtProductsBySpecificUserGr
         }
 
         $grid->addRowAction($sellBoughtProductAction);
+        $grid->addRowAction($deleteBoughtProducts);
 
         return $grid;
     }
