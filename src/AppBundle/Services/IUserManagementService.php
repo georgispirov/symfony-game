@@ -2,6 +2,7 @@
 
 namespace AppBundle\Services;
 
+use AppBundle\Entity\OrderedProducts;
 use AppBundle\Entity\User;
 
 interface IUserManagementService
@@ -36,4 +37,7 @@ interface IUserManagementService
      * @return mixed
      */
     public function verifyUserWhenCheckout(User $user);
+
+    public function updateBoughtProductByUser(User $currentOwnUser,
+                                              OrderedProducts $orderedProducts): bool;
 }

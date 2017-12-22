@@ -2,10 +2,10 @@
 
 namespace AppBundle\Services;
 
+use AppBundle\Entity\OrderedProducts;
+use AppBundle\Entity\Product;
 use AppBundle\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Component\DependencyInjection\Container;
-use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\Process\Exception\InvalidArgumentException;
@@ -98,6 +98,33 @@ class UserManagementService implements IUserManagementService
         if (true === $encoderService->isPasswordValid($userFromDb, $passwordFromSessionUser)
             && $userFromDb->getEmail() === $user->getEmail()) {
                 return true;
+        }
+
+        return false;
+    }
+
+    public function updateBoughtProductByUser(User $currentOwnUser,
+                                              OrderedProducts $orderedProducts): bool
+    {
+        if ($currentOwnUser->getId() === $orderedProducts->getUser()->getId()) {
+            return $this->em->getRepository(OrderedProducts::class)
+                            ->updateBoughtProductOnSameUser($orderedProducts);
+        }
+
+        $userWithContextOrder = $this->em->getRepository(OrderedProducts::class)
+                                         ->findOneBy([
+                                             'id'   => $orderedProducts->getId(),
+                                             'user' => $orderedProducts->getUser()
+                                         ]);
+
+        if (null !== $userWithContextOrder) {
+            return $this->em->getRepository(OrderedProducts::class)
+                            ->updateBoughtProductOnChangedUser($orderedProducts->getUser(), $orderedProducts);
+        }
+
+        if (null === $userWithContextOrder) {
+            return $this->em->getRepository(OrderedProducts::class)
+                            ->attachBoughtProductToUserWithoutContextOrder($orderedProducts->getUser(), $orderedProducts);
         }
 
         return false;

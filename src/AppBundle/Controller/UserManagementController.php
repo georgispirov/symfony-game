@@ -2,8 +2,10 @@
 
 namespace AppBundle\Controller;
 
+use AppBundle\Entity\OrderedProducts;
 use AppBundle\Entity\User;
 use AppBundle\Form\DemoteUserRolesType;
+use AppBundle\Form\UpdateBoughtProductFromUserType;
 use AppBundle\Form\UserManagementType;
 use AppBundle\Grid\BoughtProductsBySpecificUserGrid;
 use AppBundle\Grid\UserManagementGrid;
@@ -175,13 +177,38 @@ class UserManagementController extends Controller
     /**
      * @Route("/updateBoughtProduct/BySpecificUser", name="updateBoughtProductOnUser")
      * @param Request $request
+     * @return Response
      */
-    public function updateBoughtProductOnSpecificUserAction(Request $request)
+    public function updateBoughtProductOnSpecificUserAction(Request $request): Response
     {
         $loggedUser = $this->get('security.token_storage')->getToken()->getUser();
         $this->denyAccessUnlessGranted('ROLE_ADMIN', $loggedUser, 'Only Admins are granted to perform this action.');
 
-        $specificUserID = $request->query->get('id');
-        $specificUser = $this->userManagementService->getUserByID($specificUserID);
+        $orderedProductID = $request->query->get('orderedProductID');
+        /* @var OrderedProducts $orderedProduct */
+        $orderedProduct   = $this->orderedProductsService->getOrderedProductByID($orderedProductID);
+        $currentUser      = ($this->orderedProductsService->getOrderedProductByID($orderedProductID))->getUser();
+
+        $configureFormOptions = ['method'    => 'POST', 'userOwn' => $orderedProduct->getUser(),
+                                 'confirmed' => $orderedProduct->getConfirmed(), 'quantity' => $orderedProduct->getQuantity()];
+
+        $form = $this->createForm(UpdateBoughtProductFromUserType::class, $orderedProduct, $configureFormOptions);
+
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            if (true === $this->userManagementService->updateBoughtProductByUser($currentUser, $orderedProduct)) {
+                $this->addFlash('successfully-updated-bought-product', 'You have successfully updated requested bought product');
+                return $this->redirectToRoute('getAllUsers');
+            }
+
+            $this->addFlash('failed-updating-bought-product', 'Failed updating bought product.');
+            return $this->redirect($request->headers->get('referer'));
+        }
+
+        return $this->render('user_management/update_bought_product_from_user.html.twig', [
+            'form'           => $form->createView(),
+            'orderedProduct' => $orderedProduct
+        ]);
     }
 }

@@ -331,4 +331,62 @@ class OrderedProductsRepository extends EntityRepository implements IOrderedProd
                         'user'    => $user
                     ]);
     }
+
+    /**
+     * @param OrderedProducts $orderedProducts
+     * @return bool
+     */
+    public function updateBoughtProductOnSameUser(OrderedProducts $orderedProducts): bool
+    {
+        $em = $this->getEntityManager();
+        $em->getUnitOfWork()->scheduleForUpdate($orderedProducts);
+
+        if (true === $em->getUnitOfWork()->isEntityScheduled($orderedProducts)) {
+            $em->flush();
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * @param User $changedUser
+     * @param OrderedProducts $orderedProducts
+     * @return bool
+     */
+    public function updateBoughtProductOnChangedUser(User $changedUser,
+                                                     OrderedProducts $orderedProducts): bool
+    {
+        $em = $this->getEntityManager();
+    }
+
+    /**
+     * @param User $changedUser
+     * @param OrderedProducts $orderedProducts
+     * @return bool
+     */
+    public function attachBoughtProductToUserWithoutContextOrder(User $changedUser,
+                                                                 OrderedProducts $orderedProducts): bool
+    {
+        $em    = $this->getEntityManager();
+
+        $order = new OrderedProducts();
+        $order->setQuantity($orderedProducts->getQuantity());
+        $order->setConfirmed($orderedProducts->getConfirmed());
+        $order->setOrderedDate($orderedProducts->getOrderedDate());
+        $order->setUser($orderedProducts->getUser());
+        $order->setOrderedProductPrice(0);
+        $order->setProduct($orderedProducts->getProduct());
+
+        $em->remove($orderedProducts);
+        $em->persist($order);
+
+        if (true === $em->getUnitOfWork()->isScheduledForInsert($order)
+            && true === $em->getUnitOfWork()->isScheduledForDelete($orderedProducts)) {
+                $em->flush();
+                return true;
+        }
+
+        return false;
+    }
 }

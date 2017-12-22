@@ -90,8 +90,14 @@
                 <span class="product-category">{{ product.category }}</span>
             </div>
             <div class="form-group">
-                <label for="product-category">Seller: </label>
-                <span class="product-category">{{ product.user.username }}</span>
+                <label for="product-seller">Seller: </label>
+                <span class="product-seller">{{ product.user.username }}</span>
+            </div>
+            <div class="form-group">
+                <label for="product-category">Available: </label>
+                {% if product.outOfStock < 1 and product.quantity > 0 %}
+                    <span class="product-status">Yes</span>
+                {% endif %}
             </div>
             {% if product.promotion|length > 0 %}
                 <div class="form-group">

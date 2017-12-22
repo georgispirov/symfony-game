@@ -45,8 +45,6 @@ class OrderedProducts
 
     /**
      * @ORM\Column(name="quantity", type="integer")
-     * @Assert\NotBlank(message="Quantity cannot be blank.")
-     * @Assert\GreaterThanOrEqual(value="1", message="Quantity must be at least 1.")
      */
     private $quantity;
 

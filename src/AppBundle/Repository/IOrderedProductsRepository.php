@@ -102,4 +102,26 @@ interface IOrderedProductsRepository
      */
     public function getOrderedProductByProductAndUser(Product $product,
                                                       User $user);
+
+    /**
+     * @param OrderedProducts $orderedProducts
+     * @return bool
+     */
+    public function updateBoughtProductOnSameUser(OrderedProducts $orderedProducts): bool;
+
+    /**
+     * @param User $changedUser
+     * @param OrderedProducts $orderedProducts
+     * @return bool
+     */
+    public function updateBoughtProductOnChangedUser(User $changedUser,
+                                                     OrderedProducts $orderedProducts): bool;
+
+    /**
+     * @param User $changedUser
+     * @param OrderedProducts $orderedProducts
+     * @return bool
+     */
+    public function attachBoughtProductToUserWithoutContextOrder(User $changedUser,
+                                                                 OrderedProducts $orderedProducts): bool;
 }

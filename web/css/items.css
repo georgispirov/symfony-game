@@ -4,6 +4,11 @@
     font-size: 15px;
 }
 
+.bought-product-image-response {
+    width: 100px;
+    height: 80px;
+}
+
 .shop-items:after {
     display: block;
     border-top: 4px solid grey;

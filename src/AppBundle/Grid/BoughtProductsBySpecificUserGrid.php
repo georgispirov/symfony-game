@@ -11,7 +11,7 @@ class BoughtProductsBySpecificUserGrid implements BoughtProductsBySpecificUserGr
     public function configureBoughtProductsBySpecificUser(Grid $grid): Grid
     {
         $sellBoughtProductAction = new RowAction('Update Bought Product', 'updateBoughtProductOnUser');
-        $sellBoughtProductAction->setRouteParametersMapping(['orderedProductID', ]);
+        $sellBoughtProductAction->setRouteParametersMapping(['orderedProductID']);
 
         $grid->setHiddenColumns(['productID', 'orderedProductID', 'Quantity']);
 

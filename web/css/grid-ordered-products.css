@@ -10,13 +10,13 @@
     width: 60px;
 }
 
+.non-existing-bought-products {
+    margin-top: 65px;
+}
+
 .total-check-from-orders {
     margin-top: 15px;
 }
-
-/*.grid input, .grid select {*/
-    /*width: 100px !important;*/
-/*}*/
 
 .grid table
 {
