@@ -9,12 +9,9 @@ use AppBundle\Services\OrderedProductsService;
 use AppBundle\Services\ProductService;
 use APY\DataGridBundle\Grid\Source\Vector;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use Symfony\Component\Config\Definition\Exception\Exception;
-use Symfony\Component\Form\Exception\LogicException;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 
 class OrderedProductsController extends Controller
@@ -79,7 +76,7 @@ class OrderedProductsController extends Controller
         if ($form->isSubmitted() && $form->isValid()) {
             if (true === $this->orderedProductsService->sellBoughtProduct($product, $orderedProduct, $currentQuantity)) {
                 $this->addFlash('successfully-sell-product', self::SUCCESSFULLY_SELL_BOUGHT_PRODUCT);
-                return $this->redirect($request->headers->get('referer'));
+                return $this->redirectToRoute('showBoughtProducts');
             }
 
             $this->addFlash('non-successfully-sell-product', self::NON_SUCCESSFUL_SELL_BOUGHT_PRODUCT);

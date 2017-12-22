@@ -34,6 +34,7 @@ class ProductsOnExistingPromotionType extends AbstractType
             'label'         => 'Products',
             'class'         =>  Product::class,
             'multiple'      =>  true,
+            'required'      =>  true,
             'choices'       =>  array_diff($activeProducts, $promotion->getProduct()->toArray())
         ])->add('Add Products To Promotion', SubmitType::class, [
             'attr' => ['class' => 'btn btn-primary']

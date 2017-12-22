@@ -12,6 +12,14 @@
     </div>
 {% endif %}
 
+{% if app.session.flashbag.has('successfully-sell-product') %}
+    <div class="col-xs-8 alert alert-success successfully-sell-product">
+        {% for flashMessage in app.session.flashbag.get('successfully-sell-product') %}
+            {{ flashMessage }}
+        {% endfor %}
+    </div>
+{% endif %}
+
 {% if app.session.flashbag.has('successfully-removed-ordered-bought-product') %}
     <div class="col-xs-4 alert alert-success successfully-removed-ordered-bought-product">
         {% for flashMessage in app.session.flashbag.get('successfully-removed-ordered-bought-product') %}

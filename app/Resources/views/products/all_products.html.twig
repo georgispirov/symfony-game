@@ -95,22 +95,6 @@
                     <span class="product-status">Yes</span>
                 {% endif %}
             </div>
-            {% if product.promotion|length > 0 %}
-                <div class="form-group">
-                    <label for="product-promotion">On Active Promotion: </label>
-                    <span class="product-promotion">
-                    {% for promo in product.promotion %}
-                        {% if promo.active == true %}
-                            <br/> <b>|</b> -{{ promo }}%
-                            <span class="promotion-date-interval">
-                                {{ promo.startDate|date("Y-m-d H:i:s") }} - {{ promo.endDate|date("Y-m-d H:i:s") }}
-                            </span>
-                            <b>|</b> <br/>
-                        {% endif %}
-                    {% endfor %}
-                </span>
-                </div>
-            {% endif %}
         </div>
         {% if app.user != product.user %}
             <div class="form-group">

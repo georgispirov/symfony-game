@@ -5,14 +5,6 @@
     <link rel="stylesheet" href="{{ asset('js/bootstrap-slider/css/bootstrap-slider.css') }}">
 </head>
 
-{% if app.session.flashbag.has('successfully-sell-product') %}
-    <div class="col-xs-8 alert alert-success successfully-sell-product">
-        {% for flashMessage in app.session.flashbag.get('successfully-sell-product') %}
-            {{ flashMessage }}
-        {% endfor %}
-    </div>
-{% endif %}
-
 {% if app.session.flashbag.has('non-successfully-sell-product') %}
     <div class="col-xs-8 alert alert-danger non-successfully-sell-product">
         {% for flashMessage in app.session.flashbag.get('non-successfully-sell-product') %}

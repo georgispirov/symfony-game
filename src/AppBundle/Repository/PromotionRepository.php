@@ -29,12 +29,30 @@ class PromotionRepository extends EntityRepository implements IPromotionReposito
     public function addPromotionForProducts(Promotion $promotion,
                                             array $products): bool
     {
-        /* @var Product $product */
-        foreach ($products as $product) {
-            $product->setPrice($product->getPrice() - ($product->getPrice() * ($promotion->getDiscount() / 100)));
-        }
 
         $em = $this->getEntityManager();
+        $allPromotions = $em->getRepository(Promotion::class)->findAll();
+
+        $isActive = true;
+
+        foreach ($allPromotions as $allPromotion) {
+            $startDate = $allPromotion->getStartDate();
+            $endDate   = $allPromotion->getEndDate();
+            if ($promotion->getEndDate() == $startDate && $promotion->getEndDate() == $endDate) {
+                $isActive = false;
+                break;
+            }
+        }
+
+        $promotion->setIsActive($isActive);
+
+        if ($promotion->isActive() === true) {
+            /* @var Product $product */
+            foreach ($products as $product) {
+                $product->setPrice($product->getPrice() - ($product->getPrice() * ($promotion->getDiscount() / 100)));
+            }
+        }
+
         $promotion->setCategory(null);
         $em->persist($promotion);
 
@@ -145,10 +163,6 @@ class PromotionRepository extends EntityRepository implements IPromotionReposito
 
         $categories->addPromotionsToCategory($promotion);
 
-        foreach ($products as $product) { /* @var Product $product */
-            $product->addPromotionToProduct($promotion);
-            $product->setPrice($product->getPrice() - ($product->getPrice() * ($promotion->getDiscount() / 100)));
-        }
         $em->persist($promotion);
 
         if (true === $em->getUnitOfWork()->isEntityScheduled($promotion)) {

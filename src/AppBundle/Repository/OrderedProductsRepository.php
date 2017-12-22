@@ -288,15 +288,18 @@ class OrderedProductsRepository extends EntityRepository implements IOrderedProd
     {
         $em = $this->getEntityManager();
         $em->getUnitOfWork()->scheduleForUpdate($product);
-        $em->getUnitOfWork()->scheduleForUpdate($orderedProducts);
 
         $orderedProducts->setConfirmed($orderedProducts->getConfirmed() - $product->getQuantity());
+
+        if ($orderedProducts->getConfirmed() < 1) {
+            $em->remove($orderedProducts);
+        }
 
         $product->setOutOfStock(false);
         $product->setQuantity($product->getQuantity() + $currentProductQuantity);
 
-        if (true === $em->getUnitOfWork()->isScheduledForUpdate($orderedProducts)
-            && true === $em->getUnitOfWork()->isScheduledForUpdate($product)) {
+        if (true === $em->getUnitOfWork()->isEntityScheduled($orderedProducts)
+            && true === $em->getUnitOfWork()->isEntityScheduled($product)) {
                 $em->flush();
                 return true;
         }

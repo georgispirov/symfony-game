@@ -72,7 +72,29 @@ class PromotionService implements IPromotionService
             throw new InvalidArgumentException('The applied Category must be a valid Entity.');
         }
 
-        $promotion->setIsActive($isActive);
+        $allPromotions = $this->em->getRepository(Promotion::class)->findAll();
+
+        $higherPromotion = 0;
+
+        foreach ($allPromotions as $allPromotion) {
+            $startDate = $allPromotion->getStartDate();
+            $endDate   = $allPromotion->getEndDate();
+            if ($promotion->getEndDate() == $startDate && $promotion->getEndDate() == $endDate) {
+                $higherPromotion = $allPromotion->getDiscount();
+            }
+        }
+
+        if ($higherPromotion > $promotion->getDiscount()) {
+            $promotion->setIsActive(false);
+        }
+
+        if ($promotion->isActive() === true) {
+            foreach ($products as $product) { /* @var Product $product */
+                $product->addPromotionToProduct($promotion);
+                $product->setPrice($product->getPrice() - ($product->getPrice() * ($higherPromotion / 100)));
+            }
+        }
+
         $promotion->setCategory(null);
 
         return $this->em->getRepository(Promotion::class)
