@@ -7,6 +7,7 @@ use AppBundle\Entity\Product;
 use AppBundle\Entity\User;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Query\Expr\Join;
+use Doctrine\ORM\QueryBuilder;
 
 /**
  * OrderedProductsRepository
@@ -350,14 +351,27 @@ class OrderedProductsRepository extends EntityRepository implements IOrderedProd
     }
 
     /**
-     * @param User $changedUser
-     * @param OrderedProducts $orderedProducts
+     * @param OrderedProducts $requestedToUpdate
+     * @param OrderedProducts $changedOrder
      * @return bool
      */
-    public function updateBoughtProductOnChangedUser(User $changedUser,
-                                                     OrderedProducts $orderedProducts): bool
+    public function updateBoughtProductOnChangedUser(OrderedProducts $requestedToUpdate, OrderedProducts $changedOrder): bool
     {
         $em = $this->getEntityManager();
+
+        $em->getUnitOfWork()->scheduleForUpdate($requestedToUpdate);
+
+        if ($requestedToUpdate->getConfirmed() - $changedOrder->getConfirmed() === 0
+            && $requestedToUpdate->getQuantity() - $changedOrder->getQuantity() === 0) {
+                $em->remove($changedOrder);
+        }
+
+        if (true === $em->getUnitOfWork()->isScheduledForUpdate($requestedToUpdate)) {
+            $em->flush();
+            return true;
+        }
+
+        return false;
     }
 
     /**

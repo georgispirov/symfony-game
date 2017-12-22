@@ -53,15 +53,6 @@ class UpdateBoughtProductFromUserType extends AbstractType
                         "data-slider-value" => $quantity,
                         "style"             => "width:100%;"
                     ]
-                ])->add('user', EntityType::class, [
-                    'label'         => 'Change Own',
-                    'class'         => User::class,
-                    'required'      => false,
-                    'data'          => $userOwn,
-                    'query_builder' => function (UserRepository $userRepository) {
-                        return $userRepository->createQueryBuilder('u')
-                                              ->orderBy('u.username', 'ASC');
-                    }
                 ])->add('Update Bought Product', SubmitType::class, [
                     'attr' => ['class' => 'btn btn-success']
                 ]);
@@ -84,7 +75,8 @@ class UpdateBoughtProductFromUserType extends AbstractType
             'translation_domain' => false,
             'userOwn'            => null,
             'quantity'           => null,
-            'confirmed'          => null
+            'confirmed'          => null,
+            'product'            => null
         ]);
     }
 }

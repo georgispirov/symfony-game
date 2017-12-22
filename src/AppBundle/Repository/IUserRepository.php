@@ -2,6 +2,7 @@
 
 namespace AppBundle\Repository;
 
+use AppBundle\Entity\Product;
 use AppBundle\Entity\User;
 
 interface IUserRepository

@@ -188,9 +188,8 @@ class UserManagementController extends Controller
         /* @var OrderedProducts $orderedProduct */
         $orderedProduct   = $this->orderedProductsService->getOrderedProductByID($orderedProductID);
         $currentUser      = ($this->orderedProductsService->getOrderedProductByID($orderedProductID))->getUser();
-
-        $configureFormOptions = ['method'    => 'POST', 'userOwn' => $orderedProduct->getUser(),
-                                 'confirmed' => $orderedProduct->getConfirmed(), 'quantity' => $orderedProduct->getQuantity()];
+        $configureFormOptions = ['method'      => 'POST', 'userOwn' => $orderedProduct->getUser(),
+                                 'confirmed'   => $orderedProduct->getConfirmed(), 'quantity' => $orderedProduct->getQuantity()];
 
         $form = $this->createForm(UpdateBoughtProductFromUserType::class, $orderedProduct, $configureFormOptions);
 
@@ -198,8 +197,8 @@ class UserManagementController extends Controller
 
         if ($form->isSubmitted() && $form->isValid()) {
             if (true === $this->userManagementService->updateBoughtProductByUser($currentUser, $orderedProduct)) {
-                $this->addFlash('successfully-updated-bought-product', 'You have successfully updated requested bought product');
-                return $this->redirectToRoute('getAllUsers');
+                $this->addFlash('successfully-updated-bought-product', 'You have successfully updated requested bought product.');
+                return $this->redirect($request->headers->get('referer'));
             }
 
             $this->addFlash('failed-updating-bought-product', 'Failed updating bought product.');

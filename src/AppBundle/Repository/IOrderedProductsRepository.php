@@ -5,6 +5,7 @@ namespace AppBundle\Repository;
 use AppBundle\Entity\OrderedProducts;
 use AppBundle\Entity\Product;
 use AppBundle\Entity\User;
+use Doctrine\ORM\QueryBuilder;
 
 interface IOrderedProductsRepository
 {
@@ -110,12 +111,12 @@ interface IOrderedProductsRepository
     public function updateBoughtProductOnSameUser(OrderedProducts $orderedProducts): bool;
 
     /**
-     * @param User $changedUser
-     * @param OrderedProducts $orderedProducts
+     * @param OrderedProducts $requestedToUpdate
+     * @param OrderedProducts $changedOrder
      * @return bool
      */
-    public function updateBoughtProductOnChangedUser(User $changedUser,
-                                                     OrderedProducts $orderedProducts): bool;
+    public function updateBoughtProductOnChangedUser(OrderedProducts $requestedToUpdate,
+                                                     OrderedProducts $changedOrder): bool;
 
     /**
      * @param User $changedUser

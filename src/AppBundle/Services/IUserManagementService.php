@@ -38,6 +38,11 @@ interface IUserManagementService
      */
     public function verifyUserWhenCheckout(User $user);
 
+    /**
+     * @param User $currentOwnUser
+     * @param OrderedProducts $orderedProducts
+     * @return bool
+     */
     public function updateBoughtProductByUser(User $currentOwnUser,
                                               OrderedProducts $orderedProducts): bool;
 }

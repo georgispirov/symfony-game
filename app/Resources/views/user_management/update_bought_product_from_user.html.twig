@@ -14,6 +14,14 @@
     </div>
 {% endif %}
 
+{% if app.session.flashbag.has('successfully-updated-bought-product') %}
+    <div class="col-xs-4 alert alert-success successfully-updated-bought-product">
+        {% for flashMessage in app.session.flashbag.get('successfully-updated-bought-product') %}
+            {{ flashMessage }}
+        {% endfor %}
+    </div>
+{% endif %}
+
 <div class="col-lg-12 update-bought-user-product">
     <h2 class="update-bought-product-on-user-header">Product Owned By: {{ orderedProduct.user.username }} </h2> <br/>
     <div class="form-group">
@@ -27,7 +35,7 @@
     </div>
     <div class="form-group">
         <label for="bought-product-price">Product Price: </label>
-        <span class="bought-product-title">{{ orderedProduct.product.price }}</span>
+        <span class="bought-product-title">${{ orderedProduct.product.price }}</span>
     </div>
     {{ form_start(form, {
         'action': path('updateBoughtProductOnUser', {'orderedProductID': orderedProduct.id}),

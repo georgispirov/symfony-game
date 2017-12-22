@@ -3,7 +3,6 @@
 namespace AppBundle\Services;
 
 use AppBundle\Entity\OrderedProducts;
-use AppBundle\Entity\Product;
 use AppBundle\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -103,6 +102,11 @@ class UserManagementService implements IUserManagementService
         return false;
     }
 
+    /**
+     * @param User $currentOwnUser
+     * @param OrderedProducts $orderedProducts
+     * @return bool
+     */
     public function updateBoughtProductByUser(User $currentOwnUser,
                                               OrderedProducts $orderedProducts): bool
     {
@@ -111,22 +115,17 @@ class UserManagementService implements IUserManagementService
                             ->updateBoughtProductOnSameUser($orderedProducts);
         }
 
-        $userWithContextOrder = $this->em->getRepository(OrderedProducts::class)
-                                         ->findOneBy([
-                                             'id'   => $orderedProducts->getId(),
-                                             'user' => $orderedProducts->getUser()
-                                         ]);
+//        $currentOrder = $this->em->getRepository(OrderedProducts::class)
+//                                 ->findOneBy([
+//                                     'user'     => $currentOwnUser,
+//                                     'product'  => $orderedProducts->getProduct()
+//                                 ]);
+//
+//        if ( !$currentOrder instanceof OrderedProducts ) {
+//            return $this->em->getRepository(OrderedProducts::class)
+//                            ->attachBoughtProductToUserWithoutContextOrder($orderedProducts->getUser(), $orderedProducts);
+//        }
 
-        if (null !== $userWithContextOrder) {
-            return $this->em->getRepository(OrderedProducts::class)
-                            ->updateBoughtProductOnChangedUser($orderedProducts->getUser(), $orderedProducts);
-        }
-
-        if (null === $userWithContextOrder) {
-            return $this->em->getRepository(OrderedProducts::class)
-                            ->attachBoughtProductToUserWithoutContextOrder($orderedProducts->getUser(), $orderedProducts);
-        }
-
-        return false;
+//        return false;
     }
 }
