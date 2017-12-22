@@ -16,6 +16,7 @@ use AppBundle\Services\ProductService;
 use APY\DataGridBundle\Grid\Source\Vector;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\Finder\Exception\AccessDeniedException;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
@@ -157,7 +158,7 @@ class ProductController extends Controller
         $productID = $request->query->getInt('viewProductID');
         $product   = $this->productService->getProductByID($productID);
         $user      = $this->get('security.token_storage')->getToken()->getUser(); /* @var User $user */
-        $this->denyAccessUnlessGranted('ROLE_EDITOR', $user, 'Only Editors can update Products.');
+        $this->denyAccessUnlessGranted(['ROLE_EDITOR', 'ROLE_ADMIN'], $user, 'Only Editors Or Admins can update Products.');
         $form      = $this->createForm(UpdateProductType::class, $product, ['method' => 'POST', 'user' => $user]);
 
         $form->handleRequest($request);
@@ -213,7 +214,7 @@ class ProductController extends Controller
     public function deleteProductAction(Request $request): Response
     {
         $user      = $this->get('security.token_storage')->getToken()->getUser();
-        $this->denyAccessUnlessGranted('ROLE_EDITOR', $user, 'Only Editors or higher level role has access to perform this action.');
+        $this->denyAccessUnlessGranted(['ROLE_EDITOR', 'ROLE_ADMIN'], $user, 'Only Editors or Admins has access to perform this action.');
         $productID = $request->query->get('productID');
         $product   = $this->productService->getProductByID($productID);
 

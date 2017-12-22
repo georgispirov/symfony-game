@@ -18,7 +18,6 @@ class CategoriesGrid implements CategoriesGridInterface
 
         $deleteCategoryAction = new RowAction('Delete', 'deleteCategory');
         $deleteCategoryAction->setRouteParametersMapping(['id' => $grid->getColumn('id')->getId()]);
-        $deleteCategoryAction->setRole('ROLE_EDITOR');
 
         $grid->getColumn('name')->setTitle('Category')
                                         ->setFilterable(false)

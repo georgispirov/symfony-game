@@ -90,10 +90,6 @@
                 <span class="product-category">{{ product.category }}</span>
             </div>
             <div class="form-group">
-                <label for="product-seller">Seller: </label>
-                <span class="product-seller">{{ product.user.username }}</span>
-            </div>
-            <div class="form-group">
                 <label for="product-category">Available: </label>
                 {% if product.outOfStock < 1 and product.quantity > 0 %}
                     <span class="product-status">Yes</span>
@@ -126,7 +122,7 @@
             <a href="{{ path('viewProduct', { 'viewProductID': product.id }) }}"
                class="btn btn-success">View Product</a>
         </div>
-        {% if is_granted('ROLE_EDITOR') %}
+        {% if is_granted('ROLE_EDITOR') or is_granted('ROLE_ADMIN') %}
             <div class="form-group">
                 <a href="{{ path('updateProduct', { 'viewProductID': product.id }) }}"
                    class="btn btn-warning">Update Product</a>

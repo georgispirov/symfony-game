@@ -1,5 +1,21 @@
 {% include 'base.html.twig' %}
 
+{% if app.session.flashbag.has('successfully-added-product-promotion') %}
+    <div class="col-xs-4 alert alert-success successfully-added-product-promotion">
+        {% for flashMessage in app.session.flashbag.get('successfully-added-product-promotion') %}
+            {{ flashMessage }}
+        {% endfor %}
+    </div>
+{% endif %}
+
+{% if app.session.flashbag.has('failed-adding-product-promotion') %}
+    <div class="col-xs-4 alert alert-danger failed-adding-product-promotion">
+        {% for flashMessage in app.session.flashbag.get('failed-adding-product-promotion') %}
+            {{ flashMessage }}
+        {% endfor %}
+    </div>
+{% endif %}
+
 <div class="col-lg-12 update-product">
     <h2 class="add-product-header">Add Promotion</h2> <br/>
     {{ form_start(form, {

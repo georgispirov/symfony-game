@@ -69,10 +69,6 @@ class OrderedProductsController extends Controller
         /* @var OrderedProducts $orderedProduct */
         $orderedProduct  = $this->orderedProductsService->getOrderedProductByID($orderedProductID);
 
-        if ($orderedProduct->getConfirmed() < 1) {
-            throw new LogicException('There are no left quantity of this bought product.');
-        }
-
         $formOptions     = ['method' => 'POST', 'orderedProduct' => $orderedProduct];
         $product         = $this->productService->getProductByID($orderedProduct->getProduct()->getId());
         $currentQuantity = $orderedProduct->getProduct()->getQuantity();

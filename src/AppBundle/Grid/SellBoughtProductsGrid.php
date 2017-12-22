@@ -17,10 +17,13 @@ class SellBoughtProductsGrid implements SellBoughtProductsGridInterface
         $sellBoughtProductAction = new RowAction('Sell Product', 'sellBoughtProduct');
         $sellBoughtProductAction->setRouteParametersMapping(['orderedProductID']);
 
-        $grid->setHiddenColumns(['productID', 'orderedProductID', 'Quantity']);
+        $grid->setHiddenColumns(['productID', 'orderedProductID', 'Quantity', 'Seller']);
 
         $grid->getColumn('orderedDate')->setTitle('Ordered Date')->setOperators([])->setFilterable(false);
         $grid->getColumn('confirmed')->setTitle('Confirmed Orders')->setSize(1);
+        $grid->getColumn('confirmed')->manipulateRenderCell(function ($value, $row, $router) {
+            return (int) $value;
+        });
 
         $grid->getColumn('Quantity')->manipulateRenderCell(function ($value, $row, $router) {
             /* @var $value  int */

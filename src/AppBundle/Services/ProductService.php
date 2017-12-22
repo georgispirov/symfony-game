@@ -193,4 +193,12 @@ class ProductService implements IProductService
         return $this->em->getRepository(Product::class)
                         ->deleteProduct($product);
     }
+
+    public function getProductsByUser(User $user)
+    {
+        return $this->em->getRepository(Product::class)
+                        ->findBy([
+                            'user' => $user
+                        ]);
+    }
 }

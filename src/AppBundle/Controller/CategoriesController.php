@@ -131,7 +131,7 @@ class CategoriesController extends Controller
     public function allCategoriesGridAction(Request $request): Response
     {
         $user = $this->get('security.token_storage')->getToken()->getUser();
-        $this->denyAccessUnlessGranted('ROLE_EDITOR', $user, 'Only Editors can manage Categories');
+        $this->denyAccessUnlessGranted(['ROLE_EDITOR', 'ROLE_ADMIN'], $user, 'Only Editors can manage Categories');
         $grid = $this->get('grid');
         $allCategories = $this->categoryService->getAllCategoriesOnArray();
 

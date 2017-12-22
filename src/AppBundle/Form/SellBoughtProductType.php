@@ -23,17 +23,21 @@ class SellBoughtProductType extends AbstractType
         /* @var OrderedProducts $orderedProduct */
         $orderedProduct = $options['orderedProduct'];
 
-        $builder->add('imageFile', VichFileType::class, [
-            'label'    => 'Picture',
-            'required' => false
-        ])->add('title', null, [
+        $builder->add('title', null, [
             'label'    => 'Product Title',
-            'required' => true
+            'attr'     => [
+                'readonly' => true
+            ]
         ])->add('description', TextareaType::class, [
-            'label'    => 'Description'
+            'label'    => 'Description',
+            'attr'     => [
+                'readonly' => true
+            ]
         ])->add('price', MoneyType::class, [
             'label'    => 'Price',
-            'required' => true
+            'attr'     => [
+                'readonly' => true
+            ]
         ])->add('quantity', RangeType::class, [
             'label'    => 'Quantity',
             'required' => true,
@@ -48,13 +52,6 @@ class SellBoughtProductType extends AbstractType
                 "data-slider-value" => "1",
                 "style"             => "width:100%;"
             ]
-        ])->add('category', EntityType::class, [
-            'class'         => Categories::class,
-            'required'      => true,
-            'query_builder' => function (CategoriesRepository $categoriesRepository) {
-                return $categoriesRepository->createQueryBuilder('c')
-                                            ->orderBy('c.name', 'ASC');
-            }
         ])->add('Sell Product', SubmitType::class, [
             'attr' => ['class' => 'btn btn-success']
         ]);

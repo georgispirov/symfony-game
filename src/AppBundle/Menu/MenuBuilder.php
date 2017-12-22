@@ -19,7 +19,6 @@ class MenuBuilder implements ContainerAwareInterface
     private $promotionsSubMenu  = [
         'List Active Promotions'                => ['route' => 'listPromotions'],
         'Add Products To Promotion'             => ['route' => 'addPromotion'],
-        'Add Categories To Promotion'           => ['route' => 'addCategoryToPromotion'],
     ];
 
     public function mainMenu(FactoryInterface $factory, array $options)
@@ -68,14 +67,14 @@ class MenuBuilder implements ContainerAwareInterface
              ->setAttribute('class', self::ITEM_CLASS)
              ->setExtra('translation_domain', false);
 
-        if ($user->hasRole('ROLE_EDITOR')) {
+        if ($user->hasRole('ROLE_EDITOR') || $user->hasRole('ROLE_ADMIN')) {
             $menu->addChild('All Categories', ['route' => 'listCategories'])
                 ->setAttribute('class', self::ITEM_CLASS)
                 ->setExtra('translation_domain', false);
         }
 
-        if ($user->hasRole('ROLE_EDITOR')) {
-            $menu->addChild('Add Product', ['route' => 'addProduct'])
+        if ($user->hasRole('ROLE_USER')) {
+            $menu->addChild('Sell Product', ['route' => 'addProduct'])
                 ->setAttribute('class', self::ITEM_CLASS)
                 ->setExtra('translation_domain', false);
         }
@@ -84,22 +83,30 @@ class MenuBuilder implements ContainerAwareInterface
             ->setAttribute('class', self::ITEM_CLASS)
             ->setExtra('translation_domain', false);
 
-        if ($user->hasRole('ROLE_ADMIN')) {
 
-            $menu->addChild('Promotions')
-                ->setAttribute('class', self::ITEM_CLASS)
-                ->setExtra('translation_domain', false);
 
-            foreach ($this->promotionsSubMenu as $cellName => $route) {
-                $menu->getChild('Promotions')
-                     ->addChild($cellName, $route)
-                     ->setAttribute('class', self::ITEM_CLASS)
-                     ->setExtra('translation_domain', false);
-            }
+        $menu->addChild('Promotions')
+            ->setAttribute('class', self::ITEM_CLASS)
+            ->setExtra('translation_domain', false);
 
-            $menu->addChild('User Management', ['route' => 'getAllUsers'])
+        foreach ($this->promotionsSubMenu as $cellName => $route) {
+            $menu->getChild('Promotions')
+                 ->addChild($cellName, $route)
                  ->setAttribute('class', self::ITEM_CLASS)
                  ->setExtra('translation_domain', false);
+        }
+
+        if ($user->hasRole('ROLE_EDITOR') || $user->hasRole('ROLE_ADMIN')) {
+            $menu->getChild('Promotions')
+                 ->addChild('Add Categories To Promotion', ['route' => 'addCategoryToPromotion'])
+                 ->setAttribute('class', self::ITEM_CLASS)
+                 ->setExtra('translation_domain', false);
+        }
+
+        if ($user->hasRole('ROLE_ADMIN')) {
+            $menu->addChild('User Management', ['route' => 'getAllUsers'])
+                ->setAttribute('class', self::ITEM_CLASS)
+                ->setExtra('translation_domain', false);
         }
 
         return $menu;

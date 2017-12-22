@@ -147,6 +147,7 @@ class PromotionRepository extends EntityRepository implements IPromotionReposito
 
         foreach ($products as $product) { /* @var Product $product */
             $product->addPromotionToProduct($promotion);
+            $product->setPrice($product->getPrice() - ($product->getPrice() * ($promotion->getDiscount() / 100)));
         }
         $em->persist($promotion);
 

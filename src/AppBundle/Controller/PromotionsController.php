@@ -11,17 +11,15 @@ use AppBundle\Services\CategoriesService;
 use AppBundle\Services\ProductService;
 use AppBundle\Services\PromotionService;
 use APY\DataGridBundle\Grid\Source\Entity;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
-use Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 
 class PromotionsController extends Controller
 {
-    const SUCCESSFULLY_ADDED_PRODUCT_PROMOTION   = 'Promotion has been successfully applied to selected Product.';
+    const SUCCESSFULLY_ADDED_PRODUCT_PROMOTION   = 'Promotion has been successfully applied to selected Products.';
 
     const SUCCESSFULLY_REMOVED_PRODUCT_FROM_PROMOTION = 'You have successfully removed requested product from promotion.';
 
@@ -71,18 +69,11 @@ class PromotionsController extends Controller
 
     /**
      * @Route("/list/promotions", name="listPromotions")
-     * @Security("has_role('ROLE_ADMIN')")
      * @param Request $request
      * @return Response
      */
     public function listAllAction(Request $request): Response
     {
-        $authorization = $this->get('security.authorization_checker');
-
-        if (false === $authorization->isGranted('ROLE_ADMIN')) {
-            throw new UnauthorizedHttpException('You must be logged in as User to preview this section.');
-        }
-
         $promotions = $this->promotionService->getAllActivePromotions();
 
         $grid       = $this->get('grid');
@@ -112,15 +103,18 @@ class PromotionsController extends Controller
         $products  = [];
 
         if ($form->isSubmitted() && $form->isValid()) {
+
             foreach ($post['app_add_promotion']['product'] as $productID) {
                 $product = $this->productService->getProductByID($productID);
                 $products[] = $product;
                 $product->addPromotionToProduct($promotion);
             }
+
             if (true === $this->promotionService->applyPromotionForProducts($promotion, $products)) {
                 $this->addFlash('successfully-added-product-promotion', self::SUCCESSFULLY_ADDED_PRODUCT_PROMOTION);
                 return $this->redirect($request->headers->get('referer'));
             }
+
             $this->addFlash('failed-adding-product-promotion', self::NON_SUCCESSFUL_ADDED_PRODUCT_PROMOTION);
             return $this->redirect($request->headers->get('referer'));
         }

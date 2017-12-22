@@ -33,7 +33,7 @@ class UpdateProductType extends AddProductType
         $imageOptions['required'] = false;
         $builder->add('imageFile', VichFileType::class, $imageOptions);
 
-        if ($user->hasRole('ROLE_EDITOR')) {
+        if ($user->hasRole('ROLE_EDITOR') || $user->hasRole('ROLE_ADMIN')) {
             $builder->add('quantity', IntegerType::class, [
                 'label'         => 'Quantity',
                 'required'      => true
